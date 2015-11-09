@@ -1,0 +1,12 @@
+name = Carto Download Count
+description = Tracks file downloads by node
+core = 7.x
+dependencies[] = field
+dependencies[] = file
+
+; Information added by Drupal.org packaging script on 2014-11-16
+version = "7.x-0.1"
+core = "7.x"
+project = "carto_count"
+datestamp = "1416169684"
+
