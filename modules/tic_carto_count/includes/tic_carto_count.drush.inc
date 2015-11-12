@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Drush commands for carto_count.
+ * Drush commands for tic_carto_count.
  */
 
 define('SPARKLINE_BASE_URI', 'http://www.omnipotent.net/jquery.sparkline/');
@@ -12,7 +12,7 @@ define('SPARKLINE_VERSION', '1.6');
 /**
  * Implements hook_drush_help().
  */
-function carto_count_drush_help($section) {
+function tic_carto_count_drush_help($section) {
   switch ($section) {
     case 'drush:sparkline-plugin':
       return dt("This command will download the jquery.sparkline plugin from http://www.omnipotent.net. A single argument will be assumed to be the version. In order to specify a path, you must also include the version.");
@@ -22,11 +22,11 @@ function carto_count_drush_help($section) {
 /**
  * Implements hook_drush_command().
  */
-function carto_count_drush_command() {
+function tic_carto_count_drush_command() {
   $items['sparkline-plugin'] = array(
     'description' => dt('Download the jquery.sparkline plugin.'),
     'bootstrap' => DRUSH_BOOTSTRAP_DRUSH,
-    'callback' => 'carto_count_sparkline_download',
+    'callback' => 'tic_carto_count_sparkline_download',
     'aliases' => array('sparklines'),
     'arguments' => array(
       'version' => dt('Optional: the version of the sparkline plugin to download (currently the default is ' . SPARKLINE_VERSION . ')'),
@@ -39,7 +39,7 @@ function carto_count_drush_command() {
 /**
  * Callback to do the actual sparkling plugin download.
  */
-function carto_count_sparkline_download() {
+function tic_carto_count_sparkline_download() {
   $args = func_get_args();
 
   if (count($args) == 0) {

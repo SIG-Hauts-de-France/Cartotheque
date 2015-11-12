@@ -2,21 +2,21 @@
 
 /**
  * @file
- * Administrative page callbacks for the carto_count module.
+ * Administrative page callbacks for the tic_carto_count module.
  */
 
 /**
  * Page callback for the view download counts page.
  */
-function carto_count_view_page($arg = NULL) {
-  drupal_set_title(variable_get('carto_count_view_page_title', 'Download Counts'));
+function tic_carto_count_view_page($arg = NULL) {
+  drupal_set_title(variable_get('tic_carto_count_view_page_title', 'Download Counts'));
   $total_downloads = 0;
   $colspan = 0;
   $item = 1;
-  $limit = (int) variable_get('carto_count_view_page_limit', 0);
-  $items_per_page = (int) variable_get('carto_count_view_page_items', 0);
-  $page_header = variable_get('carto_count_view_page_header', '');
-  $page_footer = variable_get('carto_count_view_page_footer', '');
+  $limit = (int) variable_get('tic_carto_count_view_page_limit', 0);
+  $items_per_page = (int) variable_get('tic_carto_count_view_page_items', 0);
+  $page_header = variable_get('tic_carto_count_view_page_header', '');
+  $page_footer = variable_get('tic_carto_count_view_page_footer', '');
   $output = '<div id="download-count-page">';
 
   $header = array(
@@ -34,7 +34,7 @@ function carto_count_view_page($arg = NULL) {
     ),
   );
 
-  $query = db_select('carto_count', 'cc')
+  $query = db_select('tic_carto_count', 'cc')
     ->fields('cc', array('dcid', 'count'))
     ->fields('n', array('nid', 'title'))
 	;
@@ -81,7 +81,7 @@ function carto_count_view_page($arg = NULL) {
       'colspan' => $colspan,
       'id' => 'actions',
     );
-    drupal_add_css(drupal_get_path('module', 'carto_count') . '/carto_count.css');
+    drupal_add_css(drupal_get_path('module', 'tic_carto_count') . '/tic_carto_count.css');
   }
   if (!empty($page_header['value'])) {
     $output .= '<div id="download-count-header">' . check_markup($page_header['value'], $page_header['format']) . '</div>';
@@ -103,7 +103,7 @@ function carto_count_view_page($arg = NULL) {
 /**
  * Download count reset function.
  */
-function carto_count_reset_form($form, $form_state, $dc_entry = NULL) {
+function tic_carto_count_reset_form($form, $form_state, $dc_entry = NULL) {
   $form = array();
   if ($dc_entry != 'all') {
     $form['dcid'] = array(
@@ -146,31 +146,31 @@ function carto_count_reset_form($form, $form_state, $dc_entry = NULL) {
 /**
  * Implements hook_submit().
  */
-function carto_count_reset_form_submit($form, &$form_state) {
+function tic_carto_count_reset_form_submit($form, &$form_state) {
   $result = NULL;
   if ($form['dcid']['#value'] == 'all') {
 
-    $result = db_truncate('carto_count')->execute();
+    $result = db_truncate('tic_carto_count')->execute();
     if ($result) {
       drupal_set_message(t('All download counts have been reset.'));
-      watchdog('carto_count', 'All download counts have been reset.', array(), WATCHDOG_NOTICE);
+      watchdog('tic_carto_count', 'All download counts have been reset.', array(), WATCHDOG_NOTICE);
     }
     else {
       drupal_set_message(t('Unable to reset all download counts.'), 'error');
-      watchdog('carto_count', 'Unable to reset all download counts.', array(), WATCHDOG_ERROR);
+      watchdog('tic_carto_count', 'Unable to reset all download counts.', array(), WATCHDOG_ERROR);
     }
   }
   else {
-    $result = db_delete('carto_count')
+    $result = db_delete('tic_carto_count')
       ->condition('nid', $form['nid']['#value'])
       ->execute();
     if ($result) {
       drupal_set_message(t('Download count for %title was reset.', array('%title' => $form['title']['#value'])));
-      watchdog('carto_count', 'Download count for %title was reset.', array('%filename' => $form['title']['#value']), WATCHDOG_NOTICE);
+      watchdog('tic_carto_count', 'Download count for %title was reset.', array('%filename' => $form['title']['#value']), WATCHDOG_NOTICE);
     }
     else {
       drupal_set_message(t('Unable to reset download count for %title.', array('%title' => $form['title']['#value'])), 'error');
-      watchdog('carto_count', 'Unable to reset download count for %title.', array('%filename' => $form['title']['#value']), WATCHDOG_ERROR);
+      watchdog('tic_carto_count', 'Unable to reset download count for %title.', array('%filename' => $form['title']['#value']), WATCHDOG_ERROR);
     }
   }
   $form_state['redirect'] = 'admin/reports/download-count';

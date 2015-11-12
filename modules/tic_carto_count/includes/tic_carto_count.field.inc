@@ -7,9 +7,9 @@
 /**
  * Implements hook_field_formatter_info().
  */
-function carto_count_field_formatter_info() {
+function tic_carto_count_field_formatter_info() {
   $formatters = array(
-    'carto_count_count' => array(
+    'tic_carto_count_count' => array(
       'label' => t('Generic file with download count'),
       'field types' => array('file'),
     ),
@@ -21,17 +21,17 @@ function carto_count_field_formatter_info() {
 /**
  * Implements hook_field_formatter_view().
  */
-function carto_count_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+function tic_carto_count_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
   $element = array();
   $entity_info = entity_get_info($entity_type);
   $access = user_access('view download counts');
 
   foreach ($items as $delta => $item) {
     if ($access) {
-      $item['downloads'] = db_query("SELECT count from {carto_count} where nid = :nid AND type = :type AND id = :id", array(':fid' => $item['fid'], ':type' => $entity_type, ':id' => $entity->$entity_info['entity keys']['id']))->fetchField();
+      $item['downloads'] = db_query("SELECT count from {tic_carto_count} where nid = :nid AND type = :type AND id = :id", array(':fid' => $item['fid'], ':type' => $entity_type, ':id' => $entity->$entity_info['entity keys']['id']))->fetchField();
     }
     $element[$delta] = array(
-      '#theme' => !$access ? 'file_link' : 'carto_count_file_field_formatter',
+      '#theme' => !$access ? 'file_link' : 'tic_carto_count_file_field_formatter',
       '#file' => (object) $item,
     );
   }
@@ -43,7 +43,7 @@ function carto_count_field_formatter_view($entity_type, $entity, $field, $instan
  * Theme function for file fields with download counts.
  * Mostly copied from the core file module.
  */
-function theme_carto_count_file_field_formatter($variables) {
+function theme_tic_carto_count_file_field_formatter($variables) {
   $file = $variables['file'];
 
   $url = file_create_url($file->uri);
