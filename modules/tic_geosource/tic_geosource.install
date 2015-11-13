@@ -1,0 +1,37 @@
+<?php
+/**
+ * Implements hook_install
+ */
+
+/**
+ * Implements hook_install()
+ *
+ * Charge les types carte et contact exportés par bundle_copy
+ */
+function tic_geosource_install() {
+	// Load the fixtures file
+	if(!file_exists(dirname(__FILE__) . '/fixtures/export_types.txt')) {
+		drupal_set_message('Le fichier de fixtures n\' a pas pu etre trouvé', 'error');
+		return;
+	}
+	
+	$data = file_get_contents( dirname(__FILE__) . '/fixtures/export_types.txt' );
+	
+	// Import fixtures via bundle copy
+	$form_state = Array();
+	$form_state['values']['macro'] = $data;
+	$form_state['values']['type'] = 'node';
+	$form_state['values']['op'] = t('Import');
+	
+	drupal_form_submit('bundle_copy_import', $form_state);
+	drupal_set_message('Les fixtures ont été installées avec succès', 'status');
+}
+
+/**
+ * Implements hook_uninstall
+ */
+function tic_geosource_uninstall() {
+	variable_del('geosource_server_url');
+	variable_del('geosource_server_user');
+	variable_del('geosource_server_password');
+}

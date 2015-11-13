@@ -3,7 +3,7 @@ description = Tracks file downloads by node
 core = 7.x
 dependencies[] = field
 dependencies[] = file
-dependencies[] = geosource
+dependencies[] = tic_geosource
 
 ; Information added by Drupal.org packaging script on 2014-11-16
 version = "7.x-0.1"

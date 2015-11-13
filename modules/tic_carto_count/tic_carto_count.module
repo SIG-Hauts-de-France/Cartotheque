@@ -132,7 +132,6 @@ function tic_carto_count_library() {
  */
 function tic_carto_count_file_download_access_alter(&$grants, $file, $entity_type, $entity) {
 	// Ne compter que les telechargements de cartes
-	//if(strpos(request_uri(), 'thumbnail')) { return; }
 	$trackedFiles = Array();
 	if(isset($entity->field_image_carte['und'][0]['filename'])) {
 		$trackedFiles[] = $entity->field_image_carte['und'][0]['filename'];
@@ -282,7 +281,6 @@ function _tic_carto_count_block_contents($block) {
     return theme('table', array('header' => $header, 'rows' => $rows, 'sticky' => FALSE));
   }
   else {
-	  //die('ok');
 	  return ' ';
   }
 }

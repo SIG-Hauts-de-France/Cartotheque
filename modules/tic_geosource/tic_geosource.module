@@ -1,0 +1,261 @@
+<?php
+/**
+ *
+ * TODO: hook node save pour push tic_geosource
+ * hook node update pour update tic_geosource ?
+ * cron synchro vers tic_geosource
+ * hook push vers tic_geosource a la sauvegarde d'une carte
+ *
+ */
+
+/**
+ * Implements hook_help()
+ *
+ * @param current path
+ * @param array 
+ */
+function tic_geosource_help($path, $args) {
+	switch($path) {
+		case "admin/help#tic_geosource":
+			return '<p>' . t(' tic_geosource ') .'</p>';
+			break;
+	}
+}
+
+/**
+ * Implements hook_menu
+ */
+function tic_geosource_menu() {
+	$items = array();
+	
+	$items['tic_geosource/create_contact_ajax'] = array(
+		'title' => 'Ajax backend',
+		'page callback' => 'tic_geosource_addcontact_ajax_submit',
+		'access callback' => true,
+		'absolute' => true,
+		'type' => MENU_CALLBACK,
+	);
+	
+	$items['admin/config/services/geosource'] = array(
+		'title' => 'Publication Geosource',
+		'description' => 'Réglages de publication Geosource',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('tic_geosource_config'),
+		'access arguments' => array('administer site configuration'),
+		'file' => 'includes/tic_geosource.settings.inc',
+	);
+	
+	$items['admin/config/services/geosource/test'] = array(
+		'title' => 'Test de la configuration Geosource',
+		'description' => 'Tester la configuration de Geosource',
+		'page callback' => 'tic_geosource_configtest',
+		'access arguments' => array('administer site configuration'),
+		'file' => 'includes/tic_geosource.settings.inc',
+	);
+	
+	return $items;
+}
+
+
+/**
+ * Implements hook_form_alter
+ *
+ */
+function tic_geosource_form_alter(&$form, &$form_state, $form_id) {
+	
+	// TODO: si edition de carte, enlever le champ 'type de carte'
+	// adapter les champs en fonction du type de carte (statique ou dynamique
+	if ($form_id == 'carte_node_form') {
+		$form_state['no_cache'] = TRUE;
+		
+		drupal_add_library('system', 'ui.dialog');
+		
+		$form['#attached']['js'] = array(
+			drupal_get_path('module', 'tic_geosource') . '/js/carto_form.js',
+			drupal_get_path('module', 'tic_geosource') . '/js/chosen/chosen.jquery.min.js',
+		);
+		
+		drupal_add_css(
+			drupal_get_path('module', 'tic_geosource') . '/js/chosen/chosen.min.css',
+			array('group' => CSS_THEME, 'type' => 'file')
+		);
+		
+		$form["field_auteur"]['#suffix'] = '<a href="#" id="addContactLink">Ajouter un contact</a>';
+		
+		$form['#validate'][] = 'tic_geosource_form_validate';
+		
+		return $form;
+	}
+}
+
+/**
+ * Implements hook_node_validate
+ */
+function tic_geosource_form_validate(&$form, &$form_state) {
+	//formalisme numero de carte
+	//checks différents si carte statique ou dynamique
+	
+	drupal_add_library('system', 'ui.dialog');
+	$form['#attached']['js'] = array(
+		drupal_get_path('module', 'tic_geosource') . '/js/carto_form.js',
+		drupal_get_path('module', 'tic_geosource') . '/js/chosen/chosen.jquery.min.js',
+	);
+	
+	drupal_add_css(
+		drupal_get_path('module', 'tic_geosource') . '/js/chosen/chosen.min.css',
+		array('group' => CSS_THEME, 'type' => 'file')
+	);
+	
+	return $form;
+}
+
+/**
+ * Callback ajax de création de contact lors de la creation d'une carte
+ */
+function tic_geosource_addcontact_ajax_submit($form, &$form_state) {
+	global $user;
+	
+	if (!user_access('create carto content')) {
+		$ret = array('code' => 'error', 'reason' => 'Vous n\'avez pas la permission de créer des contacts');
+		drupal_json_output($ret);
+		drupal_exit();
+	}
+	
+	
+	//TODO: Verifier si les donnees sont ok et si l'email n'est pas deja utilisé
+	$name = $_GET['nom'];
+	$email = $_GET['email'];
+	
+	if (!valid_email_address($email)) {
+		$ret = Array('code' => 'error', 'reason' => 'Adresse email invalide !');
+		drupal_json_output($ret);
+		drupal_exit();
+	}
+	
+	// TODO: requête SQL pour vérifier que l'adresse mail est unique
+	
+	$contact = new StdClass();
+	$contact->type = 'contact';
+	$contact->title = $name;
+	$contact->uid = $user->uid;
+	$contact->language = LANGUAGE_NONE;
+	
+	//TODO: vérifier que le node a bien été sauvé; ajouter langue
+	node_save($contact);
+	$node_wrapper = entity_metadata_wrapper('node', $contact);
+	$node_wrapper->field_adresse_email->set($email);
+	$node_wrapper->save();
+	
+	$ret = Array('code' => 'success', 'nid' => $contact->nid, 'title' => $contact->title);
+	drupal_json_output($ret);
+	drupal_exit();
+}
+
+/**
+ * Implements hook_node_insert
+ *
+ */
+function tic_geosource_node_insert($node) {
+	if($node->type == 'carte') {
+		//update or creation ?
+		if($node->is_new) {
+			$uuid = tic_geosource_insert_record($node);
+			//save the node uuid in database
+		}
+		else {
+			tic_geosource_update_record($node);
+		}
+	}
+}
+
+/**
+ * Implements hook_node_update
+ *
+ */
+function tic_geosource_node_update($node) {
+	if($node->type == 'carte') {
+		tic_geosource_update_record($node);
+	}
+}
+
+/**
+ * Loads a CWS client
+ *
+ * @return cswGeoClient Instance
+ */
+function tic_geosource_load_csw_client() {
+	//TODO: installer pear directement ?
+	set_include_path(get_include_path() . PATH_SEPARATOR . dirname(__FILE__) . '/vendor');
+	require_once dirname(__FILE__) . '/vendor/cswGeoClient.php';
+	
+	$cswServer = variable_get('geosource_server_url', '');
+	$username = variable_get('geosource_server_user', '');
+	$password = variable_get('geosource_server_password', '');
+	$authAddress = variable_get('geosource_server_auth_address', '');
+	
+	if($authAddress != '') {
+		return new cswGeoClient($cswServer, $username, $password, $authAddress);
+	}
+	else {
+		return new cswGeoClient($cswServer);
+	}
+}
+
+/**
+ * Convert XML string to simpleXMLElement
+ *
+ * @param string XML string
+ * @return simpleXMLElement
+ */
+function tic_geosource_parse_xml($string) {
+	$obj = new DOMDocument();
+	$obj->resolveExternals = true;
+	$obj->loadXML($string);
+	
+	//TODO: ajouter checks
+	return $obj;
+}
+
+function tic_geosource_insert_record($node) {
+	//load contact info
+	$data = $node->field_auteur['und'][0];
+	$relatedContact = node_load($data['nid']);
+	
+	// load DIV template engine (http://divengine.com)
+	// TODO: bbox ? chargement des tpls dans le dossier templates
+	define('PACKAGES', './');
+	require_once dirname(__FILE__) . '/vendor/div.php';
+	$xmlString = new div('templates/insert.tpl', array(
+			'language_code' => 'fr',
+			'author_name' => $relatedContact->title,
+			'author_organisation' => 'NONE',
+			'author_email' => 'damien@scriptutils.com',
+			'creation_date' => '2015-11-13T08:43:18',
+			'map_title' => $node->title,
+			'map_creation_date' => '2015-12-12',
+			'map_abstract' => 'NONE',
+			'map_purpose' => 'NONE',
+			'map_number' => 'Lambert 93',
+			'map_resolution' => '10000',
+			'map_url' => 'http://www.ada.gov/lawenfcomm.pdf',
+		)
+	);
+	
+	var_dump((string)$xmlString); die();
+	//Create XML Request
+	$dom = new DOMDocument('1.0');
+	$dom->loadXML((string)$xmlString);
+	//var_dump($dom->saveXML()); die();
+	
+	//submit request
+	$client = tic_geosource_load_csw_client();
+	// TODO: modifier insertMetada pour renvoyer le uuid
+	$uuid = $client->insertMetadata($dom);
+	
+	//return UUID
+}
+
+// TODO
+function tic_geosource_update_record($node) {
+	return true;
+}

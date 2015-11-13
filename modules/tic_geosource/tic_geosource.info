@@ -1,0 +1,9 @@
+name = Geosource Drupal Plugin
+description = Module d'interconnexion Geosource pour la gestion de cartothèques par Teicee
+core = 7.x
+dependencies[] = field
+dependencies[] = bundle_copy
+dependencies[] = node_reference
+dependencies[] = date
+dependencies[] = url
+dependencies[] = email
