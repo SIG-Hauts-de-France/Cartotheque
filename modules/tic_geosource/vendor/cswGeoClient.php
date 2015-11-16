@@ -340,7 +340,7 @@ class cswGeoClient {
     }
     /**
 	 * Insert a new metadata in the csw server
-	 * TODO: return array of uuid
+	 * TODO: better xml header removal
 	 *
      * @param DOMDocument $xmlISO19139 content to add
      * @return number of insered metadata
@@ -351,7 +351,7 @@ class cswGeoClient {
                       ->setHeader('Content-type: text/xml; charset=utf-8')
 		      ->setBody("<?xml version='1.0'?>".
                            "<csw:Transaction service='CSW' version='2.0.2' xmlns:csw='http://www.opengis.net/cat/csw/2.0.2' xmlns:ogc='http://www.opengis.net/ogc' xmlns:apiso='http://www.opengis.net/cat/csw/apiso/1.0'>".
-                           "<csw:Insert>".str_replace('<?xml version="1.0"?>','',$xmlISO19139->saveXML()).
+                           "<csw:Insert>".str_replace('<?xml version="1.0" encoding="UTF-8"?>','',$xmlISO19139->saveXML()).
 		           "</csw:Insert>".
                            "</csw:Transaction>");
         //authentication is needed !!
@@ -360,12 +360,17 @@ class cswGeoClient {
                 $docXml= new DOMDocument();
                 if ($docXml->loadXML($this->_response)) {
                     $xp = new DOMXPath($docXml);
-                    $xpathString="//csw:totalInserted";
+                    $xpathString="//csw:BriefRecord";
                     $nodes = $xp->query($xpathString);
-                    if ($nodes->length==1)
-                        return $nodes->item(0)->textContent;
+					if ($nodes->length > 0) {
+						$uuids = array();
+						foreach($nodes as $node) {
+							$uuids[] = str_replace(' ', '', $node->textContent);
+						}
+						return $uuids;
+					}
                     else
-                        return 0;
+                        return false;
                 }
                 else {
                     throw new Exception($this->_response, "004");

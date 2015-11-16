@@ -8,6 +8,21 @@
  *
  */
 
+// DEBUG
+function tic_geosource_node_view($node, $v, $e) {
+	
+	//var_dump($node->field_image_carte['und'][0]);
+	return;
+	/*
+	$data = $node->field_auteur['und'][0];
+	$relatedContact = node_load($data['nid']);
+	var_dump($relatedContact->field_adresse_email['und'][0]['email']); die();
+	 */
+
+	//var_dump($node->field_numero_de_carte['und'][0]['value']); die();
+	//var_dump($node->field_image_carte); die();
+}
+
 /**
  * Implements hook_help()
  *
@@ -152,30 +167,23 @@ function tic_geosource_addcontact_ajax_submit($form, &$form_state) {
 }
 
 /**
- * Implements hook_node_insert
+ * Implements hook_node_presave
  *
  */
-function tic_geosource_node_insert($node) {
-	if($node->type == 'carte') {
-		//update or creation ?
-		if($node->is_new) {
-			$uuid = tic_geosource_insert_record($node);
-			//save the node uuid in database
-		}
-		else {
-			tic_geosource_update_record($node);
+function tic_geosource_node_presave($node) {
+	if (! $node->type == 'carte')
+		return;
+	
+	if ($node->is_new) {
+		$uuid = tic_geosource_insert_record($node);
+		if($uuid) {
+			$node->field_uuid['und'][0]['value'] = $uuid;
 		}
 	}
-}
-
-/**
- * Implements hook_node_update
- *
- */
-function tic_geosource_node_update($node) {
-	if($node->type == 'carte') {
-		tic_geosource_update_record($node);
+	else {
+		//TODO: update geosource record
 	}
+	
 }
 
 /**
@@ -202,57 +210,157 @@ function tic_geosource_load_csw_client() {
 }
 
 /**
- * Convert XML string to simpleXMLElement
+ * Load divengine template engine (http://divengine.com)
  *
- * @param string XML string
- * @return simpleXMLElement
  */
-function tic_geosource_parse_xml($string) {
-	$obj = new DOMDocument();
-	$obj->resolveExternals = true;
-	$obj->loadXML($string);
+function tic_geosource_load_divengine() {
+	// Reconfigure div to avoid conflicts with xml language
+	define('DIV_TAG_MACRO_BEGIN', '<?php');
 	
-	//TODO: ajouter checks
-	return $obj;
+	require_once dirname(__FILE__) . '/vendor/div.php';
 }
 
-function tic_geosource_insert_record($node) {
+/**
+ * Convert a region to a bbox
+ *
+ * TODO: fixer les bboxs
+ * @param string region
+ * @return array bbox
+ */
+function tic_geosource_region_to_bbox($region) {
+	// default: world wide
+	$bbox = Array(
+		"west" => '-180',
+		"east" => '180',
+		"north" => '-90',
+		"south" => '90',
+	);
+	
+	switch($region) {
+		case 'Europe':
+			$bbox['west'] = '-18';
+			$bbox['east'] = '46';
+			$bbox['north'] = '71';
+			$bbox['south'] = '33';
+			break;
+		case 'France':
+			$bbox['west'] = '-6';
+			$bbox['east'] = '9';
+			$bbox['north'] = '51';
+			$bbox['south'] = '42';
+			
+			break;
+		case 'Région':
+			$bbox['west'] = '-31';
+			$bbox['east'] = '40';
+			$bbox['north'] = '81';
+			$bbox['south'] = '24';
+			
+			break;
+		case 'Département':
+			$bbox['west'] = '-31';
+			$bbox['east'] = '40';
+			$bbox['north'] = '81';
+			$bbox['south'] = '24';
+			
+			break;
+		case 'Infra-départemental':
+			$bbox['west'] = '-31';
+			$bbox['east'] = '40';
+			$bbox['north'] = '81';
+			$bbox['south'] = '24';
+			
+			break;
+	}
+	
+	return $bbox;
+}
+
+
+/**
+ * Convert a drupal node to an array for divengine template
+ *
+ * @param stdClass drupal node
+ * @return array paramters for divengine template
+ */
+function tic_geosource_drupal_node_to_geosource_array($node) {
 	//load contact info
 	$data = $node->field_auteur['und'][0];
 	$relatedContact = node_load($data['nid']);
 	
-	// load DIV template engine (http://divengine.com)
-	// TODO: bbox ? chargement des tpls dans le dossier templates
-	define('PACKAGES', './');
-	require_once dirname(__FILE__) . '/vendor/div.php';
-	$xmlString = new div('templates/insert.tpl', array(
+	$bbox = tic_geosource_region_to_bbox($node->field_emprise_geographique['und'][0]['value']);
+	
+	$keywords = array();
+	foreach ($node->field_mots_cles['und'] as $k) {
+		$keywords[] = $k['name'];
+	}
+	
+	$files = array();
+	
+	//var_dump($node->field_image_carte); die();
+	
+	if(is_array($node->field_image_carte)) {
+		$f = $node->field_image_carte['und'][0];
+		$files[] = array(
+			'name' => $f['filename'],
+			'url' => file_create_url($f['uri']),
+			'filetype' => $f['filemime'],
+			'version' => '1.0',
+		);
+	}
+	
+	return array(
 			'language_code' => 'fr',
 			'author_name' => $relatedContact->title,
 			'author_organisation' => 'NONE',
-			'author_email' => 'damien@scriptutils.com',
-			'creation_date' => '2015-11-13T08:43:18',
+			'author_email' => $relatedContact->field_adresse_email['und'][0]['email'],
+			//'creation_date' => '2015-11-13T08:43:18',
+			'creation_date' => date("Y-m-dTH:i:s"),
 			'map_title' => $node->title,
-			'map_creation_date' => '2015-12-12',
+			'map_creation_date' => date("Y-m-d"),
 			'map_abstract' => 'NONE',
 			'map_purpose' => 'NONE',
-			'map_number' => 'Lambert 93',
-			'map_resolution' => '10000',
+			'map_number' => $node->field_numero_de_carte['und'][0]['value'],
+			'map_resolution' => $node->field_echelle['und'][0]['value'],
 			'map_url' => 'http://www.ada.gov/lawenfcomm.pdf',
-		)
+			'bbox' => $bbox,
+			'keywords' => $keywords,
+			'files' => $files,
 	);
+}
+
+/**
+ * Save metadata to geosource
+ * 
+ * @param stdClass Drupal node
+ * @return string Geosource UUID
+ */
+function tic_geosource_insert_record($node) {
 	
-	var_dump((string)$xmlString); die();
+	tic_geosource_load_divengine();
+	
+	$template = dirname(__FILE__) . '/templates/insert.tpl';
+	
+	$xmlString = new div($template, tic_geosource_drupal_node_to_geosource_array($node));
 	//Create XML Request
 	$dom = new DOMDocument('1.0');
 	$dom->loadXML((string)$xmlString);
-	//var_dump($dom->saveXML()); die();
-	
 	//submit request
 	$client = tic_geosource_load_csw_client();
-	// TODO: modifier insertMetada pour renvoyer le uuid
-	$uuid = $client->insertMetadata($dom);
+	try {
+		$uuid = $client->insertMetadata($dom);
+	}
+	catch (Exception $e) {
+		//TODO: remplacer par set_message
+		die($e->getMessage());
+	}
 	
-	//return UUID
+	if(is_array($uuid)) {
+		return $uuid[0];
+	}
+	else {
+		return false;
+	}
 }
 
 // TODO

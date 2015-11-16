@@ -107,9 +107,11 @@
       </gmd:pointOfContact>
       <gmd:descriptiveKeywords>
         <gmd:MD_Keywords>
+[$keywords]
           <gmd:keyword>
-            <gco:CharacterString>test</gco:CharacterString>
+            <gco:CharacterString>{$value}</gco:CharacterString>
           </gmd:keyword>
+[/$keywords]
           <gmd:type>
             <gmd:MD_KeywordTypeCode codeListValue="place" codeList="http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/ML_gmxCodelists.xml#MD_KeywordTypeCode" />
           </gmd:type>
@@ -137,16 +139,16 @@
           <gmd:geographicElement>
             <gmd:EX_GeographicBoundingBox>
               <gmd:westBoundLongitude>
-                <gco:Decimal>1.3534499295909812</gco:Decimal>
+                <gco:Decimal>{$bbox.west}</gco:Decimal>
               </gmd:westBoundLongitude>
               <gmd:eastBoundLongitude>
-                <gco:Decimal>4.012141335470943</gco:Decimal>
+                <gco:Decimal>{$bbox.east}</gco:Decimal>
               </gmd:eastBoundLongitude>
               <gmd:southBoundLatitude>
-                <gco:Decimal>48.937124694016816</gco:Decimal>
+                <gco:Decimal>{$bbox.south}</gco:Decimal>
               </gmd:southBoundLatitude>
               <gmd:northBoundLatitude>
-                <gco:Decimal>50.3596646208783</gco:Decimal>
+                <gco:Decimal>{$bbox.north}</gco:Decimal>
               </gmd:northBoundLatitude>
             </gmd:EX_GeographicBoundingBox>
           </gmd:geographicElement>
@@ -175,22 +177,24 @@
       </gmd:distributionFormat>
       <gmd:transferOptions>
         <gmd:MD_DigitalTransferOptions>
+[$files]
           <gmd:onLine>
             <gmd:CI_OnlineResource>
               <gmd:linkage>
-                <gmd:URL>{$map_url}</gmd:URL>
+                <gmd:URL>{$url}</gmd:URL>
               </gmd:linkage>
               <gmd:protocol>
-                <gco:CharacterString>WWW:DOWNLOAD-1.0-http--download</gco:CharacterString>
+                <gco:CharacterString>WWW:LINK-1.0-http--link</gco:CharacterString>
               </gmd:protocol>
               <gmd:name>
                 <gmx:MimeFileType xmlns:gmx="http://www.isotc211.org/2005/gmx" type="" />
               </gmd:name>
               <gmd:description>
-                <gco:CharacterString>Carte au format PDF</gco:CharacterString>
+                <gco:CharacterString>{$name}</gco:CharacterString>
               </gmd:description>
             </gmd:CI_OnlineResource>
           </gmd:onLine>
+[/$files]
         </gmd:MD_DigitalTransferOptions>
       </gmd:transferOptions>
     </gmd:MD_Distribution>
