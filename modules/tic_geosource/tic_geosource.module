@@ -11,7 +11,8 @@
 // DEBUG
 function tic_geosource_node_view($node, $v, $e) {
 	
-	//var_dump($node->field_image_carte['und'][0]);
+	//var_dump($node->field_description['und'][0]['value']);
+	var_dump($node->field_url_source_des_donnees['und'][0]['value']);
 	return;
 	/*
 	$data = $node->field_auteur['und'][0];
@@ -99,6 +100,9 @@ function tic_geosource_form_alter(&$form, &$form_state, $form_id) {
 		
 		$form['#validate'][] = 'tic_geosource_form_validate';
 		
+		// champs non editables
+		$form['field_uuid']['#access'] = FALSE;
+		
 		return $form;
 	}
 }
@@ -181,7 +185,7 @@ function tic_geosource_node_presave($node) {
 		}
 	}
 	else {
-		//TODO: update geosource record
+		tic_geosource_update_record($node);
 	}
 	
 }
@@ -297,35 +301,57 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
 	
 	$files = array();
 	
-	//var_dump($node->field_image_carte); die();
+	// fichier carte
+	if (isset($node->field_image_carte['und'][0]['fid'])) {
+		$imageCarte = file_load($node->field_image_carte['und'][0]['fid']);
+		if ($imageCarte) {
+			$files[] = array(
+				'name' => $imageCarte->filename,
+				'url' => file_create_url($imageCarte->uri),
+				'filetype' => $imageCarte->filemime,
+				'version' => '1.0',
+			);
+		}
+	}
 	
-	if(is_array($node->field_image_carte)) {
-		$f = $node->field_image_carte['und'][0];
-		$files[] = array(
-			'name' => $f['filename'],
-			'url' => file_create_url($f['uri']),
-			'filetype' => $f['filemime'],
-			'version' => '1.0',
-		);
+	// image carte
+	if (isset($node->field_fichier_carte['und'][0]['fid'])) {
+		$fichierCarte = file_load($node->field_fichier_carte['und'][0]['fid']);
+		if ($fichierCarte) {
+			$files[] = array(
+				'name' => $fichierCarte->filename,
+				'url' => file_create_url($fichierCarte->uri),
+				'filetype' => $fichierCarte->filemime,
+				'version' => '1.0',
+			);
+		}
+	}
+	
+	if($node->is_new) {
+		$uuid = false;
+	}
+	else {
+		$uuid = $node->field_uuid['und'][0]['value'];
 	}
 	
 	return array(
-			'language_code' => 'fr',
+			'language_code' => 'fre',
 			'author_name' => $relatedContact->title,
-			'author_organisation' => 'NONE',
+			'author_organisation' => $relatedContact->title,
 			'author_email' => $relatedContact->field_adresse_email['und'][0]['email'],
 			//'creation_date' => '2015-11-13T08:43:18',
 			'creation_date' => date("Y-m-dTH:i:s"),
 			'map_title' => $node->title,
 			'map_creation_date' => date("Y-m-d"),
-			'map_abstract' => 'NONE',
+			'map_abstract' => $node->field_description['und'][0]['value'],
 			'map_purpose' => 'NONE',
-			'map_number' => $node->field_numero_de_carte['und'][0]['value'],
+			'map_number' => $node->field_numero_de_carte['und'][0]['value'], //BUG update ?
 			'map_resolution' => $node->field_echelle['und'][0]['value'],
-			'map_url' => 'http://www.ada.gov/lawenfcomm.pdf',
+			'map_url' => $node->field_url_source_des_donnees['und'][0]['value'], //BUG update ?
 			'bbox' => $bbox,
 			'keywords' => $keywords,
 			'files' => $files,
+			'uuid' => $uuid,
 	);
 }
 
@@ -351,8 +377,8 @@ function tic_geosource_insert_record($node) {
 		$uuid = $client->insertMetadata($dom);
 	}
 	catch (Exception $e) {
-		//TODO: remplacer par set_message
-		die($e->getMessage());
+		watchdog('tic_geosource', 'Erreur de sauvegarde de la ressource dans Geosource: '. $e->getMessage(), NULL, WATCHDOG_ERROR);
+		drupal_set_message('La ressource n\'a pas été sauvée dans Geosource', 'error');
 	}
 	
 	if(is_array($uuid)) {
@@ -365,5 +391,24 @@ function tic_geosource_insert_record($node) {
 
 // TODO
 function tic_geosource_update_record($node) {
-	return true;
+	tic_geosource_load_divengine();
+	
+	$template = dirname(__FILE__) . '/templates/update.tpl';
+	
+	$xmlString = new div($template, tic_geosource_drupal_node_to_geosource_array($node));
+	
+	$dom = new DOMDocument('1.0');
+	$dom->loadXML((string)$xmlString);
+	//var_dump((string)$xmlString); die();
+	$client = tic_geosource_load_csw_client();
+	$updated = 0;
+	try {
+		$updated = $client->updateMetadata($dom);
+	}
+	catch (Exception $e) {
+		watchdog('tic_geosource', 'Erreur de mise a jour de la ressource sur Geosource: ' . $e->getMessage(), NULL, WATCHDOG_ERROR);
+		drupal_set_message('La ressource n\'a pas été mise à jour dans Geosource', 'error');
+	}
+	
+	return $updated;
 }

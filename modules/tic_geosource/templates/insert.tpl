@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gmd:MD_Metadata xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gml="http://www.opengis.net/gml" xmlns:geonet="http://www.fao.org/geonetwork" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.isotc211.org/2005/gmd http://www.isotc211.org/2005/gmd/gmd.xsd http://www.isotc211.org/2005/srv http://schemas.opengis.net/iso/19139/20060504/srv/srv.xsd">
+?$uuid
+   <gmd:fileIdentifier>
+      <gco:CharacterString>{$uuid}</gco:CharacterString>
+   </gmd:fileIdentifier>
+$uuid?
   <gmd:language>
     <gmd:LanguageCode codeList="http://www.loc.gov/standards/iso639-2/" codeListValue="{$language_code}" />
   </gmd:language>
@@ -164,6 +169,7 @@
     </gmd:MD_DataIdentification>
   </gmd:identificationInfo>
   <gmd:distributionInfo>
+[$files]
     <gmd:MD_Distribution>
       <gmd:distributionFormat>
         <gmd:MD_Format>
@@ -177,7 +183,6 @@
       </gmd:distributionFormat>
       <gmd:transferOptions>
         <gmd:MD_DigitalTransferOptions>
-[$files]
           <gmd:onLine>
             <gmd:CI_OnlineResource>
               <gmd:linkage>
@@ -194,10 +199,10 @@
               </gmd:description>
             </gmd:CI_OnlineResource>
           </gmd:onLine>
-[/$files]
         </gmd:MD_DigitalTransferOptions>
       </gmd:transferOptions>
     </gmd:MD_Distribution>
+[/$files]
   </gmd:distributionInfo>
   <gmd:dataQualityInfo>
     <gmd:DQ_DataQuality>

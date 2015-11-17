@@ -9,6 +9,17 @@
  * Charge les types carte et contact exportés par bundle_copy
  */
 function tic_geosource_install() {
+	
+	// fixtures import requires bundle copy
+	if(!module_exists('bundle_copy')) {
+		return;
+	}
+	
+	if(!file_exists(dirname(__FILE__) . '/fixtures/export_taxonomy.txt')) {
+		drupal_set_message('Le fichier de fixtures n\'a pas pu etre trouvé', 'error');
+		return;
+	}
+	
 	// Load the fixtures file
 	if(!file_exists(dirname(__FILE__) . '/fixtures/export_types.txt')) {
 		drupal_set_message('Le fichier de fixtures n\' a pas pu etre trouvé', 'error');
