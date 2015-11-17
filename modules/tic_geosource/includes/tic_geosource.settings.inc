@@ -56,11 +56,13 @@ function tic_geosource_configtest() {
 		$client = tic_geosource_load_csw_client();
 		//$records = $client->getCountRecords();
 		$records = $client->getCapabilities();
-		$xml = tic_geosource_parse_xml($records);
+		
+		$dom = new DOMDocument('1.0');
+		$dom->loadXML((string)$records);
 		
 		$capabilities = '<br />';
 		
-		$caps = $xml->getElementsByTagName('OperationsMetadata');
+		$caps = $dom->getElementsByTagName('OperationsMetadata');
 		foreach($caps->item(0)->getElementsByTagName('Operation') as $cap) {
 			$capabilities .= '- ' . $cap->getAttribute('name') . '<br />';
 		}

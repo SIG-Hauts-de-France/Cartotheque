@@ -206,6 +206,10 @@ function tic_geosource_load_csw_client() {
 	$password = variable_get('geosource_server_password', '');
 	$authAddress = variable_get('geosource_server_auth_address', '');
 	
+	if($cswServer == '') {
+		return false;
+	}
+	
 	if($authAddress != '') {
 		return new cswGeoClient($cswServer, $username, $password, $authAddress);
 	}
@@ -335,6 +339,13 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
 		$uuid = $node->field_uuid['und'][0]['value'];
 	}
 	
+	if(isset($node->field_url_source_des_donnees['und'][0]['value'])) {
+		$mapUrl = $node->field_url_source_des_donnees['und'][0]['value'];
+	}
+	else {
+		$mapUrl = '';
+	}
+	
 	return array(
 			'language_code' => 'fre',
 			'author_name' => $relatedContact->title,
@@ -348,7 +359,7 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
 			'map_purpose' => 'NONE',
 			'map_number' => $node->field_numero_de_carte['und'][0]['value'], //BUG update ?
 			'map_resolution' => $node->field_echelle['und'][0]['value'],
-			'map_url' => $node->field_url_source_des_donnees['und'][0]['value'], //BUG update ?
+			'map_url' => $mapUrl, //BUG update ?
 			'bbox' => $bbox,
 			'keywords' => $keywords,
 			'files' => $files,
@@ -363,6 +374,11 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
  * @return string Geosource UUID
  */
 function tic_geosource_insert_record($node) {
+	$client = tic_geosource_load_csw_client();
+	
+	if ($client === false) {
+		return;
+	}
 	
 	tic_geosource_load_divengine();
 	
@@ -373,7 +389,6 @@ function tic_geosource_insert_record($node) {
 	$dom = new DOMDocument('1.0');
 	$dom->loadXML((string)$xmlString);
 	//submit request
-	$client = tic_geosource_load_csw_client();
 	try {
 		$uuid = $client->insertMetadata($dom);
 	}
@@ -392,6 +407,12 @@ function tic_geosource_insert_record($node) {
 
 // TODO
 function tic_geosource_update_record($node) {
+	$client = tic_geosource_load_csw_client();
+	
+	if($client === false) {
+		return;
+	}
+	
 	tic_geosource_load_divengine();
 	
 	$template = dirname(__FILE__) . '/templates/update.tpl';
@@ -400,8 +421,7 @@ function tic_geosource_update_record($node) {
 	
 	$dom = new DOMDocument('1.0');
 	$dom->loadXML((string)$xmlString);
-	//var_dump((string)$xmlString); die();
-	$client = tic_geosource_load_csw_client();
+	
 	$updated = 0;
 	try {
 		$updated = $client->updateMetadata($dom);
