@@ -15,11 +15,19 @@ function tic_geosource_install() {
 		return;
 	}
 	
-	$data = file_get_contents( dirname(__FILE__) . '/fixtures/export_types.txt' );
+	$ctypes = file_get_contents( dirname(__FILE__) . '/fixtures/export_types.txt' );
+	$taxo = file_get_contents( dirname(__FILE__) . '/fixtures/export_taxonomy.txt' );
+	
+	// First import taxonomy
+	$form_state = Array();
+	$form_state['values']['macro'] = $taxo;
+	$form_state['values']['type'] = 'taxonomy_term';
+	$form_state['values']['op'] = t('Import');
+	drupal_form_submit('bundle_copy_import', $form_state);
 	
 	// Import fixtures via bundle copy
 	$form_state = Array();
-	$form_state['values']['macro'] = $data;
+	$form_state['values']['macro'] = $ctypes;
 	$form_state['values']['type'] = 'node';
 	$form_state['values']['op'] = t('Import');
 	

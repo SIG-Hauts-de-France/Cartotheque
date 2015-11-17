@@ -300,7 +300,7 @@ $data = array(
         ),
       ),
     ),
-    'field_date_de_r_alisation' => array(
+    'field_date_de_realisation' => array(
       'translatable' => '0',
       'entity_types' => array(),
       'settings' => array(
@@ -883,7 +883,7 @@ $data = array(
       'settings' => array(
         'allowed_values' => array(
           0 => array(
-            'vocabulary' => 'th_matique_gemet',
+            'vocabulary' => 'thematique_gemet',
             'parent' => '0',
           ),
         ),
