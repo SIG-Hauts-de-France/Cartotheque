@@ -10,18 +10,15 @@
 
 // DEBUG
 function tic_geosource_node_view($node, $v, $e) {
-	
-	//var_dump($node->field_description['und'][0]['value']);
-	//var_dump($node->field_url_source_des_donnees['und'][0]['value']);
 	return;
-	/*
-	$data = $node->field_auteur['und'][0];
-	$relatedContact = node_load($data['nid']);
-	var_dump($relatedContact->field_adresse_email['und'][0]['email']); die();
-	 */
-
-	//var_dump($node->field_numero_de_carte['und'][0]['value']); die();
-	//var_dump($node->field_image_carte); die();
+	module_load_include('inc', 'tic_geosource', 'includes/tic_geosource.utils');
+	
+	$client = tic_geosource_load_csw_client();
+	$xml = $client->getRecordsModifiedSince(new DateTime('2012-07-08'));
+	$records = tic_geosource_split_records($xml);
+	var_dump(tic_geosource_record_to_node($records[2])); die();
+	
+	return;
 }
 
 /**
@@ -140,7 +137,6 @@ function tic_geosource_addcontact_ajax_submit($form, &$form_state) {
 		drupal_exit();
 	}
 	
-	
 	//TODO: Verifier si les donnees sont ok et si l'email n'est pas deja utilisé
 	$name = $_GET['nom'];
 	$email = $_GET['email'];
@@ -176,6 +172,12 @@ function tic_geosource_addcontact_ajax_submit($form, &$form_state) {
  */
 function tic_geosource_node_presave($node) {
 	if ($node->type != 'carte') {
+		return;
+	}
+	
+	// disabled is set during cron executions
+	$disabled = &drupal_static('tic_geosource_disable_geosource_push', false);
+	if($disabled) {
 		return;
 	}
 	
@@ -236,7 +238,7 @@ function tic_geosource_load_divengine() {
  * @param string region
  * @return array bbox
  */
-function tic_geosource_region_to_bbox($region) {
+function tic_geosource_region_to_bbox($region = 'Région') {
 	// default: world wide
 	$bbox = Array(
 		"west" => '-180',
@@ -260,24 +262,24 @@ function tic_geosource_region_to_bbox($region) {
 			
 			break;
 		case 'Région':
-			$bbox['west'] = '-31';
-			$bbox['east'] = '40';
-			$bbox['north'] = '81';
-			$bbox['south'] = '24';
+			$bbox['west'] = '1';
+			$bbox['east'] = '5';
+			$bbox['north'] = '51';
+			$bbox['south'] = '49';
 			
 			break;
 		case 'Département':
-			$bbox['west'] = '-31';
-			$bbox['east'] = '40';
-			$bbox['north'] = '81';
-			$bbox['south'] = '24';
+			$bbox['west'] = '1';
+			$bbox['east'] = '5';
+			$bbox['north'] = '51';
+			$bbox['south'] = '49';
 			
 			break;
 		case 'Infra-départemental':
-			$bbox['west'] = '-31';
-			$bbox['east'] = '40';
-			$bbox['north'] = '81';
-			$bbox['south'] = '24';
+			$bbox['west'] = '1';
+			$bbox['east'] = '5';
+			$bbox['north'] = '51';
+			$bbox['south'] = '49';
 			
 			break;
 	}
@@ -297,11 +299,18 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
 	$data = $node->field_auteur['und'][0];
 	$relatedContact = node_load($data['nid']);
 	
-	$bbox = tic_geosource_region_to_bbox($node->field_emprise_geographique['und'][0]['value']);
+	if (isset($node->field_emprise_geographique['und'][0]['value'])) {
+		$bbox = tic_geosource_region_to_bbox($node->field_emprise_geographique['und'][0]['value']);
+	}
+	else {
+		$bbox = tic_geosource_region_to_bbox();
+	}
 	
 	$keywords = array();
-	foreach ($node->field_mots_cles['und'] as $k) {
-		$keywords[] = $k['name'];
+	if (isset($node->field_mots_cles['und'])) {
+		foreach ($node->field_mots_cles['und'] as $k) {
+			$keywords[] = $k['name'];
+		}
 	}
 	
 	$files = array();
@@ -339,11 +348,9 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
 		$uuid = $node->field_uuid['und'][0]['value'];
 	}
 	
+	$mapUrl = '';
 	if(isset($node->field_url_source_des_donnees['und'][0]['value'])) {
 		$mapUrl = $node->field_url_source_des_donnees['und'][0]['value'];
-	}
-	else {
-		$mapUrl = '';
 	}
 	
 	return array(
@@ -405,7 +412,12 @@ function tic_geosource_insert_record($node) {
 	}
 }
 
-// TODO
+/**
+ * Update metadata to geosource
+ *
+ * @param stdClass Drupal node
+ * @return int number of updated records
+ */
 function tic_geosource_update_record($node) {
 	$client = tic_geosource_load_csw_client();
 	
@@ -432,4 +444,28 @@ function tic_geosource_update_record($node) {
 	}
 	
 	return $updated;
+}
+
+/**
+ * Implements hook_cron
+ *
+ */
+function tic_geosource_cron() {
+	$last = variable_get('tic_geosource_cron_last_run', 0);
+	$now = time();
+	
+	// temp; avancer sur fonction record to node avant
+	if($last == 0) { return; }
+	
+	module_load_include('inc', 'tic_geosource', 'includes/tic_geosource.utils');
+	
+	$client = tic_geosource_load_csw_client();
+	//TODO: changes from last cron run
+	$xml = $client->getRecordsModifiedSince(new DateTime('2012-07-08'));
+	$records = tic_geosource_split_records($xml);
+	foreach ($records as $record) {
+		tic_geosource_record_to_node($record); 
+	}
+	
+	variable_set('tic_geosource_cron_last_run', $now);
 }

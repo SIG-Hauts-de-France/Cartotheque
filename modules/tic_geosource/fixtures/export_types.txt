@@ -1653,7 +1653,7 @@ $data = array(
             'weight' => 0,
           ),
         ),
-        'required' => 0,
+        'required' => 1,
         'description' => 'Résumé de la ressource',
         'default_value' => NULL,
         'field_name' => 'field_description',

@@ -7,3 +7,4 @@ dependencies[] = node_reference
 dependencies[] = date
 dependencies[] = url
 dependencies[] = email
+dependencies[] = entity
