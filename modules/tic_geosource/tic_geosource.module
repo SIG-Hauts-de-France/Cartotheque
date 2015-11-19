@@ -15,8 +15,14 @@ function tic_geosource_node_view($node, $v, $e) {
 	
 	$client = tic_geosource_load_csw_client();
 	$xml = $client->getRecordsModifiedSince(new DateTime('2012-07-08'));
-	$records = tic_geosource_split_records($xml);
-	var_dump(tic_geosource_record_to_node($records[2])); die();
+	$uuids = tic_geosource_get_result_uuids($xml);
+	
+	//var_dump(tic_geosource_record_to_node($records[2])); die();
+	//foreach($uuids as $uuid) {
+	//	tic_geosource_process_record($uuid);
+	//}
+	tic_geosource_process_record('78f93047-74f8-4419-ac3d-fc62e4b0477b');
+	die();
 	
 	return;
 }
@@ -449,10 +455,14 @@ function tic_geosource_update_record($node) {
 /**
  * Implements hook_cron
  *
+ * TODO: vérifier que le nombre de records est bon
+ *
  */
 function tic_geosource_cron() {
 	$last = variable_get('tic_geosource_cron_last_run', 0);
 	$now = time();
+	$date = new DateTime();
+	$date->setTimestamp($last);
 	
 	// temp; avancer sur fonction record to node avant
 	if($last == 0) { return; }

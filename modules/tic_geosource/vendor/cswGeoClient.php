@@ -296,7 +296,7 @@ class cswGeoClient {
 	 *
 	 * TODO: multiple requetes au lieu d'une grosse (maxRecords)
 	 */
-	public function getRecordsModifiedSince(DateTime $since, $startRecord = 1, $qtty = 1000) {
+	public function getRecordsModifiedSince(DateTime $since, $startRecord = 1, $qtty = 10000) {
 		
 		$now = new DateTime('now');
 		
@@ -313,7 +313,7 @@ class cswGeoClient {
 				'xsi:schemaLocation="http://www.opengis.net/cat/csw/2.0.2 '.
 				'http://schemas.opengis.net/csw/2.0.2/CSW-discovery.xsd"> '.
  				'<csw:Query typeNames="csw:Record"> '.
-				'	<csw:ElementSetName>full</csw:ElementSetName> '.
+				'	<csw:ElementSetName>brief</csw:ElementSetName> '.
 				'	  <csw:Constraint version="1.1.0"> '.
 				'		 <ogc:Filter> '.
 				'		   <ogc:PropertyIsBetween> '.
