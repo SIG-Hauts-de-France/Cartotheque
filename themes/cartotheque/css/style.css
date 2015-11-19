@@ -1,0 +1,583 @@
+body{
+	font-family: 'Open Sans', sans-serif;
+	font-size:14px;
+	color:#444444;
+	font-weight:400;
+}
+header{
+	background:#fafbfb;
+	border-bottom: solid 1px #95a6b0;
+	margin-bottom:40px;
+}
+footer{
+	background:#fafbfb;
+	border-top: solid 1px #95a6b0;
+	min-height:50px;
+	margin-top:40px;
+}
+header img{
+	float:left; 
+	margin:40px;
+}
+header h1{
+	margin:0;
+	margin-top:40px;
+	font-weight:300;
+	font-size:48px;
+	line-height:0.9em;
+}
+header h1 span{
+	font-weight:600;
+	font-size:30px;
+}
+header ul.topNav{
+	float:right;
+	margin-top:80px;
+}
+header ul.topNav li{
+	list-style: none;
+	display:inline-block;
+	font-size:11px;
+}
+header ul.topNav li span{
+	display: block;
+	width: 43px;
+	height:43px;
+	background:#000;
+	margin:auto;
+	margin-bottom: 1px;
+	border-radius: 50%;
+}
+header ul li a{
+	display:block;
+	height:43px;
+}
+header ul.topNav li.home a{
+	background-image: url(../images/top-icones.png);
+	background-repeat: no-repeat;
+}
+header ul.topNav li.connect a{
+	background-image: url(../images/top-icones.png);
+	background-repeat: no-repeat;
+	background-position: 0 -44px;
+}
+
+div.tvt{
+	margin:40px auto;
+	display:table;
+}
+div.tvt > div{
+	float:left;
+	margin-right:20px;
+}
+div.tvt p{
+	text-align:center;
+	font-size:18px;
+	font-weight:400;
+}
+}
+div.tvt div.lineIcone{
+	position: relative;
+	height: 50px;
+	margin-top: 10px;
+}
+div.tvt div.lineIcone div.line{
+	border-top: 1px solid #466a7f;
+	position: relative;
+	z-index: 1;
+	margin: 0px;
+	top: 25px;
+}
+div.tvt div.visualiser div.lineIcone div.line{
+	border-top: 1px solid #5f8296;
+}
+div.tvt div.telecharger div.lineIcone div.line{
+	border-top: 1px solid #7992a0;
+}
+div.tvt div.lineIcone div.icone{
+	position:relative;
+	z-index:2;
+	display: table;
+	width: 50px;
+	height: 50px;
+	background: #fff;
+	text-align: center;
+	margin: 0px auto;
+}
+div.tvt div.lineIcone div.icone.loupe{
+	background-image: url(../images/i_tvt.png);
+	background-repeat:no-repeat;
+}
+div.tvt div.lineIcone div.icone.oeil{
+	background-image: url(../images/i_tvt.png);
+	background-repeat:no-repeat;
+	background-position: -50px 0;
+}
+div.tvt div.lineIcone div.icone.telecharger{
+	background-image: url(../images/i_tvt.png);
+	background-repeat:no-repeat;
+	background-position: -100px 0;
+}
+div.tvt  span{
+	font-size:28px;
+	font-weight:600;
+}
+div.trouver span{
+	color:#466a7f;
+}
+div.visualiser span{
+	color:#5f8296;
+}
+div.telecharger span{
+	color:#7992a0;
+}
+
+div.searchMap{
+	background:#eef1f2;
+	padding-top:15px;
+	padding-bottom:15px;
+}
+p.searchMore{
+	margin-top:40px;
+}
+p.searchMore span{
+	background:url(../images/i_searchmore.png) no-repeat;
+	display: inline-block;
+	width:20px;
+	height:20px;
+	margin-right:10px;
+	margin-left:20px;
+	vertical-align: -25%;
+}
+p.searchMore a{
+	color:#466a7f;
+}
+div.actus{
+	margin-top:40px;
+}
+div.actus h2{
+	margin:0;
+	text-align:center;
+	background:#95a6b1;
+	color:#000;
+	font-size:1em;
+	padding:6px;
+}
+
+div.actus div.maps div.mapZoom{
+	position:absolute;
+	z-index:100;
+	display: none;
+	top:-300px;
+	padding:7px;
+	background:#c1c1c1;
+	-webkit-box-shadow: 2px 2px 4px 2px rgba(0,0,0,0.2);
+box-shadow: 2px 2px 4px 2px rgba(0,0,0,0.2);
+	
+}
+div.actus div.maps.leftMaps div.mapZoom{
+	left:20px;
+}
+div.actus  div.mapZoom:after {
+	content:"ch";
+	/*background: url(../images/triangle-gris.png);*/
+}
+div.actus div.maps.rightMaps div.mapZoom{
+	right:20px;
+}
+div.actus div.maps div:hover div.mapZoom{
+	display: block;
+}
+
+
+.rslides {
+  position: relative;
+  list-style: none;
+  overflow: hidden;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  }
+
+.rslides li {
+  -webkit-backface-visibility: hidden;
+  position: absolute;
+  display: none;
+  width: 100%;
+  left: 0;
+  top: 0;
+  }
+
+.rslides li:first-child {
+  position: relative;
+  display: block;
+  float: left;
+  }
+
+.rslides img {
+  display: block;
+  height: auto;
+  float: left;
+  width: 100%;
+  border: 0;
+  }
+  
+  .callbacks_nav.next {
+    left: auto;
+    background-position: right top;
+    right: 0px;
+}
+.callbacks_nav {
+    position: absolute;
+    top: 52%;
+    left: 0px;
+    opacity: 0.7;
+    z-index: 3;
+    text-indent: -9999px;
+    overflow: hidden;
+    text-decoration: none;
+    height: 61px;
+    width: 38px;
+    background: transparent url("../images/themes.gif") no-repeat scroll left top;
+    margin-top: -45px;
+}
+
+
+/************** END HOME ***********************/
+.filtreList .form-group label{
+	float:left;
+	width:200px;
+	font-size: 12px;
+}
+.filtreList .form-group select{
+	width:50px;
+	height:20px;
+	font-size:10px;
+	padding:2px;
+}
+
+div.orderList{
+	float:right;
+	margin-bottom:20px;
+	/*margin-right:20px;*/
+}
+div.orderList span{
+	display:inline-block;
+	width:22px;
+	height:16px;
+	background-image:url(../images/i_order.png);
+	background-repeat: no-repeat;
+}
+div.orderList span a{
+	display:block;
+	height:16px;
+}
+div.orderList span.orderZa{
+	background-position: -22px 0;
+}
+div.orderList span.order01{
+	background-position: -44px 0;
+}
+div.orderList span.order10{
+	background-position: -66px 0;
+}
+
+div.map{
+	clear:both;
+	margin-top:20px;
+}
+
+div.map h2{
+	font-size:18px;
+	font-weight:600;
+	background:#e4e9eb;
+	height:35px;
+	line-height:35px;
+	padding-left:10px;
+}
+div.map h2 span.type{
+	display: inline-block;
+	background: #eef1f2;
+	height:35px;
+	line-height:35px;
+	font-size:14px;
+	font-weight:400;
+	border-left: solid 1px #fff;
+	float:right;
+	padding-right:10px;
+	padding-left:10px;
+	margin-left:10px;
+}
+div.map h2 span.tree{
+	display: inline-block;
+	background: #fff;
+	background-image: url(../images/i_tree.png);
+	background-repeat: no-repeat;
+	background-position: 50% 0;
+	height:35px;
+	width:40px;
+	float:right;
+	padding-right:10px;
+	padding-left:10px;
+}
+div.theMap{
+	display:table;
+	clear:both;
+}
+div.imgMap, div.descMap{
+	display:table-cell;
+	position:relative;
+	vertical-align:top;
+	padding-left:10px;
+	padding-right:10px;
+}
+div.imgMap img{
+	width:250px;
+}
+div.infoMap dt, div.infoMap dd{
+	font-size:12px;
+	font-weight:400;
+	font-style:italic;
+}
+div.infoMap dt, .infosGenerales dt{
+	float:left;
+	margin-right: 4px;
+}
+ .infosGenerales dt{
+	 width:150px;
+	 text-align :right;
+	 margin-right:8px;
+ }
+ .infosGenerales dd{
+	 margin-left:158px;
+ }
+.infosGenerales dt, .infosGenerales dd{
+	font-size:13px;
+	font-weight:400;
+}
+ .infosGenerales dl.themaMap dt{
+	 border-left: solid 1px #94a6b0;
+	 width:100px;
+	 margin-left:50px;
+ }
+div.descMap p{
+	text-align:justify;
+}
+div.map img.fgMap{
+	border:solid 1px #a4b2bb;
+}
+
+div.linkMap{
+	position:absolute;
+	bottom:0;
+	width:100%;
+}
+div.linkMap span{
+	display:inline-block;
+	width:27px;
+	height:27px;
+	margin-right:1px;
+	background:#f4f6f7;
+	background-image:url(../images/i_linkmap.png);
+	background-repeat:no-repeat;
+}
+div.linkMap span a{
+	display:block;
+	height:27px;
+}
+div.linkMap span.linkImg{
+	background-position: -28px 0;
+}
+div.linkMap span.linkPdf{
+	background-position: -56px 0;
+}
+div.linkMap span.readMore{
+	background-image:none;
+	width:auto;
+	float:right;
+	line-height:27px;
+	background:#95a6b1;
+	padding-left:4px;
+	padding-right:4px;
+}
+div.linkMap span.readMore a{
+	color:#fff;
+	font-style:italic;
+	font-size:12px;
+}
+
+div.nbAction{
+	font-size:12px;
+	color:#444;
+}
+div.nbAction span{
+	background-image:url(../images/i_actionmap.png);
+	background-repeat:no-repeat;
+	display:inline-block;
+	height:22px;
+	width:27px;
+	vertical-align:-25%;
+}
+div.nbAction span.nbImg{
+	background-position: -28px 0;
+}
+div.nbAction span.nbPdf{
+	background-position: -56px 0;
+}
+
+aside fieldset legend{
+	font-weight:300;
+	color:#fff;
+	font-size:18px;
+	background:#767a7c;
+	padding: 6px 10px;
+	margin-bottom:0;
+}
+
+aside fieldset div.formFieldset{
+	padding:10px;
+}
+aside div.input-group{
+	margin-top:40px;
+	margin-bottom:20px;
+}
+aside input, aside select{
+	margin-bottom: 10px;
+}
+
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default{
+	background:#767a7c;
+	font-weight:300;
+	color:#fff;
+}
+
+.pagination > .active > a{
+	background-color: #95A6B1;
+border-color: #95A6B1;
+}
+
+
+
+@media (max-width: 800px){
+	div.imgMap, div.descMap{
+	display:block;
+	}
+	div.imgMap img{
+		width:100%;
+	}
+	div.linkMap{
+		position:relative;
+	}
+}
+@media (max-width: 992px){
+	header h1{
+		font-size:36px;
+		line-height: 0.7em;
+	}
+	header h1 span{
+		font-size:22px;
+	}
+}
+@media (max-width: 360px){
+	header{
+		text-align:center;
+	}
+	header h1{
+		font-size:26px;
+		line-height: 0.7em;
+		text-align:center;
+		margin-bottom:20px;
+	}
+	header h1 span{
+		font-size:18px;
+	}
+	header img{
+		float:none;
+		margin:auto;
+	}
+	div.tvt > div{
+		/*float:none;*/
+		text-align:center;
+		/*margin-right:0;
+		margin:0;*/
+	}
+	div.tvt {
+		margin: auto;
+	}
+	div.tvt span{
+		font-size:18px;
+	}
+	div.tvt p{
+		clear:left;
+		font-size:14px;
+	}
+}
+/****************** END LISTE ***************************/
+
+.backList{
+	font-size:12px;
+	font-weight:600;
+}
+.backList span{
+	display: inline-block;
+	width:35px;
+	height:11px;
+	background: url(../images/back-arrow.png) no-repeat;
+	margin-right:7px;
+}
+.descMapFiche p {
+	font-size:14xp;
+	line-height:21px;
+	margin-bottom: 30px;
+	text-align:justify;
+}
+div.linkTheMap{
+	text-align: right;
+}
+div.linkTheMap >  span{
+	display: inline-block;
+	background: #e4e9eb;
+	padding:5px;
+	height:44px;
+	border-radius: 4px;
+	text-transform: uppercase;
+	font-weight:600;
+}
+div.linkTheMap >  span span{
+	display: inline-block;
+	width:34px;
+	height:34px;
+	background: url(../images/i_biglinkmap.png) no-repeat;
+	vertical-align:-60%;
+	margin-right:4px;
+}
+div.linkTheMap >  span.imgMap span.linkIcone{
+	background-position: -34px 0;
+}
+div.linkTheMap >  span.pdfMap span.linkIcone{
+	background-position: -68px 0;
+}
+div.keyWordMap:before{
+	content: "";
+	height: 1px;
+	width: 100%;
+	background: #b5c1c8;
+	display: block;
+	margin-top: 20px;
+}
+div.keyWordMap{
+	font-size: 13px;
+}
+div.keyWordMap span.keyWord{
+	font-style:italic;
+}
+
+.collectionsMap{
+	margin-top: 50px;
+}
+.collectionsMap h4{
+	background: url(../images/i_tree.png) no-repeat;
+	height: 35px;
+	padding-left: 30px;
+	line-height:35px;
+}
