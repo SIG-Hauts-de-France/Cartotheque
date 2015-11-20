@@ -945,9 +945,7 @@ $data = array(
     'field_numero_de_carte' => array(
       'translatable' => '0',
       'entity_types' => array(),
-      'settings' => array(
-        'max_length' => '255',
-      ),
+      'settings' => array(),
       'storage' => array(
         'type' => 'field_sql_storage',
         'settings' => array(),
@@ -958,47 +956,28 @@ $data = array(
             'FIELD_LOAD_CURRENT' => array(
               'field_data_field_numero_de_carte' => array(
                 'value' => 'field_numero_de_carte_value',
-                'format' => 'field_numero_de_carte_format',
               ),
             ),
             'FIELD_LOAD_REVISION' => array(
               'field_revision_field_numero_de_carte' => array(
                 'value' => 'field_numero_de_carte_value',
-                'format' => 'field_numero_de_carte_format',
               ),
             ),
           ),
         ),
       ),
-      'foreign keys' => array(
-        'format' => array(
-          'table' => 'filter_format',
-          'columns' => array(
-            'format' => 'format',
-          ),
-        ),
-      ),
-      'indexes' => array(
-        'format' => array(
-          0 => 'format',
-        ),
-      ),
+      'foreign keys' => array(),
+      'indexes' => array(),
       'field_name' => 'field_numero_de_carte',
-      'type' => 'text',
-      'module' => 'text',
+      'type' => 'number_integer',
+      'module' => 'number',
       'active' => '1',
       'locked' => '0',
       'cardinality' => '1',
       'deleted' => '0',
       'columns' => array(
         'value' => array(
-          'type' => 'varchar',
-          'length' => '255',
-          'not null' => FALSE,
-        ),
-        'format' => array(
-          'type' => 'varchar',
-          'length' => 255,
+          'type' => 'int',
           'not null' => FALSE,
         ),
       ),
@@ -1919,24 +1898,28 @@ $data = array(
         'label' => 'Numéro de carte',
         'widget' => array(
           'weight' => '16',
-          'type' => 'text_textfield',
-          'module' => 'text',
-          'active' => 1,
-          'settings' => array(
-            'size' => '60',
-          ),
+          'type' => 'number',
+          'module' => 'number',
         ),
         'settings' => array(
-          'text_processing' => '0',
+          'min' => '',
+          'max' => '',
+          'prefix' => '',
+          'suffix' => '',
           'user_register_form' => FALSE,
         ),
         'display' => array(
           'default' => array(
             'label' => 'above',
-            'type' => 'text_default',
+            'type' => 'number_integer',
             'weight' => '20',
-            'settings' => array(),
-            'module' => 'text',
+            'settings' => array(
+              'thousand_separator' => ' ',
+              'decimal_separator' => '.',
+              'scale' => 0,
+              'prefix_suffix' => TRUE,
+            ),
+            'module' => 'number',
           ),
           'teaser' => array(
             'type' => 'hidden',
@@ -1945,7 +1928,7 @@ $data = array(
             'weight' => 0,
           ),
         ),
-        'required' => 0,
+        'required' => FALSE,
         'description' => '',
         'default_value' => NULL,
         'field_name' => 'field_numero_de_carte',
