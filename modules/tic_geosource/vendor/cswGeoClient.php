@@ -9,6 +9,10 @@ require_once 'HTTP/Request2.php';
 
 /**
  * cswClient allows to request a OGC CSW 2.0.2 - ISO API service
+ * Modifié par dpiquet (dpiquet@teicee.com)
+ * Client adapté pour Geosource 3.0
+ * Support de l'API REST de Geosource
+ *
  * @package csw
  * @author lagarde pierre
  * @copyright BRGM
@@ -127,6 +131,65 @@ class cswGeoClient {
         return true;
     }
 
+	/**
+	 * JSON Request to Geosource
+	 *
+	 * @param string relative URI for the request
+	 * @param request
+	 * @return string JSON or false
+	 */
+	private function _jsonRequest($request) {
+		return;
+	}
+	
+	/**
+	 * Recupérer l'id Geosource a partir de l'uuid
+	 * TODO
+	 */
+	public function getGeoidFromUuid($uuid) {
+		$request = new HTTP_Request2($this->_authentAddress.'/srv/eng/q');
+		$request->setMethod(HTTP_Request2::METHOD_GET);
+		$url = $request->getUrl();
+		
+		$url->setQueryVariables(array(
+			'_content_type' => 'json',
+			'fast' => 'index',
+			'uuid' => $uuid,
+		));
+		
+		// Auth needed
+		$this->_authentication($request);
+		
+		if($this->_callHTTPCSW($request)) {
+			$record = json_decode($this->_response, true);
+			return $record['metadata']['geonet:info']['id'];
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Assigner une catégorie a une carte
+	 *
+	 * @param int Geosource resource identifier
+	 * @return bool
+	 */
+	public function addMapCategory($geoid) {
+		$request = new HTTP_Request2($this->_authentAddress.'/srv/eng/md.category.update');
+		$request->setMethod(HTTP_Request2::METHOD_GET);
+		$url = $request->getUrl();
+		
+		$url->setQueryVariables(array(
+			'id' => $geoid,
+			'_1' => 'on',
+		));
+		
+		// auth needed
+		$this->_authentication($request);
+		
+		return $this->_callHTTPCSW($request);
+	}
+	
 	/**
 	 * retrieve csw repository capabilities
 	 * @return XML content
@@ -493,6 +556,59 @@ class cswGeoClient {
 
 
     }
+
+	/**
+     * update full record in the csw server
+     * @param DOMDocument $xmlISO19139 content to add
+     * @return number of updated metadata
+     */
+    public function updateFullRecord($xmlISO19139) {
+        
+        //first, find the uuid of the metadata !
+        
+        $nFI=$xmlISO19139->getElementsByTagName('fileIdentifier');
+        if ($nFI->length==1) {               
+                $uuid = $nFI->item(0)->childNodes->item(1)->nodeValue;
+        }
+        else
+            throw new Exception("No fileIdentifier found");
+       
+        $updateMetadataRequest = new HTTP_Request2($this->_cswAddress);
+        $updateMetadataRequest->setMethod(HTTP_Request2::METHOD_POST)
+			->setHeader('Content-type: text/xml; charset=utf-8')
+			->setBody("<?xml version='1.0'?>".
+					"<csw:Transaction service='CSW' version='2.0.2' xmlns:csw='http://www.opengis.net/cat/csw/2.0.2' xmlns:ogc='http://www.opengis.net/ogc' xmlns:apiso='http://www.opengis.net/cat/csw/apiso/1.0'>".
+					"	<csw:Update>".
+							str_replace('<?xml version="1.0" encoding="UTF-8"?>','',$xmlISO19139->saveXML()).
+					"	</csw:Update>".
+					"</csw:Transaction>");
+        //authentication is needed !!
+        
+        if (!$this->_authentication($updateMetadataRequest)) throw new Exception("authentication mandatory");
+        
+        if ($this->_callHTTPCSW($updateMetadataRequest)) {
+                $docXml= new DOMDocument();
+               
+                if ($docXml->loadXML($this->_response)) {
+                    $xp = new DOMXPath($docXml);
+                    $xpathString="//csw:totalUpdated";
+                    $nodes = $xp->query($xpathString);
+                    if ($nodes->length==1)
+                        return $nodes->item(0)->textContent;
+                    else
+                        return 0;
+                }
+                else {
+                    throw new Exception($this->_response);
+                }
+        }
+        else
+            throw new Exception($this->_response);
+
+
+    }
+
+
 
     /**
      * deleted a  metadata in the csw server
