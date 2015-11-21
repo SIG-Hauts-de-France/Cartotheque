@@ -15,21 +15,36 @@ function tic_geosource_node_view($node, $v, $e) {
 	
 	$client = tic_geosource_load_csw_client();
 	
-	$geoid = $client->getGeoidFromUuid('2b3bbdd1-c1b1-475a-a0c9-6478e1f949f5');
-	$client->addMapCategory($geoid);
-	die();
+	//$geoid = $client->getGeoidFromUuid('2b3bbdd1-c1b1-475a-a0c9-6478e1f949f5');
+	//$client->addMapCategory($geoid);
+	//die();
 	
-	$xml = $client->getRecordsModifiedSince(new DateTime('2012-07-08'));
-	$uuids = tic_geosource_get_result_uuids($xml);
+	//$xml = $client->getRecordsModifiedSince(new DateTime('2012-07-08'));
+	//$uuids = tic_geosource_get_result_uuids($xml);
 	
 	//var_dump(tic_geosource_record_to_node($records[2])); die();
 	//foreach($uuids as $uuid) {
 	//	tic_geosource_process_record($uuid);
 	//}
-	tic_geosource_process_record('78f93047-74f8-4419-ac3d-fc62e4b0477b');
+	//tic_geosource_process_record('78f93047-74f8-4419-ac3d-fc62e4b0477b');
+	tic_geosource_process_record('f51edb38-d1de-455d-a16f-83e9655d5af9');
 	die();
 	
 	return;
+}
+
+/**
+ * Implements hook_cron_queue_info
+ *
+ *
+ */
+function tic_geosource_cron_queue_info() {
+	$queues['tic_geosource_sync'] = array(
+		'worker callback' => 'tic_geosource_queue_worker',
+		'time' => 120,
+	);
+	
+	return $queues;
 }
 
 /**
@@ -192,7 +207,8 @@ function tic_geosource_node_presave($node) {
 		return;
 	}
 	
-	if ($node->is_new) {
+	// a node can exists in drupal but not in geosource yet
+	if (! isset($node->field_uuid['und'][0]['value'])) {
 		$uuid = tic_geosource_insert_record($node);
 		if($uuid) {
 			$node->field_uuid['und'][0]['value'] = $uuid;
@@ -384,15 +400,15 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
 		}
 	}
 	
-	if($node->is_new) {
-		$uuid = false;
+	if (isset($node->field_uuid['und'][0]['value'])) {
+		$uuid = $node->field_uuid['und'][0]['value'];
 	}
 	else {
-		$uuid = $node->field_uuid['und'][0]['value'];
+		$uuid = false;
 	}
 	
 	$mapUrl = '';
-	if(isset($node->field_url_source_des_donnees['und'][0]['value'])) {
+	if (isset($node->field_url_source_des_donnees['und'][0]['value'])) {
 		$mapUrl = htmlspecialchars($node->field_url_source_des_donnees['und'][0]['value']);
 	}
 	
@@ -451,6 +467,7 @@ function tic_geosource_insert_record($node) {
 	}
 	
 	if(is_array($uuid)) {
+		tic_geosource_add_map_category($uuid[0]);
 		return $uuid[0];
 	}
 	else {
@@ -478,7 +495,7 @@ function tic_geosource_update_record($node) {
 	$xmlString = new div($template, tic_geosource_drupal_node_to_geosource_array($node));
 	
 	$dom = new DOMDocument('1.0');
-	$dom->loadXML((string)$xmlString);	
+	$dom->loadXML((string)$xmlString);
 	
 	$updated = 0;
 	try {
@@ -489,9 +506,20 @@ function tic_geosource_update_record($node) {
 		drupal_set_message('La ressource n\'a pas été mise à jour dans Geosource', 'error');
 	}
 	
-	tic_geosource_add_map_category($node);
+	tic_geosource_add_map_category($node->field_uuid['und'][0]['value']);
 	
 	return $updated;
+}
+
+/*
+ * Implements callback_queue_worker
+ *
+ * 
+ */
+function tic_geosource_queue_worker($uuid) {
+	module_load_include('inc', 'tic_geosource', 'includes/tic_geosource.utils');
+	
+	tic_geosource_process_record($uuid);
 }
 
 /**
@@ -502,21 +530,27 @@ function tic_geosource_update_record($node) {
  */
 function tic_geosource_cron() {
 	$last = variable_get('tic_geosource_cron_last_run', 0);
+	$delay = variable_get('geosource_sync_delay');
 	$now = time();
+	
+	if (($now - $last) < $delay) {
+		return;
+	}
+	
 	$date = new DateTime();
 	$date->setTimestamp($last);
-	
-	// temp; avancer sur fonction record to node avant
-	if($last == 0) { return; }
 	
 	module_load_include('inc', 'tic_geosource', 'includes/tic_geosource.utils');
 	
 	$client = tic_geosource_load_csw_client();
 	//TODO: changes from last cron run
 	$xml = $client->getRecordsModifiedSince(new DateTime('2012-07-08'));
-	$records = tic_geosource_split_records($xml);
-	foreach ($records as $record) {
-		tic_geosource_record_to_node($record); 
+	$uuids = tic_geosource_get_result_uuids($xml);
+	
+	// Ajouter les uuids a traiter dans le queue
+	$queue = DrupalQueue::get('tic_geosource_sync');
+	foreach ($uuids as $uuid) {
+		$queue->createItem($uuid);
 	}
 	
 	variable_set('tic_geosource_cron_last_run', $now);
@@ -527,8 +561,7 @@ function tic_geosource_cron() {
  *
  * @param stdClass Drupal node
  */
-function tic_geosource_add_map_category($node) {
-	$uuid = $node->field_uuid['und'][0]['value'];
+function tic_geosource_add_map_category($uuid) {
 	$client = tic_geosource_load_csw_client();
 	$geoid = $client->getGeoidFromUuid($uuid);
 	if($geoid) {

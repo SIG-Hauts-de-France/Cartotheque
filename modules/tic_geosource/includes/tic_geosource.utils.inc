@@ -117,20 +117,18 @@ function tic_geosource_get_record_thumbnail($record) {
 	$small = array();
 	$other = array();
 	
-	foreach($record->getElementsByTagName('graphicOverview') as $thumbNode) {
+	foreach ($record->getElementsByTagName('graphicOverview') as $thumbNode) {
 		$desc = trim($thumbNode->getElementsByTagName('fileDescription')->item(0)->nodeValue);
 		$name = trim($thumbNode->getElementsByTagName('fileName')->item(0)->nodeValue);
 		$fileType = trim($thumbNode->getElementsByTagName('fileType')->item(0)->nodeValue);
-
-		var_dump($desc);
 		
-		if($desc == 'thumbnail') {
+		if ($desc == 'thumbnail') {
 			$small = array(
 				'uri' => $name,
 				'filetype' => $fileType,
 			);
 		}
-		elseif($desc == 'large_thumbnail') {
+		elseif ($desc == 'large_thumbnail') {
 			$large = array(
 				'uri' => $name,
 				'filetype' => $fileType,
@@ -144,31 +142,59 @@ function tic_geosource_get_record_thumbnail($record) {
 		}
 	}
 	
-	if(!empty($large)) {
+	if (!empty($large)) {
 		$data = file_get_contents($large['uri']);
-		if($data !== false) {
+		if ($data !== false) {
 			$thumb = file_save_data($data, file_default_scheme() . '://');
-			if($thumb) { return $thumb; }
+			if ($thumb) { return $thumb; }
 		}
 	}
 	
-	if(!empty($small)) {
+	if (!empty($small)) {
 		$data = file_get_contents($small['uri']);
-		if($data !== false) {
+		if ($data !== false) {
 			$thumb = file_save_data($data, file_default_scheme() . '://');
 			return $thumb;
 		}
 	}
 	
-	if(!empty($other)) {
+	if (!empty($other)) {
 		$data = file_get_contents($other['uri']);
 		if($data !== false) {
 			$thumb = file_save_data($data, file_default_scheme() . '://');
 			return $thumb;
 		}
 	}
-
+	
 	return false;
+}
+
+function tic_geosource_get_keywords_and_themes($record) {
+	$ret = array();
+	
+	$ret['themes'] = array();
+	$ret['keywords'] = array();
+	
+	$nodes = $record->getElementsByTagName('descriptiveKeywords');
+	if (! $nodes->length > 0) {
+		return $ret;
+	}
+	
+	foreach ($nodes as $node) {
+		$thesaurus = $node->getElementsByTagName('thesaurusName');
+		if ($thesaurus->length > 0) {
+			$key = 'themes';
+		}
+		else {
+			$key = 'keywords';
+		}
+		
+		$knodes = $node->getElementsByTagName('keyword');
+		foreach($knodes as $k) {
+			$ret[$key][] = $k->nodeValue;
+		}
+	}
+	return $ret;
 }
 
 /**
@@ -181,7 +207,7 @@ function tic_geosource_record_to_node($record) {
 	$uuid = tic_geosource_get_single_element_value($record, 'fileIdentifier', false);
 	
 	// If no uuid found, do not continue
-	if($uuid === false) {
+	if ($uuid === false) {
 		watchdog('tic_geosource', 'Aucun UUID trouvé pour une fiche lors de la synchronisation avec Geosource');
 		return;
 	}
@@ -189,17 +215,32 @@ function tic_geosource_record_to_node($record) {
 	$title = tic_geosource_get_single_element_value($record, 'title');
 	$abstract = tic_geosource_get_single_element_value($record, 'abstract');
 	$date = tic_geosource_get_single_element_value($record, 'date');
-	$keywords = tic_geosource_get_multiple_elements_value($record, 'keyword');
-	$scale = tic_geosource_get_single_element_by_path($record, '//gmd:spatialResolution/gmd:MD_Resolution/gmd:equivalentScale/gmd:MD_RepresentativeFraction/gmd:denominator');
+	$scale = intval(tic_geosource_get_single_element_by_path($record, '//gmd:spatialResolution/gmd:MD_Resolution/gmd:equivalentScale/gmd:MD_RepresentativeFraction/gmd:denominator'));
 	$category = tic_geosource_get_single_element_value($record, 'MD_TopicCategoryCode');
-	$numCarte = tic_geosource_get_single_element_by_path($record, '//gmd:referenceSystemInfo/gmd:MD_ReferenceSystem/gmd:referenceSystemIdentifier/gmd:RS_Identifier/gmd:code');
+	$numCarte = intval(tic_geosource_get_single_element_by_path($record, '//gmd:referenceSystemInfo/gmd:MD_ReferenceSystem/gmd:referenceSystemIdentifier/gmd:RS_Identifier/gmd:code'));
+	
+	$contactName = tic_geosource_get_single_element_by_path($record, '//gmd:contact/gmd:CI_ResponsibleParty/gmd:individualName');
+	$contactEmail = tic_geosource_get_single_element_by_path($record, '//gmd:contact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:electronicMailAddress');
+	
+	$contact = false;
+	if ($contactEmail != '') {
+		$contact = tic_geosource_load_contact_by_email($contactEmail);
+		if (!$contact) {
+			//create contact
+		}
+	}
+	else {
+		watchdog('tic_geosource', 'Aucun contact trouvé pour la ressource '.$title);
+	}
 	
 	//Fichiers
 	$thumb = tic_geosource_get_record_thumbnail($record);
 	
+	$kt = tic_geosource_get_keywords_and_themes($record);
+	
 	$node = tic_geosource_get_node_by_uuid($uuid);
 	
-	if(!$node) {
+	if (!$node) {
 		$node = new stdClass();
 		
 		$node->type = 'carte';
@@ -211,7 +252,6 @@ function tic_geosource_record_to_node($record) {
 		$node->promote = 0;
 		$node->field_uuid['und'][0]['value'] = $uuid;
 		
-		//TODO: gérer l'auteur; créer si besoin
 	}
 	
 	// TODO: date de realisation
@@ -220,7 +260,6 @@ function tic_geosource_record_to_node($record) {
 	// url carte
 	// source des données
 	// url source des données
-	// echelle
 	// emprise geographique (depuis la bbox)
 	// thematique et catégories
 	
@@ -230,11 +269,20 @@ function tic_geosource_record_to_node($record) {
 	$node->field_numero_de_carte['und'][0]['value'] = $numCarte;
 	$node->field_echelle['und'][0]['value'] = $scale;
 	$node->field_categorie['und'][0]['value'] = $category;
+	if ($contact) {
+		$node->field_contact['und'][0]['nid'] = $contact->nid;
+	}
 	
 	$node->field_mots_cles['und'] = array();
-	foreach($keywords as $keyword) {
-		$tid = tic_geosource_get_tid_from_term_name($keyword);
+	foreach($kt['keywords'] as $keyword) {
+		$tid = tic_geosource_get_tid_from_term_name('thematique_gemet', $keyword);
 		$node->field_mots_cles['und'][]['tid'] = $tid;
+	}
+	
+	// TODO: basculer les thematiques en taxo
+	$node->field_thematique['und'] = array();
+	foreach($kt['themes'] as $theme) {
+		$node->field_thematique['und'][]['value'] = $theme;
 	}
 	
 	//Fichiers
@@ -265,10 +313,10 @@ function tic_geosource_get_node_by_uuid($uuid) {
 	;
 	
 	$result = $query->execute();
-
-	if(!is_array($result)) { return false; }
 	
-	if(array_key_exists('node', $result)) {
+	if (!is_array($result)) { return false; }
+	
+	if (array_key_exists('node', $result)) {
 		$obj = array_pop($result['node']);
 		return node_load($obj->nid, $obj->vid);
 	}
@@ -282,8 +330,8 @@ function tic_geosource_get_node_by_uuid($uuid) {
  * @param string Term name
  * @return int term ID
  */
-function tic_geosource_get_tid_from_term_name($term_name) {
-	$vocabulary = 'th_matique_gemet';
+function tic_geosource_get_tid_from_term_name($vocabulary, $term_name) {
+	//$vocabulary = 'thematique_gemet';
 	$arr_terms = taxonomy_get_term_by_name($term_name, $vocabulary);
 	if (!empty($arr_terms)) {
 		$arr_terms = array_values($arr_terms);
@@ -298,4 +346,24 @@ function tic_geosource_get_tid_from_term_name($term_name) {
 		$tid = $term->tid;
 	}
 	return $tid;
+}
+
+function tic_geosource_load_contact_by_email($email) {
+	$query = new EntityFieldQuery();
+	
+	$query->entityCondition('entity_type', 'node')
+		->entityCondition('bundle', 'contact')
+		->fieldCondition('field_adresse_email', 'email', $email, '=')
+	;
+	
+	$result = $query->execute();
+	
+	if(!is_array($result)) { return false; }
+	
+	if(array_key_exists('node', $result)) {
+		$obj = array_pop($result['node']);
+		return node_load($obj->nid, $obj->vid);
+	}
+	
+	return false;
 }

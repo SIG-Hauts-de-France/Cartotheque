@@ -36,7 +36,20 @@ function tic_geosource_config($form, &$form_state) {
 		'#maxlength' => 255,
 		'#description' => 'Adresse de l\'authentification Geosource pour la synchronisation de cartes',
 	);
-
+	$form['geosource sync'] = array(
+		'#type' => 'fieldset',
+		'#title' => 'Options de synchronisation Geosource',
+		'#collapsible' => false,
+	);
+	$form['geosource sync']['geosource_sync_delay'] = array(
+		'#type' => 'textfield',
+		'#title' => 'Intervalle de synchronisation',
+		'#default_value' => variable_get('geosource_sync_delay', ''),
+		'#description' => 'Délai entre deux synchronisations avec Geosource (en secondes)',
+	);
+	// TODO: utilisateur pour les cartes créées par la synchro
+	// TODO: auteur par défaut pour les cartes créées par la synchro n'ayant pas d'email associé
+	
 	return system_settings_form($form);
 }
 
