@@ -156,42 +156,11 @@ $data = array(
       'entity_types' => array(),
       'settings' => array(
         'allowed_values' => array(
-          'Référentiels de coordonnées' => 'Référentiels de coordonnées',
-          'Systèmes de maillage géographique' => 'Systèmes de maillage géographique',
-          'Dénominations géographiques' => 'Dénominations géographiques',
-          'Unités administratives' => 'Unités administratives',
-          'Adresses' => 'Adresses',
-          'Parcelles cadastrales' => 'Parcelles cadastrales',
-          'Réseaux de transport' => 'Réseaux de transport',
-          'Hydrographie' => 'Hydrographie',
-          'Sites protégés' => 'Sites protégés',
-          'Altitude' => 'Altitude',
-          'Occupation des terres' => 'Occupation des terres',
-          'Ortho-imagerie' => 'Ortho-imagerie',
-          'Géologie' => 'Géologie',
-          'Unités statistiques' => 'Unités statistiques',
-          'Bâtiments' => 'Bâtiments',
-          'Sols' => 'Sols',
-          'Usage des sols' => 'Usage des sols',
-          'Santé et sécurité des personnes' => 'Santé et sécurité des personnes',
-          'Services d\'utilité publique et services publics' => 'Services d\'utilité publique et services publics',
-          'Installations de suivi environnemental' => 'Installations de suivi environnemental',
-          'Lieux de production et sites industriels' => 'Lieux de production et sites industriels',
-          'Installations agricoles et aquacoles' => 'Installations agricoles et aquacoles',
-          'Répartition de la population - démographie' => 'Répartition de la population - démographie',
-          'Zones de gestion, de restriction ou de réglementation et unités de déclaration' => 'Zones de gestion, de restriction ou de réglementation et unités de déclaration',
-          'Zones à risque naturel' => 'Zones à risque naturel',
-          'Conditions atmosphériques' => 'Conditions atmosphériques',
-          'Caractéristiques géographiques météorologiques' => 'Caractéristiques géographiques météorologiques',
-          'Caractéristiques géographiques océanographiques' => 'Caractéristiques géographiques océanographiques',
-          'Régions maritimes' => 'Régions maritimes',
-          'Régions biogéographiques' => 'Régions biogéographiques',
-          'Habitats et biotopes' => 'Habitats et biotopes',
-          'Répartition des espèces' => 'Répartition des espèces',
-          'Sources d\'énergie' => 'Sources d\'énergie',
-          'Ressources minérales' => 'Ressources minérales',
+          0 => array(
+            'vocabulary' => 'categorie',
+            'parent' => '0',
+          ),
         ),
-        'allowed_values_function' => '',
       ),
       'storage' => array(
         'type' => 'field_sql_storage',
@@ -202,34 +171,41 @@ $data = array(
           'sql' => array(
             'FIELD_LOAD_CURRENT' => array(
               'field_data_field_categorie' => array(
-                'value' => 'field_categorie_value',
+                'tid' => 'field_categorie_tid',
               ),
             ),
             'FIELD_LOAD_REVISION' => array(
               'field_revision_field_categorie' => array(
-                'value' => 'field_categorie_value',
+                'tid' => 'field_categorie_tid',
               ),
             ),
           ),
         ),
       ),
-      'foreign keys' => array(),
+      'foreign keys' => array(
+        'tid' => array(
+          'table' => 'taxonomy_term_data',
+          'columns' => array(
+            'tid' => 'tid',
+          ),
+        ),
+      ),
       'indexes' => array(
-        'value' => array(
-          0 => 'value',
+        'tid' => array(
+          0 => 'tid',
         ),
       ),
       'field_name' => 'field_categorie',
-      'type' => 'list_text',
-      'module' => 'list',
+      'type' => 'taxonomy_term_reference',
+      'module' => 'taxonomy',
       'active' => '1',
       'locked' => '0',
       'cardinality' => '1',
       'deleted' => '0',
       'columns' => array(
-        'value' => array(
-          'type' => 'varchar',
-          'length' => 255,
+        'tid' => array(
+          'type' => 'int',
+          'unsigned' => TRUE,
           'not null' => FALSE,
         ),
       ),
@@ -280,67 +256,6 @@ $data = array(
       'foreign keys' => array(),
       'indexes' => array(),
       'field_name' => 'field_date_de_mise_jour',
-      'type' => 'datestamp',
-      'module' => 'date',
-      'active' => '1',
-      'locked' => '0',
-      'cardinality' => '1',
-      'deleted' => '0',
-      'columns' => array(
-        'value' => array(
-          'type' => 'int',
-          'not null' => FALSE,
-          'sortable' => TRUE,
-          'views' => TRUE,
-        ),
-      ),
-      'bundles' => array(
-        'node' => array(
-          0 => 'carte',
-        ),
-      ),
-    ),
-    'field_date_de_realisation' => array(
-      'translatable' => '0',
-      'entity_types' => array(),
-      'settings' => array(
-        'granularity' => array(
-          'month' => 'month',
-          'day' => 'day',
-          'year' => 'year',
-          'hour' => 0,
-          'minute' => 0,
-          'second' => 0,
-        ),
-        'tz_handling' => 'none',
-        'timezone_db' => '',
-        'cache_enabled' => 0,
-        'cache_count' => '4',
-        'todate' => '',
-      ),
-      'storage' => array(
-        'type' => 'field_sql_storage',
-        'settings' => array(),
-        'module' => 'field_sql_storage',
-        'active' => '1',
-        'details' => array(
-          'sql' => array(
-            'FIELD_LOAD_CURRENT' => array(
-              'field_data_field_date_de_r_alisation' => array(
-                'value' => 'field_date_de_r_alisation_value',
-              ),
-            ),
-            'FIELD_LOAD_REVISION' => array(
-              'field_revision_field_date_de_r_alisation' => array(
-                'value' => 'field_date_de_r_alisation_value',
-              ),
-            ),
-          ),
-        ),
-      ),
-      'foreign keys' => array(),
-      'indexes' => array(),
-      'field_name' => 'field_date_de_r_alisation',
       'type' => 'datestamp',
       'module' => 'date',
       'active' => '1',
@@ -498,16 +413,16 @@ $data = array(
       'entity_types' => array(),
       'settings' => array(
         'allowed_values' => array(
-          '1000' => '1:1000',
-          '10000' => '1:10000',
-          '100000' => '1:100000',
-          '1000000' => '1:1000000',
-          '200000' => '1:200000',
-          '25000' => '1:25000',
-          '300000' => '1:300000',
-          '5000' => '1:5000',
-          '50000' => '1:50000',
-          '500000' => '1:500000',
+          1000 => '1:1000',
+          10000 => '1:10000',
+          100000 => '1:100000',
+          1000000 => '1:1000000',
+          200000 => '1:200000',
+          25000 => '1:25000',
+          300000 => '1:300000',
+          5000 => '1:5000',
+          50000 => '1:50000',
+          500000 => '1:500000',
         ),
         'allowed_values_function' => '',
       ),
@@ -883,7 +798,7 @@ $data = array(
       'settings' => array(
         'allowed_values' => array(
           0 => array(
-            'vocabulary' => 'thematique_gemet',
+            'vocabulary' => 'mots_cles',
             'parent' => '0',
           ),
         ),
@@ -1056,42 +971,11 @@ $data = array(
       'entity_types' => array(),
       'settings' => array(
         'allowed_values' => array(
-          'Référentiels de coordonnées' => 'Référentiels de coordonnées',
-          'Systèmes de maillage géographique' => 'Systèmes de maillage géographique',
-          'Dénominations géographiques' => 'Dénominations géographiques',
-          'Unités administratives' => 'Unités administratives',
-          'Adresses' => 'Adresses',
-          'Parcelles cadastrales' => 'Parcelles cadastrales',
-          'Réseaux de transport' => 'Réseaux de transport',
-          'Hydrographie' => 'Hydrographie',
-          'Sites protégés' => 'Sites protégés',
-          'Altitude' => 'Altitude',
-          'Occupation des terres' => 'Occupation des terres',
-          'Ortho-imagerie' => 'Ortho-imagerie',
-          'Géologie' => 'Géologie',
-          'Unités statistiques' => 'Unités statistiques',
-          'Bâtiments' => 'Bâtiments',
-          'Sols' => 'Sols',
-          'Usage des sols' => 'Usage des sols',
-          'Santé et sécurité des personnes' => 'Santé et sécurité des personnes',
-          'Services d\'utilité publique et services publics' => 'Services d\'utilité publique et services publics',
-          'Installations de suivi environnemental' => 'Installations de suivi environnemental',
-          'Lieux de production et sites industriels' => 'Lieux de production et sites industriels',
-          'Installations agricoles et aquacoles' => 'Installations agricoles et aquacoles',
-          'Répartition de la population - démographie' => 'Répartition de la population - démographie',
-          'Zones de gestion, de restriction ou de réglementation et unités de déclaration' => 'Zones de gestion, de restriction ou de réglementation et unités de déclaration',
-          'Zones à risque naturel' => 'Zones à risque naturel',
-          'Conditions atmosphériques' => 'Conditions atmosphériques',
-          'Caractéristiques géographiques météorologiques' => 'Caractéristiques géographiques météorologiques',
-          'Caractéristiques géographiques océanographiques' => 'Caractéristiques géographiques océanographiques',
-          'Régions maritimes' => 'Régions maritimes',
-          'Régions biogéographiques' => 'Régions biogéographiques',
-          'Habitats et biotopes' => 'Habitats et biotopes',
-          'Répartition des espèces' => 'Répartition des espèces',
-          'Sources d\'énergie' => 'Sources d\'énergie',
-          'Ressources minérales' => 'Ressources minérales',
+          0 => array(
+            'vocabulary' => 'thematique_gemet',
+            'parent' => '0',
+          ),
         ),
-        'allowed_values_function' => '',
       ),
       'storage' => array(
         'type' => 'field_sql_storage',
@@ -1102,34 +986,41 @@ $data = array(
           'sql' => array(
             'FIELD_LOAD_CURRENT' => array(
               'field_data_field_thematique' => array(
-                'value' => 'field_thematique_value',
+                'tid' => 'field_thematique_tid',
               ),
             ),
             'FIELD_LOAD_REVISION' => array(
               'field_revision_field_thematique' => array(
-                'value' => 'field_thematique_value',
+                'tid' => 'field_thematique_tid',
               ),
             ),
           ),
         ),
       ),
-      'foreign keys' => array(),
+      'foreign keys' => array(
+        'tid' => array(
+          'table' => 'taxonomy_term_data',
+          'columns' => array(
+            'tid' => 'tid',
+          ),
+        ),
+      ),
       'indexes' => array(
-        'value' => array(
-          0 => 'value',
+        'tid' => array(
+          0 => 'tid',
         ),
       ),
       'field_name' => 'field_thematique',
-      'type' => 'list_text',
-      'module' => 'list',
+      'type' => 'taxonomy_term_reference',
+      'module' => 'taxonomy',
       'active' => '1',
       'locked' => '0',
       'cardinality' => '-1',
       'deleted' => '0',
       'columns' => array(
-        'value' => array(
-          'type' => 'varchar',
-          'length' => 255,
+        'tid' => array(
+          'type' => 'int',
+          'unsigned' => TRUE,
           'not null' => FALSE,
         ),
       ),
@@ -1323,6 +1214,72 @@ $data = array(
         ),
       ),
     ),
+    'field_uuid' => array(
+      'translatable' => '0',
+      'entity_types' => array(),
+      'settings' => array(
+        'max_length' => '255',
+      ),
+      'storage' => array(
+        'type' => 'field_sql_storage',
+        'settings' => array(),
+        'module' => 'field_sql_storage',
+        'active' => '1',
+        'details' => array(
+          'sql' => array(
+            'FIELD_LOAD_CURRENT' => array(
+              'field_data_field_uuid' => array(
+                'value' => 'field_uuid_value',
+                'format' => 'field_uuid_format',
+              ),
+            ),
+            'FIELD_LOAD_REVISION' => array(
+              'field_revision_field_uuid' => array(
+                'value' => 'field_uuid_value',
+                'format' => 'field_uuid_format',
+              ),
+            ),
+          ),
+        ),
+      ),
+      'foreign keys' => array(
+        'format' => array(
+          'table' => 'filter_format',
+          'columns' => array(
+            'format' => 'format',
+          ),
+        ),
+      ),
+      'indexes' => array(
+        'format' => array(
+          0 => 'format',
+        ),
+      ),
+      'field_name' => 'field_uuid',
+      'type' => 'text',
+      'module' => 'text',
+      'active' => '1',
+      'locked' => '0',
+      'cardinality' => '1',
+      'deleted' => '0',
+      'columns' => array(
+        'value' => array(
+          'type' => 'varchar',
+          'length' => '255',
+          'not null' => FALSE,
+        ),
+        'format' => array(
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => FALSE,
+        ),
+      ),
+      'bundles' => array(
+        'node' => array(
+          0 => 'carte',
+        ),
+      ),
+    ),
   ),
   'instances' => array(
     'field_adresse_email' => array(
@@ -1405,7 +1362,7 @@ $data = array(
       0 => array(
         'label' => 'Catégorie',
         'widget' => array(
-          'weight' => '19',
+          'weight' => '22',
           'type' => 'options_select',
           'module' => 'options',
           'active' => 1,
@@ -1417,10 +1374,10 @@ $data = array(
         'display' => array(
           'default' => array(
             'label' => 'above',
-            'type' => 'list_default',
-            'weight' => '23',
+            'type' => 'taxonomy_term_reference_link',
             'settings' => array(),
-            'module' => 'list',
+            'module' => 'taxonomy',
+            'weight' => 26,
           ),
           'teaser' => array(
             'type' => 'hidden',
@@ -1429,7 +1386,7 @@ $data = array(
             'weight' => 0,
           ),
         ),
-        'required' => 1,
+        'required' => 0,
         'description' => '',
         'default_value' => NULL,
         'field_name' => 'field_categorie',
@@ -1486,59 +1443,6 @@ $data = array(
         'required' => FALSE,
         'description' => '',
         'field_name' => 'field_date_de_mise_jour',
-        'entity_type' => 'node',
-        'bundle' => 'carte',
-        'deleted' => '0',
-      ),
-    ),
-    'field_date_de_r_alisation' => array(
-      0 => array(
-        'label' => 'Date de réalisation',
-        'widget' => array(
-          'type' => 'date_select',
-          'weight' => '-1',
-          'settings' => array(
-            'input_format' => 'm/d/Y - H:i:s',
-            'input_format_custom' => '',
-            'increment' => 15,
-            'text_parts' => array(),
-            'year_range' => '-3:+3',
-            'label_position' => 'above',
-          ),
-          'module' => 'date',
-        ),
-        'settings' => array(
-          'default_value' => 'now',
-          'default_value_code' => '',
-          'default_value2' => 'same',
-          'default_value_code2' => '',
-          'user_register_form' => FALSE,
-        ),
-        'display' => array(
-          'default' => array(
-            'label' => 'above',
-            'type' => 'date_default',
-            'weight' => '3',
-            'settings' => array(
-              'format_type' => 'long',
-              'multiple_number' => '',
-              'multiple_from' => '',
-              'multiple_to' => '',
-              'fromto' => 'both',
-              'show_remaining_days' => FALSE,
-            ),
-            'module' => 'date',
-          ),
-          'teaser' => array(
-            'type' => 'hidden',
-            'label' => 'above',
-            'settings' => array(),
-            'weight' => 0,
-          ),
-        ),
-        'required' => FALSE,
-        'description' => '',
-        'field_name' => 'field_date_de_r_alisation',
         'entity_type' => 'node',
         'bundle' => 'carte',
         'deleted' => '0',
@@ -1900,6 +1804,7 @@ $data = array(
           'weight' => '16',
           'type' => 'number',
           'module' => 'number',
+          'settings' => array(),
         ),
         'settings' => array(
           'min' => '',
@@ -1981,7 +1886,7 @@ $data = array(
       0 => array(
         'label' => 'Thématique',
         'widget' => array(
-          'weight' => '18',
+          'weight' => '21',
           'type' => 'options_select',
           'module' => 'options',
           'active' => 1,
@@ -1993,10 +1898,10 @@ $data = array(
         'display' => array(
           'default' => array(
             'label' => 'above',
-            'type' => 'list_default',
-            'weight' => '22',
+            'type' => 'taxonomy_term_reference_link',
             'settings' => array(),
-            'module' => 'list',
+            'module' => 'taxonomy',
+            'weight' => 25,
           ),
           'teaser' => array(
             'type' => 'hidden',
@@ -2005,7 +1910,7 @@ $data = array(
             'weight' => 0,
           ),
         ),
-        'required' => 1,
+        'required' => 0,
         'description' => '',
         'default_value' => NULL,
         'field_name' => 'field_thematique',
@@ -2138,6 +2043,46 @@ $data = array(
         'description' => '',
         'default_value' => NULL,
         'field_name' => 'field_url_source_des_donnees',
+        'entity_type' => 'node',
+        'bundle' => 'carte',
+        'deleted' => '0',
+      ),
+    ),
+    'field_uuid' => array(
+      0 => array(
+        'label' => 'uuid',
+        'widget' => array(
+          'weight' => '23',
+          'type' => 'text_textfield',
+          'module' => 'text',
+          'active' => 1,
+          'settings' => array(
+            'size' => '60',
+          ),
+        ),
+        'settings' => array(
+          'text_processing' => '0',
+          'user_register_form' => FALSE,
+        ),
+        'display' => array(
+          'default' => array(
+            'label' => 'above',
+            'type' => 'text_default',
+            'settings' => array(),
+            'module' => 'text',
+            'weight' => 27,
+          ),
+          'teaser' => array(
+            'type' => 'hidden',
+            'label' => 'above',
+            'settings' => array(),
+            'weight' => 0,
+          ),
+        ),
+        'required' => 0,
+        'description' => '',
+        'default_value' => NULL,
+        'field_name' => 'field_uuid',
         'entity_type' => 'node',
         'bundle' => 'carte',
         'deleted' => '0',

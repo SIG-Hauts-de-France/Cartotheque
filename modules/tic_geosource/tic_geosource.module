@@ -13,7 +13,12 @@ function tic_geosource_node_view($node, $v, $e) {
 	return;
 	module_load_include('inc', 'tic_geosource', 'includes/tic_geosource.utils');
 	
-	$client = tic_geosource_load_csw_client();
+	tic_geosource_load_thesaurus();
+	
+	//$client = tic_geosource_load_csw_client();
+	//$t = $client->getGeoThemeThesaurus();
+	//var_dump($t); die();
+	die();
 	
 	//$geoid = $client->getGeoidFromUuid('2b3bbdd1-c1b1-475a-a0c9-6478e1f949f5');
 	//$client->addMapCategory($geoid);
@@ -173,19 +178,9 @@ function tic_geosource_addcontact_ajax_submit($form, &$form_state) {
 		drupal_exit();
 	}
 	
-	// TODO: requête SQL pour vérifier que l'adresse mail est unique
+	module_load_include('inc', 'tic_geosource', 'includes/tic_geosource.utils');
 	
-	$contact = new StdClass();
-	$contact->type = 'contact';
-	$contact->title = $name;
-	$contact->uid = $user->uid;
-	$contact->language = LANGUAGE_NONE;
-	
-	//TODO: vérifier que le node a bien été sauvé; ajouter langue
-	node_save($contact);
-	$node_wrapper = entity_metadata_wrapper('node', $contact);
-	$node_wrapper->field_adresse_email->set($email);
-	$node_wrapper->save();
+	$contact = tic_geosource_create_contact($name, $email);
 	
 	$ret = Array('code' => 'success', 'nid' => $contact->nid, 'title' => $contact->title);
 	drupal_json_output($ret);
@@ -267,53 +262,64 @@ function tic_geosource_load_divengine() {
  */
 function tic_geosource_region_to_bbox($region = 'Région') {
 	// default: world wide
-	$bbox = Array(
+	$ret = Array(
 		"west" => '-180',
 		"east" => '180',
 		"north" => '-90',
 		"south" => '90',
 	);
 	
-	switch($region) {
-		case 'Europe':
-			$bbox['west'] = '-18';
-			$bbox['east'] = '46';
-			$bbox['north'] = '71';
-			$bbox['south'] = '33';
-			break;
-		case 'France':
-			$bbox['west'] = '-6';
-			$bbox['east'] = '9';
-			$bbox['north'] = '51';
-			$bbox['south'] = '42';
-			
-			break;
-		case 'Région':
-			$bbox['west'] = '1';
-			$bbox['east'] = '5';
-			$bbox['north'] = '51';
-			$bbox['south'] = '49';
-			
-			break;
-		case 'Département':
-			$bbox['west'] = '1';
-			$bbox['east'] = '5';
-			$bbox['north'] = '51';
-			$bbox['south'] = '49';
-			
-			break;
-		case 'Infra-départemental':
-			$bbox['west'] = '1';
-			$bbox['east'] = '5';
-			$bbox['north'] = '51';
-			$bbox['south'] = '49';
-			
-			break;
-	}
+	$bbox = variable_get('tic_geosource_bbox');
 	
-	return $bbox;
+	if(isset($bbox[$region])) { $ret = $bbox[$region]; }
+	
+	return $ret;
 }
 
+/**
+ * Conversion bbox vers region
+ *
+ * Recupérer l'element le plus proche de la bbox de la ressource
+ *
+ * @param string north
+ * @param string south
+ * @param string east
+ * @param string west
+ * @return string region
+ */
+function tic_geosource_bbox_to_region($north, $south, $east, $west) {
+	
+	$north = intval($north);
+	$south = intval($south);
+	$east = intval($east);
+	$west = intval($west);
+	
+	$bbox = variable_get('tic_geosource_bbox');
+	
+	// max value is 180. 400 will always be superior
+	$northDiff = 400;
+	$westDiff = 400;
+	$eastDiff = 400;
+	$southDiff = 400;
+	
+	$best = 400*4;
+	$ret = '';
+	
+	foreach($bbox as $key => $values) {
+		$ndiff = abs($north - $values['north']);
+		$sdiff = abs($south - $values['south']);
+		$ediff = abs($east - $values['east']);
+		$wdiff = abs($west - $values['west']);
+		
+		$match = $ndiff + $sdiff + $ediff + $wdiff;
+		if($match < $best) {
+			$best = $match;
+			$ret = $key;
+		}
+	}
+	
+	return $ret;
+}
 
 /**
  * Convert a drupal node to an array for divengine template
@@ -337,18 +343,21 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
 	$keywords = array();
 	if (isset($node->field_mots_cles['und'])) {
 		foreach ($node->field_mots_cles['und'] as $k) {
-			$keywords[] = $k['name'];
+			$term = taxonomy_term_load($k['tid']);
+			$keywords[] = $term->name;
 		}
 	}
 	
 	// categorie
-	$category = $node->field_categorie['und'][0]['value'];
+	$catTerm = taxonomy_term_load($node->field_categorie['und'][0]['tid']);
+	$category = $catTerm->name;
 	
 	// thematiques Gemet
 	$thematiques = array();
 	if(isset($node->field_thematique['und'])) {
 		foreach ($node->field_thematique['und'] as $t) {
-			$thematiques[] = $t['value'];
+			$term = taxonomy_term_load($t['tid']);
+			$thematiques[] = $term->name;
 		}
 	}
 	
@@ -534,6 +543,7 @@ function tic_geosource_cron() {
 	$now = time();
 	
 	if (($now - $last) < $delay) {
+		die('ok');
 		return;
 	}
 	
@@ -541,6 +551,9 @@ function tic_geosource_cron() {
 	$date->setTimestamp($last);
 	
 	module_load_include('inc', 'tic_geosource', 'includes/tic_geosource.utils');
+	
+	// synchro thesaurus, themes et mots cles
+	tic_geosource_load_thesaurus();
 	
 	$client = tic_geosource_load_csw_client();
 	//TODO: changes from last cron run

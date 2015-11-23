@@ -143,6 +143,32 @@ class cswGeoClient {
 	}
 	
 	/**
+	 * Load Theme Thesaurus from Geosource
+	 *
+	 */
+	public function getGeoThemeThesaurus() {
+		$request = new HTTP_Request2($this->_authentAddress.'/srv/fre/q');
+		$request->setMethod(HTTP_Request2::METHOD_GET);
+		$url = $request->getUrl();
+		
+		$url->setQueryVariables(array(
+			'summaryOnly' => 'false',
+			'thesaurusIdentifier' => 'external.theme.inspire-theme',
+			'_content_type' => 'json',
+		));
+		
+		//auth needed
+		$this->_authentication($request);
+		
+		if($this->_callHTTPCSW($request)) {
+			$thesaurus = json_decode($this->_response, true);
+			return $thesaurus;
+		}
+		
+		return false;
+	}
+	
+	/**
 	 * Recupérer l'id Geosource a partir de l'uuid
 	 * TODO
 	 */

@@ -9,6 +9,49 @@
  * Charge les types carte et contact exportés par bundle_copy
  */
 function tic_geosource_install() {
+	// Init bbox settings
+	$europeBbox = Array(
+		'west' => '-18',
+		'east' => '46',
+		'north' => '71',
+		'south' => '33',
+	);
+	
+	$franceBbox = Array(
+		'west' => '-6',
+		'east' => '9',
+		'north' => '51',
+		'south' => '42',
+	);
+	
+	$regionBbox = array(
+		'west' => '1',
+		'east' => '5',
+		'north' => '51',
+		'south' => '49',
+	);
+	
+	$depBbox = array(
+		'west' => '1',
+		'east' => '5',
+		'north' => '51',
+		'south' => '49',
+	);
+	
+	$infradepBbox = array(
+		'west' => '1',
+		'east' => '5',
+		'north' => '51',
+		'south' => '49',
+	);
+	
+	$bbox['Europe'] = $europeBbox;
+	$bbox['France'] = $franceBbox;
+	$bbox['Région'] = $regionBbox;
+	$bbox['Département'] = $depBbox;
+	$bbox['Infra-départemental'] = $infradepBbox;
+	
+	variable_set('tic_geosource_bbox', $bbox);
 	
 	// fixtures import requires bundle copy
 	if(!module_exists('bundle_copy')) {
@@ -53,4 +96,5 @@ function tic_geosource_uninstall() {
 	variable_del('geosource_server_url');
 	variable_del('geosource_server_user');
 	variable_del('geosource_server_password');
+	variable_del('tic_geosource_bbox');
 }
