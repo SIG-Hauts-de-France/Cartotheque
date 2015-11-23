@@ -113,10 +113,12 @@
 
 
     <div id="main-wrapper" class="container"><div id="main" class="row clearfix">
-	
+
+	<!--	
 	<?php if ($breadcrumb): ?>
 		<div id="breadcrumb" class="col-md-12"><?php print $breadcrumb; ?></div>
 	<?php endif; ?>
+	-->
 	
 	<?php if ($messages): ?>
 		<div class="col-md-12"><?php print $messages; ?></div>
