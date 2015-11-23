@@ -79,7 +79,7 @@ $uuid?
          <gmd:referenceSystemIdentifier>
             <gmd:RS_Identifier>
                <gmd:code>
-                  <gco:CharacterString>${map_number}</gco:CharacterString>
+                  <gco:CharacterString>{$map_number}</gco:CharacterString>
                </gmd:code>
             </gmd:RS_Identifier>
          </gmd:referenceSystemIdentifier>
@@ -102,6 +102,17 @@ $uuid?
                                              codeListValue="publication"/>
                      </gmd:dateType>
                   </gmd:CI_Date>
+?$update_date
+                  <gmd:CI_Date>
+                     <gmd:date>
+                        <gco:Date>{$update_date}</gco:Date>
+                     </gmd:date>
+                     <gmd:dateType>
+                        <gmd:CI_DateTypeCode codeList="http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#CI_DateTypeCode"
+                                             codeListValue="revision"/>
+                     </gmd:dateType>
+                  </gmd:CI_Date>
+$update_date?
                </gmd:date>
                <gmd:edition>
                   <gco:CharacterString>First</gco:CharacterString>

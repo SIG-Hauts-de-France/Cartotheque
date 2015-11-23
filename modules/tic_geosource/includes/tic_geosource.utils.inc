@@ -186,10 +186,10 @@ function tic_geosource_get_keywords_and_themes($record) {
 	foreach ($nodes as $node) {
 		$thesaurus = $node->getElementsByTagName('thesaurusName');
 		if ($thesaurus->length > 0) {
-			$key = 'thematique';
+			$key = 'themes';
 		}
 		else {
-			$key = 'mots_cles';
+			$key = 'keywords';
 		}
 		
 		$knodes = $node->getElementsByTagName('keyword');
@@ -197,6 +197,7 @@ function tic_geosource_get_keywords_and_themes($record) {
 			$ret[$key][] = $k->nodeValue;
 		}
 	}
+	
 	return $ret;
 }
 
@@ -241,6 +242,8 @@ function tic_geosource_record_to_node($record) {
 	
 	$empriseGeo = tic_geosource_get_record_bbox_equivalent($record);
 	
+	$urlData = tic_geosource_get_single_element_by_path($record, '//gmd:lineage/gmd:LI_Lineage/gmd:statement');
+	
 	$contact = false;
 	if ($contactEmail != '') {
 		$contact = tic_geosource_load_contact_by_email($contactEmail);
@@ -252,7 +255,6 @@ function tic_geosource_record_to_node($record) {
 			}
 		}
 	}
-	
 	
 	//Fichiers
 	$thumb = tic_geosource_get_record_thumbnail($record);
@@ -276,17 +278,17 @@ function tic_geosource_record_to_node($record) {
 	
 	// TODO: date de realisation
 	// date de mise a jour
-	// images ?
-	// url carte
+	// images et fichiers ?
+	// url carte voir le xml (ref document)
 	// source des données
 	// url source des données
-	// thematique et catégories
 	
 	// atttributs
 	$node->title = $title;
 	$node->field_description['und'][0]['value'] = $abstract;
 	$node->field_numero_de_carte['und'][0]['value'] = $numCarte;
 	$node->field_echelle['und'][0]['value'] = $scale;
+	$node->field_url_source_des_donnees['und'][0]['value'] = $urlData;
 	$node->field_categorie['und'][0]['tid'] = tic_geosource_get_tid_from_term_name('categorie', $category);
 	
 	$node->field_emprise_geographique['und'][0]['value'] = $empriseGeo;
@@ -308,7 +310,7 @@ function tic_geosource_record_to_node($record) {
 	$node->field_thematique['und'] = array();
 	foreach($kt['themes'] as $theme) {
 		$tid = tic_geosource_get_tid_from_term_name('thematique_gemet', $theme);
-		$node->field_thematique['und'][]['tid'] = $theme;
+		$node->field_thematique['und'][]['tid'] = $tid;
 	}
 	
 	//Fichiers

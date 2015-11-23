@@ -13,12 +13,12 @@ function tic_geosource_node_view($node, $v, $e) {
 	return;
 	module_load_include('inc', 'tic_geosource', 'includes/tic_geosource.utils');
 	
-	tic_geosource_load_thesaurus();
+	//tic_geosource_load_thesaurus();
 	
 	//$client = tic_geosource_load_csw_client();
 	//$t = $client->getGeoThemeThesaurus();
 	//var_dump($t); die();
-	die();
+	//die();
 	
 	//$geoid = $client->getGeoidFromUuid('2b3bbdd1-c1b1-475a-a0c9-6478e1f949f5');
 	//$client->addMapCategory($geoid);
@@ -32,7 +32,7 @@ function tic_geosource_node_view($node, $v, $e) {
 	//	tic_geosource_process_record($uuid);
 	//}
 	//tic_geosource_process_record('78f93047-74f8-4419-ac3d-fc62e4b0477b');
-	tic_geosource_process_record('f51edb38-d1de-455d-a16f-83e9655d5af9');
+	tic_geosource_process_record('bae9539a-e7bf-4140-b77b-0723bab82d17');
 	die();
 	
 	return;
@@ -40,7 +40,6 @@ function tic_geosource_node_view($node, $v, $e) {
 
 /**
  * Implements hook_cron_queue_info
- *
  *
  */
 function tic_geosource_cron_queue_info() {
@@ -322,6 +321,16 @@ function tic_geosource_bbox_to_region($north, $south, $east, $west) {
 }
 
 /**
+ * Convert unixtimestamp to geosource date format
+ *
+ * @param int unix timestamp
+ * @return string formatted time
+ */
+function tic_geosource_unixtime_to_geosource_date($unix) {
+	return gmdate("Y-m-d\TH:i:s", intval($unix));
+}
+
+/**
  * Convert a drupal node to an array for divengine template
  *
  * @param stdClass drupal node
@@ -332,6 +341,7 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
 	$data = $node->field_auteur['und'][0];
 	$relatedContact = node_load($data['nid']);
 	
+	// transformer la region bbox
 	if (isset($node->field_emprise_geographique['und'][0]['value'])) {
 		$bbox = tic_geosource_region_to_bbox($node->field_emprise_geographique['und'][0]['value']);
 	}
@@ -361,9 +371,8 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
 		}
 	}
 	
-	$files = array();
-	
 	// fichier carte
+	$files = array();
 	if (isset($node->field_image_carte['und'][0]['fid'])) {
 		$imageCarte = file_load($node->field_image_carte['und'][0]['fid']);
 		if ($imageCarte) {
@@ -389,7 +398,7 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
 		}
 	}
 	
-	// imagette Remplacer par un tableau avec lien grande image et petite image
+	// imagette
 	$thumbnails = array();
 	if (isset($node->field_imagette['und'][0]['fid'])) {
 		$imagette = file_load($node->field_imagette['und'][0]['fid']);
@@ -409,6 +418,7 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
 		}
 	}
 	
+	// UUID Geosource de la ressource (si existe)
 	if (isset($node->field_uuid['und'][0]['value'])) {
 		$uuid = $node->field_uuid['und'][0]['value'];
 	}
@@ -416,9 +426,26 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
 		$uuid = false;
 	}
 	
+	// URL source des données
 	$mapUrl = '';
 	if (isset($node->field_url_source_des_donnees['und'][0]['value'])) {
 		$mapUrl = htmlspecialchars($node->field_url_source_des_donnees['und'][0]['value']);
+	}
+	
+	//Date de mise a jour
+	if (isset($node->field_date_de_mise_jour['und'][0]['value'])) {
+		$updateDate = tic_geosource_unixtime_to_geosource_date($node->field_date_de_mise_jour['und'][0]['value']);
+	}
+	else {
+		$updateDate = false;
+	}
+	
+	//date source des données
+	if(isset($node->field_date_source_des_donnees['und'][0]['value'])) {
+		$dateData = tic_geosource_unixtime_to_geosource_date($node->field_date_source_des_donness['und'][0]['value']);
+	}
+	else {
+		$dateData = false;
 	}
 	
 	return array(
@@ -427,12 +454,17 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
 		'author_organisation' => $relatedContact->title,
 		'author_email' => $relatedContact->field_adresse_email['und'][0]['email'],
 		//'creation_date' => '2015-11-13T08:43:18',
-		'creation_date' => date("Y-m-dTH:i:s"),
+		//TODO: recharger si update
+		'creation_date' => date("Y-m-d\TH:i:s"),
+		'update_date' => date("Y-m-d\TH:i:s"),
 		'map_title' => $node->title,
+		// TODO verifier avec cdc
 		'map_creation_date' => date("Y-m-d"),
 		'map_abstract' => $node->field_description['und'][0]['value'],
-		'map_purpose' => 'NONE',
-		'map_number' => $node->field_numero_de_carte['und'][0]['value'], //BUG update ?
+		//TODO
+		'map_purpose' => 'NONE ?',
+		//TODO: mal placé dans le XML
+		'map_number' => $node->field_numero_de_carte['und'][0]['value'],
 		'map_resolution' => $node->field_echelle['und'][0]['value'],
 		'map_url' => $mapUrl, //BUG update ?
 		'bbox' => $bbox,
@@ -543,8 +575,8 @@ function tic_geosource_cron() {
 	$now = time();
 	
 	if (($now - $last) < $delay) {
-		die('ok');
-		return;
+		// DEBUG TODO: decommenter le return
+		//return;
 	}
 	
 	$date = new DateTime();
