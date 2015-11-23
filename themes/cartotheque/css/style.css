@@ -38,6 +38,9 @@ header ul.topNav li{
 	list-style: none;
 	display:inline-block;
 	font-size:11px;
+	text-align:center;
+	padding-right: 5px;
+	padding-left: 5px;
 }
 header ul.topNav li span{
 	display: block;

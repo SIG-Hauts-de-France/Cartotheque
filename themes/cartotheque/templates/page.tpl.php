@@ -78,8 +78,18 @@
     <header class="container-fluid">
 	<section class="container clearfix">
 	 <ul class="topNav hidden-xs">
-		<li class="home"><span><a href=""></a></span>accueil</li>
-		<li class="connect"><span><a href=""></a></span>se connecter</li>
+		<li class="home"><span><a href="<?php print $front_page; ?>" rel="home"></a></span><?php print t('home'); ?></li>
+		<?php
+			if ($user->uid > 0) {
+				print '<li class="user"><span>' . l('', 'user') . '</span>' . t('my account') . "</li>\n";
+				//print ' &nbsp;|&nbsp; ';
+				//print l(t('logout'), 'logout');
+				print '<li class="connect"><span>' . l('', 'logout') . '</span>' . t('logout') . "</li>\n";
+			} else {
+				//print l(t('login'), 'user');
+				print '<li class="connect"><span>' . l('', 'user') . '</span>' . t('login') . "</li>\n";
+			}
+		?>
 	</ul>
       <?php if ($logo): ?>
         <a href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>" rel="home" id="logo">
@@ -112,7 +122,7 @@
     <?php print $messages; ?>
 	</div><?php endif; ?>
 	
-      <div id="mainContent" class="column <?php echo $contentclass; ?>"><div class="section">
+      <div id="mainContent" class="column"><div class="section">
         <?php if ($page['highlighted']): ?><div id="highlighted"><?php print render($page['highlighted']); ?></div><?php endif; ?>
         <a id="main-content"></a>
         <?php print render($title_prefix); ?>
