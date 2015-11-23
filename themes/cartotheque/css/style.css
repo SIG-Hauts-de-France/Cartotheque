@@ -51,53 +51,57 @@ header ul.topNav li span{
 	margin-bottom: 1px;
 	border-radius: 50%;
 }
-header ul li a{
+header ul.topNav li a{
 	display:block;
 	height:43px;
+	background-image: url(../images/top-icones.png);
+	background-repeat: no-repeat;
 }
 header ul.topNav li.home a{
-	background-image: url(../images/top-icones.png);
-	background-repeat: no-repeat;
+	background-position: 0 -88px;
 }
-header ul.topNav li.connect a{
-	background-image: url(../images/top-icones.png);
-	background-repeat: no-repeat;
+header ul.topNav li.login a{
+	background-position: 0 -132px;
+}
+header ul.topNav li.logout a{
+	background-position: 0 0;
+}
+header ul.topNav li.user a{
 	background-position: 0 -44px;
 }
 
-div.tvt{
+section.tvt{
 	margin:40px auto;
 	display:table;
 }
-div.tvt > div{
+section.tvt > div{
 	float:left;
 	margin-right:20px;
 }
-div.tvt p{
+section.tvt p{
 	text-align:center;
 	font-size:18px;
 	font-weight:400;
 }
-}
-div.tvt div.lineIcone{
+section.tvt div.lineIcone{
 	position: relative;
 	height: 50px;
 	margin-top: 10px;
 }
-div.tvt div.lineIcone div.line{
+section.tvt div.lineIcone div.line{
 	border-top: 1px solid #466a7f;
 	position: relative;
 	z-index: 1;
 	margin: 0px;
 	top: 25px;
 }
-div.tvt div.visualiser div.lineIcone div.line{
+section.tvt div.visualiser div.lineIcone div.line{
 	border-top: 1px solid #5f8296;
 }
-div.tvt div.telecharger div.lineIcone div.line{
+section.tvt div.telecharger div.lineIcone div.line{
 	border-top: 1px solid #7992a0;
 }
-div.tvt div.lineIcone div.icone{
+section.tvt div.lineIcone div.icone{
 	position:relative;
 	z-index:2;
 	display: table;
@@ -107,38 +111,44 @@ div.tvt div.lineIcone div.icone{
 	text-align: center;
 	margin: 0px auto;
 }
-div.tvt div.lineIcone div.icone.loupe{
+section.tvt div.lineIcone div.icone.loupe{
 	background-image: url(../images/i_tvt.png);
 	background-repeat:no-repeat;
 }
-div.tvt div.lineIcone div.icone.oeil{
+section.tvt div.lineIcone div.icone.oeil{
 	background-image: url(../images/i_tvt.png);
 	background-repeat:no-repeat;
 	background-position: -50px 0;
 }
-div.tvt div.lineIcone div.icone.telecharger{
+section.tvt div.lineIcone div.icone.telecharger{
 	background-image: url(../images/i_tvt.png);
 	background-repeat:no-repeat;
 	background-position: -100px 0;
 }
-div.tvt  span{
+section.tvt  span{
 	font-size:28px;
 	font-weight:600;
 }
-div.trouver span{
+section.tvt div.trouver span{
 	color:#466a7f;
 }
-div.visualiser span{
+section.tvt div.visualiser span{
 	color:#5f8296;
 }
-div.telecharger span{
+section.tvt div.telecharger span{
 	color:#7992a0;
 }
 
-div.searchMap{
+section.searchMap{
 	background:#eef1f2;
 	padding-top:15px;
 	padding-bottom:15px;
+}
+section.searchMap .input-group span.search{
+background-image: url("../images/i_search.png");
+background-repeat: no-repeat;
+padding-right: 32px;
+background-position: 12px 5px;
 }
 p.searchMore{
 	margin-top:40px;
@@ -155,10 +165,10 @@ p.searchMore span{
 p.searchMore a{
 	color:#466a7f;
 }
-div.actus{
+section.actus{
 	margin-top:40px;
 }
-div.actus h2{
+section.actus h2{
 	margin:0;
 	text-align:center;
 	background:#95a6b1;
@@ -167,7 +177,7 @@ div.actus h2{
 	padding:6px;
 }
 
-div.actus div.maps div.mapZoom{
+section.actus div.maps div.mapZoom{
 	position:absolute;
 	z-index:100;
 	display: none;
@@ -178,17 +188,17 @@ div.actus div.maps div.mapZoom{
 box-shadow: 2px 2px 4px 2px rgba(0,0,0,0.2);
 	
 }
-div.actus div.maps.leftMaps div.mapZoom{
+section.actus div.maps.leftMaps div.mapZoom{
 	left:20px;
 }
-div.actus  div.mapZoom:after {
+section.actus  div.mapZoom:after {
 	content:"ch";
 	/*background: url(../images/triangle-gris.png);*/
 }
-div.actus div.maps.rightMaps div.mapZoom{
+section.actus div.maps.rightMaps div.mapZoom{
 	right:20px;
 }
-div.actus div.maps div:hover div.mapZoom{
+section.actus div.maps div:hover div.mapZoom{
 	display: block;
 }
 
