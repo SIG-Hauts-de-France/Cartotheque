@@ -14,8 +14,12 @@ regions[highlighted] = Highlighted
 regions[help] = Help
 regions[content] = Content
 ;regions[sidebar_first] = Left sidebar
-regions[sidebar_second] = Right sidebar
+;regions[sidebar_second] = Right sidebar
 regions[footer] = Footer
+regions[search] = Search
+regions[home_last_maps] = Home last maps
+regions[home_month_maps] = Home month maps
+regions[home_more_downloaded_maps] = Home more downloaded maps
 
 
 features[] = logo

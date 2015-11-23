@@ -46,3 +46,10 @@ function cartotheque_preprocess_page(&$variables) {
  */ 	
 
 }
+
+
+function cartotheque_form_search_block_form_alter(&$form, &$form_state, $form_id) {
+	//var_dump( $form );
+	$form['search_block_form']['#attributes']['placeholder'] = t('Search');
+	$form['search_block_form']['#attributes']['class'][] = 'form-control';
+}

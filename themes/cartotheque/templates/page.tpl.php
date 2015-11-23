@@ -78,16 +78,16 @@
     <header class="container-fluid">
 	<section class="container clearfix">
 	 <ul class="topNav hidden-xs">
-		<li class="home"><span><a href="<?php print $front_page; ?>" rel="home"></a></span><?php print t('home'); ?></li>
+		<li class="home"><span><a href="<?php print $front_page; ?>" rel="home"></a></span><?php print t('Home'); ?></li>
 		<?php
 			if ($user->uid > 0) {
-				print '<li class="user"><span>' . l('', 'user') . '</span>' . t('my account') . "</li>\n";
+				print '<li class="user"><span>' . l('', 'user') . '</span>' . t('My account') . "</li>\n";
 				//print ' &nbsp;|&nbsp; ';
 				//print l(t('logout'), 'logout');
-				print '<li class="logout"><span>' . l('', 'user/logout') . '</span>' . t('logout') . "</li>\n";
+				print '<li class="logout"><span>' . l('', 'user/logout') . '</span>' . t('Logout') . "</li>\n";
 			} else {
 				//print l(t('login'), 'user');
-				print '<li class="login"><span>' . l('', 'user') . '</span>' . t('login') . "</li>\n";
+				print '<li class="login"><span>' . l('', 'user') . '</span>' . t('Log in') . "</li>\n";
 			}
 		?>
 	</ul>
@@ -152,13 +152,17 @@
 
 		<!-- Search block -->
 		<section class="row searchMap">
+		
 		<div class="col-sm-6">
+      			<?php print render($page['search']); ?>
+			<!--
 			<form>
 				<div class="input-group">
 				  <span class="input-group-addon search" id="basic-addon1"></span>
 				  <input type="text" class="form-control" placeholder="Recherche" aria-describedby="basic-addon1">
 				</div>
 			</form>
+			-->
 			<p class="searchMore"><span></span><a href="">Recherche avancée</a></p>
 		</div>
 		</section>
@@ -166,6 +170,7 @@
 		<!-- Maps block -->
 		<section class="row actus">
 			<div class="col-sm-3">
+			<?php print render($page['home_last_maps']); ?>
 			<h2>Dernières cartes ajoutées</h2>
 			<div class="row maps leftMaps">
 				<div class="col-xs-6 col-sm-12 col-md-6"><a href="#"><img src="images/ap-carte-home.jpg" class="img-responsive" alt="" />
@@ -180,6 +185,7 @@
 			</div>
 
 			<div class="col-sm-6">
+			<?php print render($page['home_month_maps']); ?>
 				<h2>Cartes du mois</h2>
 				<ul class="rslides">
 					<li><img src="images/carte-home.jpg" alt=""></li>
@@ -189,6 +195,7 @@
 			</div>
 
 			<div class="col-sm-3">
+			<?php print render($page['home_more_downloaded_maps']); ?>
 				<h2>Cartes les plus téléchargées</h2>
 				<div class="row maps rightMaps">
 					<div class="col-xs-6 col-sm-12 col-md-6">
