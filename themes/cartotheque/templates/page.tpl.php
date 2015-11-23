@@ -124,9 +124,9 @@
 		<div class="col-md-12"><?php print $messages; ?></div>
 	<?php endif; ?>
 
+	<?php if (drupal_is_front_page()): ?>
 	<div id="mainContent" class="column">
         <a id="main-content"></a>
-	<?php if (drupal_is_front_page()): ?>
 		<section class="row tvt">
 		<div class="trouver">
 			<div class="lineIcone">
@@ -219,21 +219,35 @@
 				</div>
 			</div>
 		</section>
+      	</div> <!-- /#content -->
 		
 	<?php else: ?>
-		<section>
+	<div id="mainContent" class="container">
+	        <a id="main-content"></a>
 		<?php if ($page['highlighted']): ?><div id="highlighted"><?php print render($page['highlighted']); ?></div><?php endif; ?>
-		<?php print render($title_prefix); ?>
-		<?php if ($title): ?><h1 class="title" id="page-title"><?php print $title; ?></h1><?php endif; ?>
-		<?php print render($title_suffix); ?>
-		<?php if ($tabs): ?><div class="tabs"><?php print render($tabs); ?></div><?php endif; ?>
-		<?php print render($page['help']); ?>
-		<?php if ($action_links): ?><ul class="action-links"><?php print render($action_links); ?></ul><?php endif; ?>
-		<?php print render($page['content']); ?>
-		<?php print $feed_icons; ?>
+		<section>
+		<?php if($node->type == "carte" ): ?>
+			<div class="backList"><a href="#"><span></span>Retour à la recherche</a></div>
+			<div class="row map">
+			<?php if ($tabs): ?><div class="tabs"><?php print render($tabs); ?></div><?php endif; ?>
+			<?php print render($page['help']); ?>
+			<?php if ($action_links): ?><ul class="action-links"><?php print render($action_links); ?></ul><?php endif; ?>
+			<?php print render($page['content']); ?>
+			<?php print $feed_icons; ?>
+			</div>
+		<?php else: ?>
+			<?php print render($title_prefix); ?>
+			<?php if ($title): ?><h1 class="title" id="page-title"><?php print $title; ?></h1><?php endif; ?>
+			<?php print render($title_suffix); ?>
+			<?php if ($tabs): ?><div class="tabs"><?php print render($tabs); ?></div><?php endif; ?>
+			<?php print render($page['help']); ?>
+			<?php if ($action_links): ?><ul class="action-links"><?php print render($action_links); ?></ul><?php endif; ?>
+			<?php print render($page['content']); ?>
+			<?php print $feed_icons; ?>
+		<?php endif; ?>
 		</section>
+	</div>
 	<?php endif; ?>
-      	</div> <!-- /#content -->
 
     </div></div> <!-- /#main, /#main-wrapper -->
 
