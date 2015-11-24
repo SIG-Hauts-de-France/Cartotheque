@@ -226,6 +226,40 @@ class cswGeoClient {
 		return $this->_callHTTPCSW($request);
 	}
 	
+	public function publish($geoid) {
+		$request = new HTTP_Request2($this->_authentAddress.'/srv/eng/md.publish');
+		$request->setMethod(HTTP_Request2::METHOD_GET);
+		$url = $request->getUrl();
+		
+		$urlVars = array(
+			'ids' => $geoid,
+		);
+		
+		$url->setQueryVariables($urlVars);
+		
+		// auth needed
+		$this->_authentication($request);
+		
+		return $this->_callHTTPCSW($request);
+	}
+	
+	public function unpublish($geoid) {
+		$request = new HTTP_Request2($this->_authentAddress.'/srv/eng/md.unpublish');
+		$request->setMethod(HTTP_Request2::METHOD_GET);
+		$url = $request->getUrl();
+		
+		$urlVars = array(
+			'ids' => $geoid,
+		);
+		
+		$url->setQueryVariables($urlVars);
+		
+		// auth needed
+		$this->_authentication($request);
+		
+		return $this->_callHTTPCSW($request);
+	}
+	
 	/**
 	 * retrieve csw repository capabilities
 	 * @return XML content
