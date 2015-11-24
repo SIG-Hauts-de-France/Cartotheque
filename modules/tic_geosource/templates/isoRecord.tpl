@@ -78,8 +78,8 @@ $uuid?
       <gmd:MD_ReferenceSystem>
          <gmd:referenceSystemIdentifier>
             <gmd:RS_Identifier>
-               <gmd:code>
-                  <gco:CharacterString>{$map_number}</gco:CharacterString>
+               <gmd:code nilReason="missing">
+                  <gco:CharacterString />
                </gmd:code>
             </gmd:RS_Identifier>
          </gmd:referenceSystemIdentifier>
@@ -92,6 +92,9 @@ $uuid?
                <gmd:title>
                   <gco:CharacterString>{$map_title}</gco:CharacterString>
                </gmd:title>
+               <gmd:identifier>
+                 <gco:CharacterString>{$map_number}</gco:CharacterString>
+               </gmd:identifier>
                <gmd:date>
                   <gmd:CI_Date>
                      <gmd:date>
@@ -135,11 +138,11 @@ $update_date?
          </gmd:status>
          <gmd:pointOfContact>
             <gmd:CI_ResponsibleParty>
-               <gmd:individualName>
-                  <gco:CharacterString>{$author_name}</gco:CharacterString>
-               </gmd:individualName>
-               <gmd:organisationName gco:nilReason="missing">
+               <gmd:individualName gco:nilReason="missing">
                   <gco:CharacterString />
+               </gmd:individualName>
+               <gmd:organisationName>
+                  <gco:CharacterString>{$author_name}</gco:CharacterString>
                </gmd:organisationName>
                <gmd:positionName gco:nilReason="missing">
                   <gco:CharacterString />
@@ -172,7 +175,7 @@ $update_date?
                </gmd:contactInfo>
                <gmd:role>
                   <gmd:CI_RoleCode codeList="http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#CI_RoleCode"
-                                   codeListValue="pointOfContact"/>
+                                   codeListValue="author"/>
                </gmd:role>
             </gmd:CI_ResponsibleParty>
          </gmd:pointOfContact>
@@ -409,7 +412,7 @@ $update_date?
          <gmd:lineage>
             <gmd:LI_Lineage>
                <gmd:statement>
-                  <gco:CharacterString>{$map_url}</gco:CharacterString>
+                  <gco:CharacterString>{$source_description} {$source_url} {$source_date}</gco:CharacterString>
                </gmd:statement>
             </gmd:LI_Lineage>
          </gmd:lineage>

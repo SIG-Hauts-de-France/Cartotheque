@@ -104,6 +104,41 @@ function tic_geosource_get_multiple_elements_value($record, $tag) {
 	return $values;
 }
 
+// TODO: fichiers ?
+/**
+ * Recuperation de URL carte et des fichiers associés a la ressource
+ *
+ * @param DOMDocument Geosource ressource
+ * @return array
+ */
+function tic_geosource_get_record_files($record) {
+	$files = array(
+		'url_carte' => array(),
+		'fichiers' => array(),
+	);
+	
+	$xpath = new DOMXpath($record);
+	$xpath->registerNamespace('gmd', 'http://www.isotc211.org/2005/gmd');
+	
+	$debug = false;
+	
+	foreach ($xpath->query('//gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine') as $n) {
+		$protocol = $n->getElementsByTagName('protocol');
+		if($protocol->length == 0) { continue; }
+		if(trim($protocol->item(0)->nodeValue) == 'OGC:WMS') {
+			$key = 'url_carte';
+		}
+		else { $key = 'fichiers'; }
+		
+		$urls = $n->getElementsByTagName('URL');
+		if($urls->length == 0) { continue; }
+		
+		$files[$key][] = array('URL' => trim($urls->item(0)->nodeValue));
+	}
+	
+	return $files;
+}
+
 /**
  * Get the thumbnail URL from the record
  *
@@ -172,6 +207,12 @@ function tic_geosource_get_record_thumbnail($record) {
 	return false;
 }
 
+
+/**
+ * Extraction des mots cles et themes
+ * @param DOMDocument Geosource resource
+ * @return array Tableau associatif themes et mots cles
+ */
 function tic_geosource_get_keywords_and_themes($record) {
 	$ret = array();
 	
@@ -202,7 +243,7 @@ function tic_geosource_get_keywords_and_themes($record) {
 }
 
 /**
- * 
+ * Obtenir l'emprise geographique depuis la bbox
  *
  * @param DOMDocument record
  */
@@ -213,6 +254,27 @@ function tic_geosource_get_record_bbox_equivalent($record) {
 	$east = tic_geosource_get_single_element_value($record, 'eastBoundLongitude', '180');
 	
 	return tic_geosource_bbox_to_region($north, $south, $east, $west);
+}
+
+/**
+ * Extraction des infos source de données
+ *
+ * @param DOMDocument Geosource Record
+ * @return array Tableau associatif url, description et date de source de données
+ */
+// TODO extraction des données via regex
+function tic_geosource_get_source_info($record) {
+	$infos = array(
+		'url' => '',
+		'date' => '',
+		'text' => '',
+	);
+	
+	$raw = tic_geosource_get_single_element_by_path($record, '//gmd:lineage/gmd:LI_Lineage/gmd:statement');
+	
+	$infos['text'] = htmlentities($raw);
+	
+	return $infos;
 }
 
 /**
@@ -233,17 +295,17 @@ function tic_geosource_record_to_node($record) {
 	$title = tic_geosource_get_single_element_value($record, 'title');
 	$abstract = tic_geosource_get_single_element_value($record, 'abstract');
 	$date = tic_geosource_get_single_element_value($record, 'date');
-	$scale = intval(tic_geosource_get_single_element_by_path($record, '//gmd:spatialResolution/gmd:MD_Resolution/gmd:equivalentScale/gmd:MD_RepresentativeFraction/gmd:denominator'));
+	$scale = tic_geosource_get_single_element_by_path($record, '//gmd:spatialResolution/gmd:MD_Resolution/gmd:equivalentScale/gmd:MD_RepresentativeFraction/gmd:denominator', false);
 	$category = tic_geosource_get_single_element_value($record, 'MD_TopicCategoryCode');
-	$numCarte = intval(tic_geosource_get_single_element_by_path($record, '//gmd:referenceSystemInfo/gmd:MD_ReferenceSystem/gmd:referenceSystemIdentifier/gmd:RS_Identifier/gmd:code'));
-	
+	$numCarte = intval(tic_geosource_get_single_element_by_path($record, '//gmd:identifier/gmd:MD_Identifier/gmd:code'));
 	$contactName = tic_geosource_get_single_element_by_path($record, '//gmd:contact/gmd:CI_ResponsibleParty/gmd:individualName');
 	$contactEmail = tic_geosource_get_single_element_by_path($record, '//gmd:contact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:electronicMailAddress');
-	
 	$empriseGeo = tic_geosource_get_record_bbox_equivalent($record);
-	
-	$urlData = tic_geosource_get_single_element_by_path($record, '//gmd:lineage/gmd:LI_Lineage/gmd:statement');
-	
+	$sourceInfos = tic_geosource_get_source_info($record);
+	$kt = tic_geosource_get_keywords_and_themes($record);
+	$creationDate = tic_geosource_get_single_element_by_path($record, '//gmd:MD_Metadata/gmd:dateStamp');
+	$updateDate = tic_geosource_get_single_element_by_path($record, '//gmd:IdentificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:date/gmd:Ci_Date/gmd:date');
+
 	$contact = false;
 	if ($contactEmail != '') {
 		$contact = tic_geosource_load_contact_by_email($contactEmail);
@@ -256,10 +318,12 @@ function tic_geosource_record_to_node($record) {
 		}
 	}
 	
-	//Fichiers
+	// Fichiers
 	$thumb = tic_geosource_get_record_thumbnail($record);
 	
-	$kt = tic_geosource_get_keywords_and_themes($record);
+	$files = tic_geosource_get_record_files($record);
+	
+	// Fichiers associés
 	
 	$node = tic_geosource_get_node_by_uuid($uuid);
 	
@@ -276,25 +340,28 @@ function tic_geosource_record_to_node($record) {
 		$node->field_uuid['und'][0]['value'] = $uuid;
 	}
 	
-	// TODO: date de realisation
-	// date de mise a jour
-	// images et fichiers ?
-	// url carte voir le xml (ref document)
-	// source des données
-	// url source des données
+	// TODO:
+	// image et fichier ?
+	// carte statique ou interactive ? pas moyen de savoir depuis le XML (extraire de geosource)
+	
+	if ($scale !== false) {
+		$node->field_echelle['und'][0]['value'] = $scale;
+	}
 	
 	// atttributs
 	$node->title = $title;
 	$node->field_description['und'][0]['value'] = $abstract;
 	$node->field_numero_de_carte['und'][0]['value'] = $numCarte;
-	$node->field_echelle['und'][0]['value'] = $scale;
-	$node->field_url_source_des_donnees['und'][0]['value'] = $urlData;
+	$node->field_url_source_des_donnees['und'][0]['value'] = $sourceInfos['url'];
+	$node->field_date_source_des_donnees['und'][0]['value'] = $sourceInfos['date'];
+	$node->field_source_des_donnees['und'][0]['value'] = $sourceInfos['text'];
 	$node->field_categorie['und'][0]['tid'] = tic_geosource_get_tid_from_term_name('categorie', $category);
-	
 	$node->field_emprise_geographique['und'][0]['value'] = $empriseGeo;
+	$node->field_date_de_creation['und'][0]['value'] = $creationDate;
+	$node->field_date_de_mise_jour['und'][0]['value'] = $updateDate;
 	
 	if ($contact) {
-		$node->field_contact['und'][0]['nid'] = $contact->nid;
+		$node->field_auteur['und'][0]['nid'] = $contact->nid;
 	}
 	else {
 		watchdog('tic_geosource', 'Aucun contact trouvé pour la ressource '.$title);
@@ -306,7 +373,6 @@ function tic_geosource_record_to_node($record) {
 		$node->field_mots_cles['und'][]['tid'] = $tid;
 	}
 	
-	// TODO: basculer les thematiques en taxo
 	$node->field_thematique['und'] = array();
 	foreach($kt['themes'] as $theme) {
 		$tid = tic_geosource_get_tid_from_term_name('thematique_gemet', $theme);
@@ -314,9 +380,19 @@ function tic_geosource_record_to_node($record) {
 	}
 	
 	//Fichiers
-	if($thumb) {
+	if ($thumb) {
 		$node->field_imagette['und']['0']['fid'] = $thumb->fid;
 	}
+	
+	foreach($files['url_carte'] as $url_carte) {
+		$node->field_url_carte['und'][0]['value'] = $url_carte['URL'];
+	}
+	
+	// TODO choisir si la carte est statique ou interactive en fonction des champs récupérés
+	if ($scale === false) {
+		$node->field_type_de_carte['und'][0]['value'] = 'statique';
+	}
+	else { $node->field_type_de_carte['und'][0]['value'] = 'dynamique'; }
 	
 	// disable push to geosource
 	$disabled = &drupal_static('tic_geosource_disable_geosource_push');

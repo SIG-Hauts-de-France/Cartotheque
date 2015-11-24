@@ -11,10 +11,10 @@
 function tic_geosource_install() {
 	// Init bbox settings
 	$europeBbox = Array(
-		'west' => '-18',
-		'east' => '46',
-		'north' => '71',
-		'south' => '33',
+		'west' => '-13',
+		'east' => '33',
+		'north' => '57',
+		'south' => '36',
 	);
 	
 	$franceBbox = Array(

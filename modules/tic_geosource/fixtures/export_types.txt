@@ -215,6 +215,68 @@ $data = array(
         ),
       ),
     ),
+    'field_date_de_creation' => array(
+      'translatable' => '0',
+      'entity_types' => array(),
+      'settings' => array(
+        'granularity' => array(
+          'month' => 'month',
+          'day' => 'day',
+          'hour' => 'hour',
+          'minute' => 'minute',
+          'year' => 'year',
+          'second' => 0,
+        ),
+        'tz_handling' => 'site',
+        'timezone_db' => 'UTC',
+        'cache_enabled' => 0,
+        'cache_count' => '4',
+        'todate' => '',
+      ),
+      'storage' => array(
+        'type' => 'field_sql_storage',
+        'settings' => array(),
+        'module' => 'field_sql_storage',
+        'active' => '1',
+        'details' => array(
+          'sql' => array(
+            'FIELD_LOAD_CURRENT' => array(
+              'field_data_field_date_de_creation' => array(
+                'value' => 'field_date_de_creation_value',
+              ),
+            ),
+            'FIELD_LOAD_REVISION' => array(
+              'field_revision_field_date_de_creation' => array(
+                'value' => 'field_date_de_creation_value',
+              ),
+            ),
+          ),
+        ),
+      ),
+      'foreign keys' => array(),
+      'indexes' => array(),
+      'field_name' => 'field_date_de_creation',
+      'type' => 'date',
+      'module' => 'date',
+      'active' => '1',
+      'locked' => '0',
+      'cardinality' => '1',
+      'deleted' => '0',
+      'columns' => array(
+        'value' => array(
+          'type' => 'varchar',
+          'length' => 20,
+          'not null' => FALSE,
+          'sortable' => TRUE,
+          'views' => TRUE,
+        ),
+      ),
+      'bundles' => array(
+        'node' => array(
+          0 => 'carte',
+        ),
+      ),
+    ),
     'field_date_de_mise_jour' => array(
       'translatable' => '0',
       'entity_types' => array(),
@@ -256,7 +318,7 @@ $data = array(
       'foreign keys' => array(),
       'indexes' => array(),
       'field_name' => 'field_date_de_mise_jour',
-      'type' => 'datestamp',
+      'type' => 'date',
       'module' => 'date',
       'active' => '1',
       'locked' => '0',
@@ -264,7 +326,8 @@ $data = array(
       'deleted' => '0',
       'columns' => array(
         'value' => array(
-          'type' => 'int',
+          'type' => 'varchar',
+          'length' => 20,
           'not null' => FALSE,
           'sortable' => TRUE,
           'views' => TRUE,
@@ -283,13 +346,13 @@ $data = array(
         'granularity' => array(
           'month' => 'month',
           'day' => 'day',
+          'hour' => 'hour',
+          'minute' => 'minute',
           'year' => 'year',
-          'hour' => 0,
-          'minute' => 0,
           'second' => 0,
         ),
-        'tz_handling' => 'none',
-        'timezone_db' => '',
+        'tz_handling' => 'site',
+        'timezone_db' => 'UTC',
         'cache_enabled' => 0,
         'cache_count' => '4',
         'todate' => '',
@@ -317,7 +380,7 @@ $data = array(
       'foreign keys' => array(),
       'indexes' => array(),
       'field_name' => 'field_date_source_des_donnees',
-      'type' => 'datestamp',
+      'type' => 'date',
       'module' => 'date',
       'active' => '1',
       'locked' => '0',
@@ -325,7 +388,8 @@ $data = array(
       'deleted' => '0',
       'columns' => array(
         'value' => array(
-          'type' => 'int',
+          'type' => 'varchar',
+          'length' => 20,
           'not null' => FALSE,
           'sortable' => TRUE,
           'views' => TRUE,
@@ -1325,7 +1389,7 @@ $data = array(
       0 => array(
         'label' => 'Auteur',
         'widget' => array(
-          'weight' => '17',
+          'weight' => '13',
           'type' => 'options_select',
           'module' => 'options',
           'active' => 1,
@@ -1349,7 +1413,7 @@ $data = array(
             'weight' => 0,
           ),
         ),
-        'required' => 0,
+        'required' => 1,
         'description' => '',
         'default_value' => NULL,
         'field_name' => 'field_auteur',
@@ -1362,7 +1426,7 @@ $data = array(
       0 => array(
         'label' => 'Catégorie',
         'widget' => array(
-          'weight' => '22',
+          'weight' => '7',
           'type' => 'options_select',
           'module' => 'options',
           'active' => 1,
@@ -1386,7 +1450,7 @@ $data = array(
             'weight' => 0,
           ),
         ),
-        'required' => 0,
+        'required' => 1,
         'description' => '',
         'default_value' => NULL,
         'field_name' => 'field_categorie',
@@ -1395,21 +1459,23 @@ $data = array(
         'deleted' => '0',
       ),
     ),
-    'field_date_de_mise_jour' => array(
+    'field_date_de_creation' => array(
       0 => array(
-        'label' => 'Date de mise à jour',
+        'label' => 'Date de réalisation',
         'widget' => array(
+          'weight' => '4',
           'type' => 'date_select',
-          'weight' => '0',
+          'module' => 'date',
+          'active' => 1,
           'settings' => array(
             'input_format' => 'm/d/Y - H:i:s',
             'input_format_custom' => '',
-            'increment' => 15,
-            'text_parts' => array(),
             'year_range' => '-3:+3',
+            'increment' => '15',
             'label_position' => 'above',
+            'text_parts' => array(),
+            'no_fieldset' => 0,
           ),
-          'module' => 'date',
         ),
         'settings' => array(
           'default_value' => 'now',
@@ -1422,7 +1488,6 @@ $data = array(
           'default' => array(
             'label' => 'above',
             'type' => 'date_default',
-            'weight' => '4',
             'settings' => array(
               'format_type' => 'long',
               'multiple_number' => '',
@@ -1432,6 +1497,7 @@ $data = array(
               'show_remaining_days' => FALSE,
             ),
             'module' => 'date',
+            'weight' => 28,
           ),
           'teaser' => array(
             'type' => 'hidden',
@@ -1440,7 +1506,62 @@ $data = array(
             'weight' => 0,
           ),
         ),
-        'required' => FALSE,
+        'required' => 1,
+        'description' => '',
+        'field_name' => 'field_date_de_creation',
+        'entity_type' => 'node',
+        'bundle' => 'carte',
+        'deleted' => '0',
+      ),
+    ),
+    'field_date_de_mise_jour' => array(
+      0 => array(
+        'label' => 'Date de mise à jour',
+        'widget' => array(
+          'weight' => '19',
+          'type' => 'date_select',
+          'module' => 'date',
+          'active' => 1,
+          'settings' => array(
+            'input_format' => 'm/d/Y - H:i:s',
+            'input_format_custom' => '',
+            'year_range' => '-3:+3',
+            'increment' => '15',
+            'label_position' => 'above',
+            'text_parts' => array(),
+            'no_fieldset' => 0,
+          ),
+        ),
+        'settings' => array(
+          'default_value' => 'now',
+          'default_value_code' => '',
+          'default_value2' => 'same',
+          'default_value_code2' => '',
+          'user_register_form' => FALSE,
+        ),
+        'display' => array(
+          'default' => array(
+            'label' => 'above',
+            'type' => 'date_default',
+            'settings' => array(
+              'format_type' => 'long',
+              'multiple_number' => '',
+              'multiple_from' => '',
+              'multiple_to' => '',
+              'fromto' => 'both',
+              'show_remaining_days' => FALSE,
+            ),
+            'module' => 'date',
+            'weight' => 30,
+          ),
+          'teaser' => array(
+            'type' => 'hidden',
+            'label' => 'above',
+            'settings' => array(),
+            'weight' => 0,
+          ),
+        ),
+        'required' => 0,
         'description' => '',
         'field_name' => 'field_date_de_mise_jour',
         'entity_type' => 'node',
@@ -1477,7 +1598,6 @@ $data = array(
           'default' => array(
             'label' => 'above',
             'type' => 'date_default',
-            'weight' => '16',
             'settings' => array(
               'format_type' => 'long',
               'multiple_number' => '',
@@ -1487,6 +1607,7 @@ $data = array(
               'show_remaining_days' => FALSE,
             ),
             'module' => 'date',
+            'weight' => 29,
           ),
           'teaser' => array(
             'type' => 'hidden',
@@ -1507,7 +1628,7 @@ $data = array(
       0 => array(
         'label' => 'Description',
         'widget' => array(
-          'weight' => '-2',
+          'weight' => '3',
           'type' => 'text_textarea_with_summary',
           'module' => 'text',
           'active' => 1,
@@ -1549,7 +1670,7 @@ $data = array(
       0 => array(
         'label' => 'Echelle',
         'widget' => array(
-          'weight' => '14',
+          'weight' => '6',
           'type' => 'options_select',
           'module' => 'options',
           'active' => 1,
@@ -1573,7 +1694,7 @@ $data = array(
             'weight' => 0,
           ),
         ),
-        'required' => 1,
+        'required' => 0,
         'description' => '',
         'default_value' => NULL,
         'field_name' => 'field_echelle',
@@ -1586,7 +1707,7 @@ $data = array(
       0 => array(
         'label' => 'Emprise géographique',
         'widget' => array(
-          'weight' => '15',
+          'weight' => '5',
           'type' => 'options_select',
           'module' => 'options',
           'active' => 1,
@@ -1623,7 +1744,7 @@ $data = array(
       0 => array(
         'label' => 'Fichier carte',
         'widget' => array(
-          'weight' => '3',
+          'weight' => '14',
           'type' => 'file_generic',
           'module' => 'file',
           'active' => 1,
@@ -1653,7 +1774,7 @@ $data = array(
             'weight' => 0,
           ),
         ),
-        'required' => 0,
+        'required' => 1,
         'description' => '',
         'field_name' => 'field_fichier_carte',
         'entity_type' => 'node',
@@ -1665,7 +1786,7 @@ $data = array(
       0 => array(
         'label' => 'Image carte',
         'widget' => array(
-          'weight' => '7',
+          'weight' => '15',
           'type' => 'image_image',
           'module' => 'image',
           'active' => 1,
@@ -1715,7 +1836,7 @@ $data = array(
       0 => array(
         'label' => 'Imagette',
         'widget' => array(
-          'weight' => '20',
+          'weight' => '16',
           'type' => 'image_image',
           'module' => 'image',
           'active' => 1,
@@ -1749,7 +1870,7 @@ $data = array(
             'weight' => 0,
           ),
         ),
-        'required' => 0,
+        'required' => 1,
         'description' => '',
         'field_name' => 'field_imagette',
         'entity_type' => 'node',
@@ -1761,7 +1882,7 @@ $data = array(
       0 => array(
         'label' => 'Mots clés',
         'widget' => array(
-          'weight' => '6',
+          'weight' => '9',
           'type' => 'taxonomy_autocomplete',
           'module' => 'taxonomy',
           'active' => 0,
@@ -1788,7 +1909,7 @@ $data = array(
             'weight' => 0,
           ),
         ),
-        'required' => 0,
+        'required' => 1,
         'description' => '',
         'default_value' => NULL,
         'field_name' => 'field_mots_cles',
@@ -1801,7 +1922,7 @@ $data = array(
       0 => array(
         'label' => 'Numéro de carte',
         'widget' => array(
-          'weight' => '16',
+          'weight' => '1',
           'type' => 'number',
           'module' => 'number',
           'settings' => array(),
@@ -1886,7 +2007,7 @@ $data = array(
       0 => array(
         'label' => 'Thématique',
         'widget' => array(
-          'weight' => '21',
+          'weight' => '8',
           'type' => 'options_select',
           'module' => 'options',
           'active' => 1,
@@ -1923,7 +2044,7 @@ $data = array(
       0 => array(
         'label' => 'Type de carte',
         'widget' => array(
-          'weight' => '13',
+          'weight' => '2',
           'type' => 'options_select',
           'module' => 'options',
           'active' => 1,
@@ -1964,7 +2085,7 @@ $data = array(
       0 => array(
         'label' => 'URL carte',
         'widget' => array(
-          'weight' => '8',
+          'weight' => '17',
           'type' => 'url_external',
           'module' => 'url',
           'active' => 1,
@@ -2052,7 +2173,7 @@ $data = array(
       0 => array(
         'label' => 'uuid',
         'widget' => array(
-          'weight' => '23',
+          'weight' => '18',
           'type' => 'text_textfield',
           'module' => 'text',
           'active' => 1,

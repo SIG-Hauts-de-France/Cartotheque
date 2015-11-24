@@ -195,20 +195,30 @@ class cswGeoClient {
 	}
 	
 	/**
-	 * Assigner une catégorie a une carte
+	 * Assigner une catégorie sur une ressource Geosource
 	 *
 	 * @param int Geosource resource identifier
+	 * @param array of categories to assign
 	 * @return bool
 	 */
-	public function addMapCategory($geoid) {
+	public function addMapCategory($geoid, $categories = array()) {
 		$request = new HTTP_Request2($this->_authentAddress.'/srv/eng/md.category.update');
 		$request->setMethod(HTTP_Request2::METHOD_GET);
 		$url = $request->getUrl();
 		
-		$url->setQueryVariables(array(
+		$urlVars = array(
 			'id' => $geoid,
-			'_1' => 'on',
-		));
+		);
+		
+		foreach ($categories as $cat) {
+			switch($cat) {
+				case 'map':
+						$urlVars['_1'] = 'on';
+					break;
+			}
+		}
+		
+		$url->setQueryVariables($urlVars);
 		
 		// auth needed
 		$this->_authentication($request);

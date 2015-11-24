@@ -1,16 +1,13 @@
 <?php
 /**
  *
- * TODO: hook node save pour push tic_geosource
- * hook node update pour update tic_geosource ?
- * cron synchro vers tic_geosource
- * hook push vers tic_geosource a la sauvegarde d'une carte
- *
  */
 
 // DEBUG
 function tic_geosource_node_view($node, $v, $e) {
 	return;
+	var_dump($node); die();
+	
 	module_load_include('inc', 'tic_geosource', 'includes/tic_geosource.utils');
 	
 	//tic_geosource_load_thesaurus();
@@ -152,6 +149,20 @@ function tic_geosource_form_validate(&$form, &$form_state) {
 		array('group' => CSS_THEME, 'type' => 'file')
 	);
 	
+	// TODO checks particuliers dynamique / statique
+	
+	//statique seulement: numero de carte obligatoire
+	// - pas de date de mise a jour
+	// - echelle obligatoire
+	// - source des données (text + date + url)
+	// - collection de carte
+	
+	//dynamique seulement: date de mise a jour obligatoire
+	// - pas de numero de carte
+	// - pas d'echelle
+	// - pas de source des données (texte  +date + url)
+	// - pas de collection de cartes
+	
 	return $form;
 }
 
@@ -195,16 +206,21 @@ function tic_geosource_node_presave($node) {
 		return;
 	}
 	
+	// Les brouillons ne sont pas envoyés sur Geosource
+	if ($node->status == 0) {
+		return;
+	}
+	
 	// disabled is set during cron executions
 	$disabled = &drupal_static('tic_geosource_disable_geosource_push', false);
-	if($disabled) {
+	if ($disabled) {
 		return;
 	}
 	
 	// a node can exists in drupal but not in geosource yet
 	if (! isset($node->field_uuid['und'][0]['value'])) {
 		$uuid = tic_geosource_insert_record($node);
-		if($uuid) {
+		if ($uuid) {
 			$node->field_uuid['und'][0]['value'] = $uuid;
 		}
 	}
@@ -229,11 +245,11 @@ function tic_geosource_load_csw_client() {
 	$password = variable_get('geosource_server_password', '');
 	$authAddress = variable_get('geosource_server_auth_address', '');
 	
-	if($cswServer == '') {
+	if ($cswServer == '') {
 		return false;
 	}
 	
-	if($authAddress != '') {
+	if ($authAddress != '') {
 		return new cswGeoClient($cswServer, $username, $password, $authAddress);
 	}
 	else {
@@ -270,7 +286,7 @@ function tic_geosource_region_to_bbox($region = 'Région') {
 	
 	$bbox = variable_get('tic_geosource_bbox');
 	
-	if(isset($bbox[$region])) { $ret = $bbox[$region]; }
+	if (isset($bbox[$region])) { $ret = $bbox[$region]; }
 	
 	return $ret;
 }
@@ -311,7 +327,7 @@ function tic_geosource_bbox_to_region($north, $south, $east, $west) {
 		$wdiff = abs($west - $values['west']);
 		
 		$match = $ndiff + $sdiff + $ediff + $wdiff;
-		if($match < $best) {
+		if ($match < $best) {
 			$best = $match;
 			$ret = $key;
 		}
@@ -321,14 +337,25 @@ function tic_geosource_bbox_to_region($north, $south, $east, $west) {
 }
 
 /**
- * Convert unixtimestamp to geosource date format
+ * Verifier si une carte est statique ou interactive
  *
- * @param int unix timestamp
- * @return string formatted time
  */
-function tic_geosource_unixtime_to_geosource_date($unix) {
-	return gmdate("Y-m-d\TH:i:s", intval($unix));
+function tic_geosource_is_static_map($node) {
+	if ($node->field_type_de_carte['und'][0]['value'] == 'statique') {
+		return true;
+	}
+	
+	return false;
 }
+
+/**
+ * Filter les entrées texte avant envoi dans Geosource
+ *
+ */
+function tic_geosource_format_text($text) {
+	return htmlspecialchars($text);
+}
+
 
 /**
  * Convert a drupal node to an array for divengine template
@@ -345,29 +372,27 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
 	if (isset($node->field_emprise_geographique['und'][0]['value'])) {
 		$bbox = tic_geosource_region_to_bbox($node->field_emprise_geographique['und'][0]['value']);
 	}
-	else {
-		$bbox = tic_geosource_region_to_bbox();
-	}
+	else { $bbox = tic_geosource_region_to_bbox(); }
 	
 	// Mots cles libres
 	$keywords = array();
 	if (isset($node->field_mots_cles['und'])) {
 		foreach ($node->field_mots_cles['und'] as $k) {
 			$term = taxonomy_term_load($k['tid']);
-			$keywords[] = $term->name;
+			$keywords[] = tic_geosource_format_text($term->name);
 		}
 	}
 	
 	// categorie
 	$catTerm = taxonomy_term_load($node->field_categorie['und'][0]['tid']);
-	$category = $catTerm->name;
+	$category = tic_geosource_format_text($catTerm->name);
 	
 	// thematiques Gemet
 	$thematiques = array();
-	if(isset($node->field_thematique['und'])) {
+	if (isset($node->field_thematique['und'])) {
 		foreach ($node->field_thematique['und'] as $t) {
 			$term = taxonomy_term_load($t['tid']);
-			$thematiques[] = $term->name;
+			$thematiques[] = tic_geosource_format_text($term->name);
 		}
 	}
 	
@@ -377,9 +402,9 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
 		$imageCarte = file_load($node->field_image_carte['und'][0]['fid']);
 		if ($imageCarte) {
 			$files[] = array(
-				'name' => $imageCarte->filename,
-				'url' => htmlspecialchars(file_create_url($imageCarte->uri)),
-				'filetype' => $imageCarte->filemime,
+				'name' => tic_geosource_format_text($imageCarte->filename),
+				'url' => tic_geosource_format_text(file_create_url($imageCarte->uri)),
+				'filetype' => tic_geosource_format_text($imageCarte->filemime),
 				'version' => '1.0',
 			);
 		}
@@ -390,9 +415,9 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
 		$fichierCarte = file_load($node->field_fichier_carte['und'][0]['fid']);
 		if ($fichierCarte) {
 			$files[] = array(
-				'name' => $fichierCarte->filename,
-				'url' => htmlspecialchars(file_create_url($fichierCarte->uri)),
-				'filetype' => $fichierCarte->filemime,
+				'name' => tic_geosource_format_text($fichierCarte->filename),
+				'url' => tic_geosource_format_text(file_create_url($fichierCarte->uri)),
+				'filetype' => tic_geosource_format_text($fichierCarte->filemime),
 				'version' => '1.0',
 			);
 		}
@@ -404,15 +429,15 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
 		$imagette = file_load($node->field_imagette['und'][0]['fid']);
 		if ($imagette) {
 			$thumbnails[] = array(
-				'name' => $imagette->filename,
-				'url' => htmlspecialchars(image_style_url('thumbnail', $imagette->uri)),
-				'filetype' => $imagette->filemime,
+				'name' => tic_geosource_format_text($imagette->filename),
+				'url' => tic_geosource_format_text(image_style_url('thumbnail', $imagette->uri)),
+				'filetype' => tic_geosource_format_text($imagette->filemime),
 				'description' => 'thumbnail',
 			);
 			$thumbnails[] = array(
-				'name' => $imagette->filename,
-				'url' => htmlspecialchars(image_style_url('medium', $imagette->uri)),
-				'filetype' => $imagette->filemime,
+				'name' => tic_geosource_format_text($imagette->filename),
+				'url' => tic_geosource_format_text(image_style_url('medium', $imagette->uri)),
+				'filetype' => tic_geosource_format_text($imagette->filemime),
 				'description' => 'large_thumbnail',
 			);
 		}
@@ -422,51 +447,65 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
 	if (isset($node->field_uuid['und'][0]['value'])) {
 		$uuid = $node->field_uuid['und'][0]['value'];
 	}
-	else {
-		$uuid = false;
+	else { $uuid = false; }
+	
+	// Description source des données
+	$sourceDesc = '';
+	if (isset($node->field_source_des_donnees['und'][0]['value'])) {
+		$sourceDesc = tic_geosource_format_text($node->field_source_des_donnees['und'][0]['value']);
 	}
 	
 	// URL source des données
-	$mapUrl = '';
+	$sourceUrl = '';
 	if (isset($node->field_url_source_des_donnees['und'][0]['value'])) {
-		$mapUrl = htmlspecialchars($node->field_url_source_des_donnees['und'][0]['value']);
+		$sourceUrl = tic_geosource_format_text($node->field_url_source_des_donnees['und'][0]['value']);
+	}
+	
+	//date source des données
+	$sourceDate = '';
+	if (isset($node->field_date_source_des_donnees['und'][0]['value'])) {
+		$sourceDate = $node->field_date_source_des_donnees['und'][0]['value'];
 	}
 	
 	//Date de mise a jour
 	if (isset($node->field_date_de_mise_jour['und'][0]['value'])) {
-		$updateDate = tic_geosource_unixtime_to_geosource_date($node->field_date_de_mise_jour['und'][0]['value']);
+		$updateDate = $node->field_date_de_mise_jour['und'][0]['value'];
 	}
-	else {
-		$updateDate = false;
+	else { $updateDate = false; }
+	
+	
+	// date de creation
+	if (isset($node->field_date_de_realisation['und'][0]['value'])) {
+		$dateRealisation = $node->field_date_de_realisation['und'][0]['value'];
+	}
+	else { $dateRealisation = date("Y-m-d\TH:i:s"); } 
+	
+	// Echelle de realisation
+	$scale = '';
+	if (isset($node->field_echelle['und'][0]['value'])) {
+		$scale = $node->field_echelle['und'][0]['value'];
 	}
 	
-	//date source des données
-	if(isset($node->field_date_source_des_donnees['und'][0]['value'])) {
-		$dateData = tic_geosource_unixtime_to_geosource_date($node->field_date_source_des_donness['und'][0]['value']);
-	}
-	else {
-		$dateData = false;
+	// URL de la carte (carte interactive)
+	$mapUrl = '';
+	if (isset($node->field_url_carte['und'][0]['value'])) {
+		$mapUrl = $node->field_url_carte['und'][0]['value'];
 	}
 	
 	return array(
 		'language_code' => 'fre',
-		'author_name' => $relatedContact->title,
-		'author_organisation' => $relatedContact->title,
-		'author_email' => $relatedContact->field_adresse_email['und'][0]['email'],
-		//'creation_date' => '2015-11-13T08:43:18',
-		//TODO: recharger si update
-		'creation_date' => date("Y-m-d\TH:i:s"),
-		'update_date' => date("Y-m-d\TH:i:s"),
-		'map_title' => $node->title,
-		// TODO verifier avec cdc
-		'map_creation_date' => date("Y-m-d"),
-		'map_abstract' => $node->field_description['und'][0]['value'],
-		//TODO
-		'map_purpose' => 'NONE ?',
-		//TODO: mal placé dans le XML
+		'author_name' => tic_geosource_format_text($relatedContact->title),
+		'author_organisation' => tic_geosource_format_text($relatedContact->title),
+		'author_email' => tic_geosource_format_text($relatedContact->field_adresse_email['und'][0]['email']),
+		'creation_date' => $dateRealisation,
+		'update_date' => $updateDate,
+		'map_title' => tic_geosource_format_text($node->title),
+		'map_abstract' => tic_geosource_format_text($node->field_description['und'][0]['value']),
 		'map_number' => $node->field_numero_de_carte['und'][0]['value'],
-		'map_resolution' => $node->field_echelle['und'][0]['value'],
-		'map_url' => $mapUrl, //BUG update ?
+		'map_scale' => $scale,
+		'source_url' => $sourceUrl,
+		'source_date' => $sourceDate,
+		'source_description' => $sourceDesc,
 		'bbox' => $bbox,
 		'keywords' => $keywords,
 		'themes' => $thematiques,
@@ -474,6 +513,7 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
 		'files' => $files,
 		'uuid' => $uuid,
 		'thumbnails' => $thumbnails,
+		'url_carte' => $mapUrl,
 	);
 }
 
@@ -484,6 +524,7 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
  * @return string Geosource UUID
  */
 function tic_geosource_insert_record($node) {
+	
 	$client = tic_geosource_load_csw_client();
 	
 	if ($client === false) {
@@ -492,7 +533,13 @@ function tic_geosource_insert_record($node) {
 	
 	tic_geosource_load_divengine();
 	
-	$template = dirname(__FILE__) . '/templates/isoRecord.tpl';
+	// TODO: template différent carte statique ou interactive
+	if (tic_geosource_is_static_map($node)) {
+		$template = dirname(__FILE__) . '/templates/statique.tpl';
+	}
+	else {
+		$template = dirname(__FILE__) . '/templates/interactive.tpl';
+	}
 	
 	$xmlString = new div($template, tic_geosource_drupal_node_to_geosource_array($node));
 	//Create XML Request
@@ -507,7 +554,7 @@ function tic_geosource_insert_record($node) {
 		drupal_set_message('La ressource n\'a pas été sauvée dans Geosource', 'error');
 	}
 	
-	if(is_array($uuid)) {
+	if (is_array($uuid)) {
 		tic_geosource_add_map_category($uuid[0]);
 		return $uuid[0];
 	}
@@ -525,13 +572,18 @@ function tic_geosource_insert_record($node) {
 function tic_geosource_update_record($node) {
 	$client = tic_geosource_load_csw_client();
 	
-	if($client === false) {
+	if ($client === false) {
 		return;
 	}
 	
 	tic_geosource_load_divengine();
 	
-	$template = dirname(__FILE__) . '/templates/isoRecord.tpl';
+	if (tic_geosource_is_static_map($node)) {
+		$template = dirname(__FILE__) . '/templates/statique.tpl';
+	}
+	else {
+		$template = dirname(__FILE__) . '/templates/interactive.tpl';
+	}
 	
 	$xmlString = new div($template, tic_geosource_drupal_node_to_geosource_array($node));
 	
@@ -565,8 +617,6 @@ function tic_geosource_queue_worker($uuid) {
 
 /**
  * Implements hook_cron
- *
- * TODO: vérifier que le nombre de records est bon
  *
  */
 function tic_geosource_cron() {
@@ -609,8 +659,8 @@ function tic_geosource_cron() {
 function tic_geosource_add_map_category($uuid) {
 	$client = tic_geosource_load_csw_client();
 	$geoid = $client->getGeoidFromUuid($uuid);
-	if($geoid) {
-		return $client->addMapCategory($geoid);
+	if ($geoid) {
+		return $client->addMapCategory($geoid, array('map'));
 	}
 	
 	return false;
@@ -625,7 +675,7 @@ function tic_geosource_add_map_category($uuid) {
 function tic_geosource_get_next_map_identifier() {
 	$id = (int)db_query('select MAX(field_numero_de_carte_value) from field_data_field_numero_de_carte;')->fetchCol();
 	
-	if($id < 20000) {
+	if ($id < 20000) {
 		$id = 20000;
 	}
 	
