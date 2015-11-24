@@ -16,7 +16,7 @@ function tic_geosource_split_records($xml) {
 	foreach ($dom->getElementsByTagName('Record') as $rec) {
 		$records[] = $rec;
 	}
-	
+
 	return $records;
 }
 
@@ -46,6 +46,25 @@ function tic_geosource_process_record($uuid) {
 	$dom->loadXML((string)$xml);
 	
 	tic_geosource_record_to_node($dom);
+}
+
+function tic_geosource_check_record($uuid) {
+	$client = tic_geosource_load_csw_client();
+	$xml = $client->getRecordById($uuid);
+	$dom = new DOMDocument('1.0');
+	$dom->loadXML((string)$xml);
+	
+	//si la ressource n'as pas de uuid elle n'existe pas
+	$recordUuid = tic_geosource_get_single_element_value($dom, 'fileIdentifier', false);
+	
+	if ($recordUuid === false) {
+		// le node n'existe pas dans Geosource
+		$node = tic_geosource_get_node_by_uuid($uuid);
+		if($node) {
+			node_delete($node->nid);
+			watchdog('tic_geosource', 'Suppression du node '.$uuid.' supprimé dans Geosource');
+		}
+	}
 }
 
 /**
