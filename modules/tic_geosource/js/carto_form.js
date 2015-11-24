@@ -7,16 +7,36 @@ jQuery(document).ready(function() {
 	var thematiqueSelect = jQuery('#edit-field-thematique-und');
 	var addContactLink = jQuery('#addContactLink');
 	var addContactWindow = jQuery('#createContact');
+	var numeroDeCarte = jQuery('#edit-field-numero-de-carte');
+	var sourceData = jQuery('#edit-field-source-des-donnees');
+	var urlSourceData = jQuery('#edit-field-url-source-des-donnees');
+	var dateSourceData = jQuery('#edit-field-date-source-des-donnees');
+	var dateMiseAJour = jQuery('#edit-field-date-de-mise-jour');
+	var urlCarte = jQuery('#edit-field-url-carte');
 	
 	// Attacher chosen sur le select categories
 	thematiqueSelect.chosen();
 	
-	function cartoDynamiqueForm() {
+	function cartoDynamiqueForm() {
 		echelleInputDiv.slideUp();
+		numeroDeCarte.slideUp();
+		sourceData.slideUp();
+		urlSourceData.slideUp();
+		dateSourceData.slideUp();
+		
+		dateMiseAJour.slideDown();
+		urlCarte.slideDown();
 	}
 	
 	function cartoStatiqueForm() {
 		echelleInputDiv.slideDown();
+		numeroDeCarte.slideDown();
+		sourceData.slideDown();
+		urlSourceData.slideDown();
+		dateSourceData.slideDown();
+		
+		dateMiseAJour.slideUp();
+		urlCarte.slideUp();
 	}
 	
 	addContactLink.click(function(e) {
@@ -53,6 +73,13 @@ jQuery(document).ready(function() {
 	});
 	
 	var currentMapType = mapType.val();
+	
+	if (mapType.val() == 'Statique') {
+		cartoStatiqueForm();
+	}
+	else {
+		cartoDynamiqueForm();
+	}
 	
 	mapType.change(function() {
 		if (mapType.val() == 'Statique') {

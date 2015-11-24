@@ -127,6 +127,11 @@ function tic_geosource_form_alter(&$form, &$form_state, $form_id) {
 		// champs non editables
 		$form['field_uuid']['#access'] = FALSE;
 		
+		//Si editition, pas possible de changer type de carte
+		if ($form['nid']['#value']) {
+			$form['field_type_de_carte']['#access'] = FALSE;
+		}
+		
 		return $form;
 	}
 }
@@ -135,8 +140,11 @@ function tic_geosource_form_alter(&$form, &$form_state, $form_id) {
  * Implements hook_node_validate
  */
 function tic_geosource_form_validate(&$form, &$form_state) {
+	
 	//formalisme numero de carte
 	//checks différents si carte statique ou dynamique
+	
+	//TODO limiter au formulaire de creation/edition de carte
 	
 	drupal_add_library('system', 'ui.dialog');
 	$form['#attached']['js'] = array(
@@ -149,19 +157,58 @@ function tic_geosource_form_validate(&$form, &$form_state) {
 		array('group' => CSS_THEME, 'type' => 'file')
 	);
 	
-	// TODO checks particuliers dynamique / statique
+	// TODO adapter le JS aussi
 	
-	//statique seulement: numero de carte obligatoire
-	// - pas de date de mise a jour
-	// - echelle obligatoire
-	// - source des données (text + date + url)
-	// - collection de carte
-	
-	//dynamique seulement: date de mise a jour obligatoire
-	// - pas de numero de carte
-	// - pas d'echelle
-	// - pas de source des données (texte  +date + url)
-	// - pas de collection de cartes
+	$type = $form_state['values']['field_type_de_carte']['und'][0]['value'];
+	if ($type == 'Statique') {
+		//statique seulement: numero de carte obligatoire
+		if (!isset($form_state['values']['field_numero_de_carte']['und'][0]['value'])) {
+			form_set_error('field_numero_de_carte', 'Le numéro de carte est obligatoire');
+		}
+		
+		// - echelle obligatoire
+		if (!isset($form_state['values']['field_echelle']['und'][0]['value'])) {
+			form_set_error('field_echelle', 'Le champ echelle de la carte est requis');
+		}
+		
+		// - pas de date de mise a jour
+		
+		// - source des données (text + date + url)
+		//texte
+		if (!isset($form_state['values']['field_source_des_donnees']['und'][0]['value'])) {
+			form_set_error('field_source_des_donnees', 'Le champ source des données est requis');
+		}
+		//URL
+		if (!isset($form_state['values']['field_url_source_des_donnees']['und'][0]['value'])) {
+			form_set_error('field_url_source_des_donnees', 'Le champ URL source des données est requis');
+		}
+		//date
+		if (!isset($form_state['values']['field_date_source_des_donnees']['und'][0]['value'])) {
+			form_set_error('field_date_source_des_donnees', 'Le champ date source des données est requis');
+		}
+		
+		// - collection de carte
+		//TODO
+	}
+	elseif ($type == 'Dynamique') {
+		//dynamique seulement: date de mise a jour obligatoire
+		if (!isset($form_state['values']['field_date_de_mise_jour']['und'][0]['value'])) {
+			form_set_error('field_date_de_mise_jour', 'Le champ date de mise a jour est obligatoire');
+		}
+		
+		//URL de la carte obligatoire
+		if (!isset($form_state['values']['field_url_carte']['und'][0]['value'])) {
+			form_set_error('field_url_carte', 'Le champ URL de la carte est obligatoire');
+		}
+		
+		// - pas de numero de carte
+		// - pas d'echelle
+		// - pas de source des données (texte  +date + url)
+		// - pas de collection de cartes
+	}
+	else {
+		form_set_error('field_type_de_carte', 'Type de carte incorrect');
+	}
 	
 	return $form;
 }
@@ -492,6 +539,12 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
 		$mapUrl = $node->field_url_carte['und'][0]['value'];
 	}
 	
+	// Numero de carte
+	$mapNumber = false;
+	if (isset($node->field_numero_de_carte['und'][0]['value'])) {
+		$mapNumber = $node->field_numero_de_carte['und'][0]['value'];
+	}
+	
 	return array(
 		'language_code' => 'fre',
 		'author_name' => tic_geosource_format_text($relatedContact->title),
@@ -501,7 +554,7 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
 		'update_date' => $updateDate,
 		'map_title' => tic_geosource_format_text($node->title),
 		'map_abstract' => tic_geosource_format_text($node->field_description['und'][0]['value']),
-		'map_number' => $node->field_numero_de_carte['und'][0]['value'],
+		'map_number' => $mapNumber,
 		'map_scale' => $scale,
 		'source_url' => $sourceUrl,
 		'source_date' => $sourceDate,
