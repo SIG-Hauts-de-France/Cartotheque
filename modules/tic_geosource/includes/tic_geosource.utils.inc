@@ -295,7 +295,7 @@ function tic_geosource_record_to_node($record) {
 	$title = tic_geosource_get_single_element_value($record, 'title');
 	$abstract = tic_geosource_get_single_element_value($record, 'abstract');
 	$date = tic_geosource_get_single_element_value($record, 'date');
-	$scale = tic_geosource_get_single_element_by_path($record, '//gmd:spatialResolution/gmd:MD_Resolution/gmd:equivalentScale/gmd:MD_RepresentativeFraction/gmd:denominator', false);
+	$scale = tic_geosource_get_single_element_by_path($record, '//gmd:spatialResolution/gmd:MD_Resolution/gmd:equivalentScale/gmd:MD_RepresentativeFraction/gmd:denominator', '');
 	$category = tic_geosource_get_single_element_value($record, 'MD_TopicCategoryCode');
 	$numCarte = intval(tic_geosource_get_single_element_by_path($record, '//gmd:identifier/gmd:MD_Identifier/gmd:code'));
 	$contactName = tic_geosource_get_single_element_by_path($record, '//gmd:contact/gmd:CI_ResponsibleParty/gmd:individualName');
@@ -304,7 +304,7 @@ function tic_geosource_record_to_node($record) {
 	$sourceInfos = tic_geosource_get_source_info($record);
 	$kt = tic_geosource_get_keywords_and_themes($record);
 	$creationDate = tic_geosource_get_single_element_by_path($record, '//gmd:MD_Metadata/gmd:dateStamp');
-	$updateDate = tic_geosource_get_single_element_by_path($record, '//gmd:IdentificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:date/gmd:Ci_Date/gmd:date');
+	$updateDate = tic_geosource_get_single_element_by_path($record, '//gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:date/gmd:CI_Date/gmd:date');
 
 	$contact = false;
 	if ($contactEmail != '') {
@@ -389,7 +389,7 @@ function tic_geosource_record_to_node($record) {
 	}
 	
 	// TODO choisir si la carte est statique ou interactive en fonction des champs récupérés
-	if ($scale === false) {
+	if ($scale === '') {
 		$node->field_type_de_carte['und'][0]['value'] = 'statique';
 	}
 	else { $node->field_type_de_carte['und'][0]['value'] = 'dynamique'; }
@@ -397,7 +397,13 @@ function tic_geosource_record_to_node($record) {
 	// disable push to geosource
 	$disabled = &drupal_static('tic_geosource_disable_geosource_push');
 	$disabled = true;
-	node_save($node);
+	
+	try {
+		node_save($node);
+	}
+	catch (Exception $e) {
+		watchdog('tic_geosource', 'Synchronisation de la carte '. $node->title . ' echoue ' .$e->getMessage());
+	}
 	$disabled = false;
 }
 

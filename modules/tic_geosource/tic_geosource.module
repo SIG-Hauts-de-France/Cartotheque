@@ -6,7 +6,7 @@
 // DEBUG
 function tic_geosource_node_view($node, $v, $e) {
 	return;
-	var_dump($node); die();
+	//var_dump($node); die();
 	
 	module_load_include('inc', 'tic_geosource', 'includes/tic_geosource.utils');
 	
@@ -29,7 +29,7 @@ function tic_geosource_node_view($node, $v, $e) {
 	//	tic_geosource_process_record($uuid);
 	//}
 	//tic_geosource_process_record('78f93047-74f8-4419-ac3d-fc62e4b0477b');
-	tic_geosource_process_record('bae9539a-e7bf-4140-b77b-0723bab82d17');
+	tic_geosource_process_record('487f8b4c-2f96-42ec-9d7d-783f5efc8cc7');
 	die();
 	
 	return;
@@ -245,10 +245,27 @@ function tic_geosource_addcontact_ajax_submit($form, &$form_state) {
 }
 
 /**
+ * Implements hook_node_delete
+ *
+ */
+function tic_geosource_node_delete($node) {
+	if ($node->type != 'carte') {
+		return;
+	}
+	
+	//Supprimer la ressource de Geosource
+	// a node can exists in drupal but not in geosource yet
+	if (isset($node->field_uuid['und'][0]['value'])) {
+		$uuid = tic_geosource_remove_record($node);
+	}
+}
+
+/**
  * Implements hook_node_presave
  *
  */
 function tic_geosource_node_presave($node) {
+	
 	if ($node->type != 'carte') {
 		return;
 	}
@@ -318,7 +335,6 @@ function tic_geosource_load_divengine() {
 /**
  * Convert a region to a bbox
  *
- * TODO: fixer les bboxs
  * @param string region
  * @return array bbox
  */
@@ -586,7 +602,6 @@ function tic_geosource_insert_record($node) {
 	
 	tic_geosource_load_divengine();
 	
-	// TODO: template différent carte statique ou interactive
 	if (tic_geosource_is_static_map($node)) {
 		$template = dirname(__FILE__) . '/templates/statique.tpl';
 	}
@@ -655,6 +670,42 @@ function tic_geosource_update_record($node) {
 	tic_geosource_add_map_category($node->field_uuid['und'][0]['value']);
 	
 	return $updated;
+}
+
+/**
+ * Suppression d'une ressource de Geosource
+ *
+ */
+function tic_geosource_remove_record($node) {
+	$client = tic_geosource_load_csw_client();
+	
+	if ($client === false) {
+		return;
+	}
+	
+	tic_geosource_load_divengine();
+	
+	if (tic_geosource_is_static_map($node)) {
+		$template = dirname(__FILE__) . '/templates/statique.tpl';
+	}
+	else {
+		$template = dirname(__FILE__) . '/templates/interactive.tpl';
+	}
+	
+	$xmlString = new div($template, tic_geosource_drupal_node_to_geosource_array($node));
+	
+	$dom = new DOMDocument('1.0');
+	$dom->loadXML((string)$xmlString);
+	$removed = 0;
+	
+	try {
+		$removed = $client->deleteMetadataFromUuid($node->field_uuid['und'][0]['value']);
+	}
+	catch (Exception $e) {
+		watchdog('tic_geosource', 'Erreur lors de la suppression de la ressource "'.$node->title.'" dans Geosource');
+	}
+	
+	return $removed;
 }
 
 /*
