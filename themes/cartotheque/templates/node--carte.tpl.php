@@ -98,16 +98,19 @@
 	<div class="imgMapFiche"><?php print render($content['field_image_carte']); ?></div>
 	<div class="col-xs-6 infoMap">
 	<dl>
-		<?php $content['field_numero_de_carte']['#label_display'] = 'hidden'; ?>
-		<dt><?php print $content['field_numero_de_carte']['#title']; ?> :</dt>
-		<dd><?php print render($content['field_numero_de_carte']); ?></dd>
-		<?php $content['field_date_de_mise_jour']['#label_display'] = 'hidden'; ?>
+		<?php $content['field_numero_de_carte']['#label_display'] = 'hidden';
+			if ($node->field_type_de_carte['und'][0]['value'] == 'Statique') { 
+				print '<dt>'; print $content['field_numero_de_carte']['#title']; print ':</dt>';
+				print '<dd>'; print render($content['field_numero_de_carte']); print '</dd>';
+			}
+			$content['field_date_de_mise_jour']['#label_display'] = 'hidden';
+		?>
 		<dt><?php print $content['field_date_de_mise_jour']['#title']; ?> :</dt>
 		<dd><?php print render($content['field_date_de_mise_jour']); ?></dd>
 	</dl>
 	</div>
 	<div class="col-xs-6" style="text-align:right;">
-		<div class="nbAction">?<span class="nbImg"></span> ?<span class="nbPdf"></span></div>
+	<div class="nbAction"><?php echo '?' ?><span class="nbImg"></span> ?<span class="nbPdf"></span></div>
 	</div>
 	<div class="hidden-xs col-sm-12 infosGenerales">
 		<h4>Informations</h4>
@@ -120,9 +123,14 @@
 			<?php $content['field_emprise_geographique']['#label_display'] = 'hidden'; ?>
 			<dt><?php print $content['field_emprise_geographique']['#title']; ?>:</dt>
 			<dd><?php print render($content['field_emprise_geographique']); ?></dd>
-			<?php $content['field_echelle']['#label_display'] = 'hidden'; ?>
+			<?php
+				if ($node->field_type_de_carte['und'][0]['value'] == 'Statique'):
+					$content['field_echelle']['#label_display'] = 'hidden'; ?>
 			<dt><?php print $content['field_echelle']['#title']; ?>:</dt>
 			<dd><?php print render($content['field_echelle']); ?></dd>
+			<?php
+				endif;
+			?>
 		</dl>
 		<dl class="themaMap">
 			<p><u>Thématiques:</u></p>
@@ -148,13 +156,16 @@
 <div class="col-xs-12 col-sm-7">
 	<div class="descMapFiche">
 		<?php print render($content['field_description']); ?>
-		<?php //var_dump($content['field_url_carte']); ?>
 		<div class="linkTheMap">
 			<span class="urlMap"><a href="#"><span class="linkIcone"></span>url</a></span>
 			<span class="imgMap"><a href="#"><span class="linkIcone"></span>img</a></span>
 			<span class="pdfMap"><a href="#"><span class="linkIcone"></span>pdf</a></span>
 		</div>
-		<div class="keyWordMap">Mots clés : <span class="keyWord">?</span></div>
+		<div class="keyWordMap">Mots clés : <span class="keyWord"><?php
+			$content['field_mots_cles']['#label_display'] = 'hidden';
+			print render($content['field_mots_cles']);
+			?></span>
+		</div>
 	</div>
 </div>
 

@@ -1,0 +1,149 @@
+<?php
+/*
+ * modification de la fonction de recherche de Drupal
+ *
+ */
+
+function tic_customsearch_form_search_block_form_alter(&$form, &$form_state, $form_id) {
+	$form['#submit'][] = 'tic_customsearch_alter_submit';
+	
+	$form['type_de_carte'] = tic_customsearch_input_type_carte();
+}
+
+function tic_customsearch_form_search_form_alter(&$form, &$form_state, $form_id) {
+	$form['#submit'][] = 'tic_customsearch_alter_submit';
+	
+	$form['basic']['type_de_carte'] = tic_customsearch_input_type_carte();
+}
+
+function tic_customsearch_input_type_carte() {
+	return array(
+		'#type' => 'select',
+		'#options' => array(
+			'' => 'Type de carte',
+			'statique' => 'Statique',
+			'dynamique' => 'Dynamique',
+		),
+		'#weight' => 1,
+		'#title' => 'Type de carte',
+		'#required' => false,
+		'#attributes' => array ('class' => array( 'advanced-form' ) ),
+	);
+}
+
+function tic_customsearch_alter_submit($form, $form_state) {
+	$path = $form_state['redirect'];
+	$options = array(
+		'query' => array(
+			'type_de_carte' => $form_state['values']['type_de_carte']
+		)
+	);
+	drupal_goto($path, $options);
+}
+
+/**
+ * Implements hook_search_info().
+ */
+function tic_customsearch_search_info() {
+	return array(
+		'title' => 'Content',
+		'path' => 'node',
+		'conditions_callback' => 'tic_customsearch_conditions_callback',
+	);
+}
+
+function tic_customsearch_conditions_callback($keys) {
+    $conditions = array();
+    if (!empty($_REQUEST['site'])) {
+        $conditions['site'] = $_REQUEST['site'];
+    }
+
+	if (!empty($_REQUEST['type_de_carte'])) {
+		$conditions['type_de_carte'] = $_REQUEST['type_de_carte'];
+	}
+
+    return $conditions;
+}
+
+/**
+ * Implements hook_search_execute().
+ */
+function tic_customsearch_search_execute($keys = NULL, $conditions = NULL) {
+    // Build matching conditions
+    $query = db_select('search_index', 'i', array('target' => 'slave'))
+        ->extend('SearchQuery')
+        ->extend('PagerDefault');
+
+    $query->join('node', 'n', 'n.nid = i.sid');
+
+    // Here goes my filter where I joined another table and
+    // filter by required field
+    $site = (isset($conditions['site'])) ? $conditions['site'] : NULL;
+    if ($site) {
+        $query->leftJoin('field_data_field_site', 's', 's.entity_id = i.sid');
+        $query->condition('s.field_site_value', $site);
+    }
+
+	// Type de Carte
+	$mapType = (isset($conditions['type_de_carte'])) ? $conditions['type_de_carte'] : NULL;
+	if ($mapType) {
+		$query->leftJoin('field_data_field_type_de_carte', 'c', 'c.entity_id = i.sid');
+		$query->condition('c.field_type_de_carte_value', $mapType);
+	}
+    // End of my filter
+
+    $query
+        ->condition('n.status', 1)
+        ->addTag('node_access')
+        ->searchExpression($keys, 'node');
+
+    // Insert special keywords.
+    $query->setOption('type', 'n.type');
+    $query->setOption('language', 'n.language');
+    if ($query->setOption('term', 'ti.tid')) {
+        $query->join('taxonomy_index', 'ti', 'n.nid = ti.nid');
+    }
+
+    // Only continue if the first pass query matches.
+    if (!$query->executeFirstPass()) {
+        return array();
+    }
+
+    // Add the ranking expressions.
+    _node_rankings($query);
+
+    // Load results.
+    $find = $query
+        ->limit(10)
+        ->execute();
+
+    $results = array();
+    foreach ($find as $item) {
+        // Build the node body.
+        $node = node_load($item->sid);
+        node_build_content($node, 'search_result');
+        $node->body = drupal_render($node->content);
+
+		//TODO
+        // Fetch comments for snippet.
+        //$node->rendered .= ' ' . module_invoke('comment', 'node_update_index', $node);
+        // Fetch terms for snippet.
+        //$node->rendered .= ' ' . module_invoke('taxonomy', 'node_update_index', $node);
+
+        $extra = module_invoke_all('node_search_result', $node);
+
+        $results[] = array(
+            'link' => url("node/{$item->sid}", array('absolute' => TRUE)),
+            'type' => check_plain(node_type_get_name($node)),
+            'title' => $node->title,
+            'user' => theme('username', array('account' => $node)),
+            'date' => $node->changed,
+            'node' => $node,
+            'extra' => $extra,
+            'score' => $item->calculated_score,
+            'snippet' => search_excerpt($keys, $node->body)
+        );
+    }
+
+    return $results;
+}
