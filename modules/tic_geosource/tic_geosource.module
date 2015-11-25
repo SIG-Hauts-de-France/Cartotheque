@@ -166,8 +166,6 @@ function tic_geosource_form_validate(&$form, &$form_state) {
 		array('group' => CSS_THEME, 'type' => 'file')
 	);
 	
-	// TODO adapter le JS aussi
-	
 	$type = $form_state['values']['field_type_de_carte']['und'][0]['value'];
 	if ($type == 'Statique') {
 		//statique seulement: numero de carte obligatoire
@@ -319,6 +317,14 @@ function tic_geosource_load_csw_client() {
 	$authAddress = variable_get('geosource_server_auth_address', '');
 	
 	if ($cswServer == '') {
+		return false;
+	}
+	
+	if ($authAddress == '') {
+		return false;
+	}
+	
+	if ($username == '') {
 		return false;
 	}
 	
