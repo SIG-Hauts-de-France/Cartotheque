@@ -376,7 +376,7 @@ div.infoMap dt, .infosGenerales dt{
 div.descMap p{
 	text-align:justify;
 }
-div.map img.fgMap{
+div.imgMapFiche {
 	border:solid 1px #a4b2bb;
 }
 

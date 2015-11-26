@@ -96,7 +96,7 @@
 
 <div class="col-sm-5">
 	<div class="imgMapFiche"><?php print render($content['field_image_carte']); ?></div>
-	<div class="col-xs-6 infoMap">
+	<div class="col-xs-8 infoMap">
 	<dl>
 		<?php $content['field_numero_de_carte']['#label_display'] = 'hidden';
 			if ($node->field_type_de_carte['und'][0]['value'] == 'Statique') { 
@@ -109,7 +109,7 @@
 		<dd><?php print render($content['field_date_de_mise_jour']); ?></dd>
 	</dl>
 	</div>
-	<div class="col-xs-6" style="text-align:right;">
+	<div class="col-xs-4" style="text-align:right;">
 	<div class="nbAction"><?php echo '?' ?><span class="nbImg"></span> ?<span class="nbPdf"></span></div>
 	</div>
 	<div class="hidden-xs col-sm-12 infosGenerales">
