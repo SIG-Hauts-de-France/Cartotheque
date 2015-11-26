@@ -186,15 +186,7 @@
 			</div>
 			</div>
 
-			<div class="col-sm-6">
-			<?php print render($page['home_month_maps']); ?>
-				<h2>Cartes du mois</h2>
-				<ul class="rslides">
-					<li><img src="images/carte-home.jpg" alt=""></li>
-					<li><img src="images/carte2.jpg" alt=""></li>
-					<li><img src="images/carte3.jpg" alt=""></li>
-				</ul>
-			</div>
+			<div class="col-sm-6 home-month-maps"><?php print render($page['home_month_maps']); ?></div>
 
 			<div class="col-sm-3">
 			<?php print render($page['home_more_downloaded_maps']); ?>
