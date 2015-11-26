@@ -44,7 +44,7 @@
 	<?php
 		$htmlwidget = $widget->widget;
 		// Si le widget est un textfield, on ajoute la loupe
-		if(preg_match('/<div.*form-type-textfield.*>.*<input(.*)class="(.*)"(.*)\/>/s',$htmlwidget,$matches)) {
+		if(preg_match('/<div.*form-type-textfield.*>.*<input(.*)class="(.*)"(.*)\/>/s', $htmlwidget, $matches)) {
 			echo '<div class="input-group">';
 			echo '<span class="input-group-addon search" id="basic-addon-search"></span>';
 			echo '<input '.$matches[1].' class="'.$matches[2].' form-control" '.$matches[3].' placeholder="Rechercher" aria-describedby="basic-addon-search" />';
