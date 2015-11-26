@@ -95,7 +95,7 @@
   <?php endif; ?>
 
 <div class="col-sm-5">
-	<div class="imgMapFiche"><?php print render($content['field_image_carte']); ?></div>
+	<div class="imgMapFiche"><?php print render($content['field_imagette']); ?></div>
 	<div class="col-xs-8 infoMap">
 	<dl>
 		<?php $content['field_numero_de_carte']['#label_display'] = 'hidden';
