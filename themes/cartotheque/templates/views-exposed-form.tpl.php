@@ -28,28 +28,48 @@
 <?php endif; ?>
 
 
-<?php $widget_count=0; ?>
 <div class="views-exposed-form">
   <div class="views-exposed-widgets clearfix">
 <?php
+	//On trie les types de widget
+	$mywidgets = array();
+	
 	foreach ($widgets as $id => $widget) {
 		$htmlwidget = $widget->widget;
-		// Si le widget est un textfield, on ajoute la loupe
-		if(preg_match('/<div.*form-type-textfield.*>.*<input(.*)class="(.*)"(.*)\/>/s', $htmlwidget, $matches)) {
-			echo '<div class="input-group">';
-			echo '<span class="input-group-addon search" id="basic-addon-search"></span>';
-			echo '<input '.$matches[1].' class="'.$matches[2].' form-control" '.$matches[3].' placeholder="Rechercher" aria-describedby="basic-addon-search" />';
-			echo '</div>';
+	
+		// Si le widget est un champ de recherche général, on ajoute la loupe
+		if(preg_match('/<div.*combine.*>.*<input(.*)class="(.*)"(.*)\/>/s', $htmlwidget, $matches)) {
+			$mywidgets['search'][] =
+			'<div class="input-group">'.
+			'<span class="input-group-addon search" id="basic-addon-search"></span>'.
+			'<input '.$matches[1].' class="'.$matches[2].' form-control" '.$matches[3].' placeholder="Rechercher" aria-describedby="basic-addon-search" />'.
+			'</div>';
+		}
+
+		else {
+			$mywidgets['advanced'][] = $htmlwidget;
 		}
 	}
-?>
 
-<div id="accordion">
-<h3>Recherche avancée</h3>
+	//On affiche d'abord le formulaire de recherche
+	foreach( $mywidgets['search'] as $widget ) {
+		echo $widget;
+	}
+	if (!drupal_is_front_page()) {
+		echo '<div id="accordion"><h3>Recherche avancée</h3><div>';
+		foreach( $mywidgets['advanced'] as $widget ) {
+			echo $widget;
+		}
+		echo '</div></div>';
+	}
+?>
+</div>
+</div>
+
 <?php
 	// Puis on affiche les autres champs
 	foreach ($widgets as $id => $widget) :
-		if(preg_match('/<div.*form-type-textfield.*>.*<input(.*)class="(.*)"(.*)\/>/s', $htmlwidget)) continue;
+		if(preg_match('/<div.*combine.*>.*<input(.*)class="(.*)"(.*)\/>/s', $widget->widget)) continue;
 ?>
       <div id="<?php print $widget->id; ?>-wrapper" class="views-exposed-widget views-widget-<?php print $id; ?>">
         <?php if (!empty($widget->label)): ?>
@@ -63,7 +83,10 @@
           </div>
         <?php endif; ?>
         <div class="views-widget">
-		<?php print $widget->widget; ?>
+		<?php
+		$htmlwidget = $widget->widget;
+		//print $widget->widget;
+		?>
         </div>
         <?php if (!empty($widget->description)): ?>
           <div class="description">
@@ -73,7 +96,9 @@
       </div>
     <?php endforeach; ?>
 </div>
+</div>
 
+<div class="filter">
     <?php if (!empty($sort_by)): ?>
       <div class="views-exposed-widget views-widget-sort-by">
         <?php print $sort_by; ?>
@@ -82,6 +107,9 @@
         <?php print $sort_order; ?>
       </div>
     <?php endif; ?>
+</div>
+
+
     <?php if (!empty($items_per_page)): ?>
       <div class="views-exposed-widget views-widget-per-page">
         <?php print $items_per_page; ?>
