@@ -27,50 +27,49 @@
   ?>
 <?php endif; ?>
 
-
+<?php if(drupal_is_front_page()): ?>
+	<?php foreach ($widgets as $id => $widget): ?>
+	<?php if($widget->id == "edit-combine") print $widget->widget; ?>
+	<?php endforeach; ?>
+	<p class="searchMore"><span></span><a href="">Recherche avancée</a></p>
+<?php else: ?>
 <div class="views-exposed-form">
   <div class="views-exposed-widgets clearfix">
+
+	<div class="filtreList row">
+		<?php if (!empty($items_per_page)): ?>
+		<div class="form-group col-sm-9">
+			<?php print $items_per_page; ?>
+		</div>
+		<?php endif; ?>
+		<!--
+		<div class="orderList col-sm-3">
+			<span class="orderAz"><a href=""></a></span>
+			<span class="orderZa"><a href=""></a></span>
+			<span class="order01"><a href=""></a></span>
+			<span class="order10"><a href=""></a></span>
+		</div>
+		-->
+	</div>
+
 <?php
-	//On trie les types de widget
-	$mywidgets = array();
-	
+	//On trie les champs
+	$combine = array(); $select = array(); $checkbox = array(); $other = array();
 	foreach ($widgets as $id => $widget) {
-		$htmlwidget = $widget->widget;
-	
-		// Si le widget est un champ de recherche général, on ajoute la loupe
-		if(preg_match('/<div.*combine.*>.*<input(.*)class="(.*)"(.*)\/>/s', $htmlwidget, $matches)) {
-			$mywidgets['search'][] =
-			'<div class="input-group">'.
-			'<span class="input-group-addon search" id="basic-addon-search"></span>'.
-			'<input '.$matches[1].' class="'.$matches[2].' form-control" '.$matches[3].' placeholder="Rechercher" aria-describedby="basic-addon-search" />'.
-			'</div>';
-		}
-
-		else {
-			$mywidgets['advanced'][] = $htmlwidget;
-		}
+		if($id=="filter-combine") $combine[] = $widget;
+		else $other[] = $widget;
 	}
 
-	//On affiche d'abord le formulaire de recherche
-	foreach( $mywidgets['search'] as $widget ) {
-		echo $widget;
-	}
-	if (!drupal_is_front_page()) {
-		echo '<div id="accordion"><h3>Recherche avancée</h3><div>';
-		foreach( $mywidgets['advanced'] as $widget ) {
-			echo $widget;
-		}
-		echo '</div></div>';
-	}
 ?>
-</div>
-</div>
 
-<?php
-	// Puis on affiche les autres champs
-	foreach ($widgets as $id => $widget) :
-		if(preg_match('/<div.*combine.*>.*<input(.*)class="(.*)"(.*)\/>/s', $widget->widget)) continue;
-?>
+	<?php foreach($combine as $id => $widget): ?>
+		<?php print $widget->widget; ?>
+	<?php endforeach; ?>
+
+<div id="accordion" style="clear:left;">
+<h3>Recherche avancée</h3>
+<div>
+<?php foreach($other as $id => $widget): ?>
       <div id="<?php print $widget->id; ?>-wrapper" class="views-exposed-widget views-widget-<?php print $id; ?>">
         <?php if (!empty($widget->label)): ?>
           <label for="<?php print $widget->id; ?>">
@@ -83,10 +82,7 @@
           </div>
         <?php endif; ?>
         <div class="views-widget">
-		<?php
-		$htmlwidget = $widget->widget;
-		//print $widget->widget;
-		?>
+          <?php print $widget->widget; ?>
         </div>
         <?php if (!empty($widget->description)): ?>
           <div class="description">
@@ -94,11 +90,13 @@
           </div>
         <?php endif; ?>
       </div>
-    <?php endforeach; ?>
+<?php endforeach; ?>
+</div>
+<h3>Critères</h3>
+<div>
 </div>
 </div>
 
-<div class="filter">
     <?php if (!empty($sort_by)): ?>
       <div class="views-exposed-widget views-widget-sort-by">
         <?php print $sort_by; ?>
@@ -107,26 +105,24 @@
         <?php print $sort_order; ?>
       </div>
     <?php endif; ?>
-</div>
 
 
-    <?php if (!empty($items_per_page)): ?>
-      <div class="views-exposed-widget views-widget-per-page">
-        <?php print $items_per_page; ?>
-      </div>
-    <?php endif; ?>
     <?php if (!empty($offset)): ?>
       <div class="views-exposed-widget views-widget-offset">
         <?php print $offset; ?>
       </div>
     <?php endif; ?>
+
     <div class="views-exposed-widget views-submit-button">
       <?php print $button; ?>
     </div>
-    <?php if (!empty($reset_button)): ?>
+
+     <?php if (!empty($reset_button)): ?>
       <div class="views-exposed-widget views-reset-button">
         <?php print $reset_button; ?>
       </div>
     <?php endif; ?>
+
   </div>
 </div>
+<?php endif; ?>

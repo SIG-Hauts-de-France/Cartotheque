@@ -154,32 +154,14 @@
 
 		<!-- Search block -->
 		<section class="row searchMap">
-		
-		<div class="col-sm-6">
-      			<?php print render($page['search']); ?>
-			<!--
-			<form>
-				<div class="input-group">
-				  <span class="input-group-addon search" id="basic-addon1"></span>
-				  <input type="text" class="form-control" placeholder="Recherche" aria-describedby="basic-addon1">
-				</div>
-			</form>
-			-->
-			<p class="searchMore"><span></span><a href="">Recherche avancée</a></p>
-		</div>
+			<div class="col-sm-6"><?php print render($page['search']); ?></div>
 		</section>
 
 		<!-- Maps block -->
 		<section class="row actus">
-			<div class="col-sm-3">
-				<?php print render($page['home_last_maps']); ?>
-			</div>
-
+			<div class="col-sm-3"><?php print render($page['home_last_maps']); ?></div>
 			<div class="col-sm-6 home-month-maps"><?php print render($page['home_month_maps']); ?></div>
-
-			<div class="col-sm-3">
-				<?php print render($page['home_more_downloaded_maps']); ?>
-			</div>
+			<div class="col-sm-3"><?php print render($page['home_more_downloaded_maps']); ?></div>
 		</section>
       	</div> <!-- /#content -->
 		
@@ -188,7 +170,7 @@
 	        <a id="main-content"></a>
 		<?php if ($page['highlighted']): ?><div id="highlighted"><?php print render($page['highlighted']); ?></div><?php endif; ?>
 		<section>
-		<?php if($node->type == "carte" ): ?>
+		<?php if(isset($node) && $node->type == "carte" ): ?>
 			<div class="backList"><a href="#"><span></span>Retour à la recherche</a></div>
 			<div class="row map">
 			<?php if ($tabs): ?><div class="tabs"><?php print render($tabs); ?></div><?php endif; ?>
@@ -198,19 +180,19 @@
 			<?php print $feed_icons; ?>
 			</div>
 		<?php else: ?>
-			<div class="col-sm-8">
+			<!--
 			<?php print render($title_prefix); ?>
 			<?php if ($title): ?><h1 class="title" id="page-title"><?php print $title; ?></h1><?php endif; ?>
 			<?php print render($title_suffix); ?>
+			-->
+			<div class="col-sm-8">
 			<?php if ($tabs): ?><div class="tabs"><?php print render($tabs); ?></div><?php endif; ?>
 			<?php print render($page['help']); ?>
 			<?php if ($action_links): ?><ul class="action-links"><?php print render($action_links); ?></ul><?php endif; ?>
 			<?php print render($page['content']); ?>
 			<?php print $feed_icons; ?>
 			</div>
-			<div class="col-sm-4">
-				<?php print render($page['search']); ?>
-			</div>
+			<div class="col-sm-4"><?php print render($page['search']); ?></div>
 		<?php endif; ?>
 		</section>
 	</div>
