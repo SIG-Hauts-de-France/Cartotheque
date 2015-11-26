@@ -28,7 +28,7 @@
  */
 
 ?>
-<div class="<?php print $classes; ?> col-sm-8">
+<div class="<?php print $classes; ?> col-sm-12">
   <?php print render($title_prefix); ?>
   <?php if ($title): ?>
     <?php print $title; ?>
@@ -83,10 +83,3 @@
   <?php endif; ?>
 
 </div><?php /* class view */ ?>
-<div class="col-sm-4">
-<?php if ($exposed): ?>
-    <div class="view-filters">
-      <?php print $exposed; ?>
-    </div>
-  <?php endif; ?>
-</div>
