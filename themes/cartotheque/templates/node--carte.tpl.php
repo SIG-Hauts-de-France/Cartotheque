@@ -157,9 +157,21 @@
 	<div class="descMapFiche">
 		<?php print render($content['field_description']); ?>
 		<div class="linkTheMap">
-			<span class="urlMap"><a href="#"><span class="linkIcone"></span>url</a></span>
-			<span class="imgMap"><a href="#"><span class="linkIcone"></span>img</a></span>
-			<span class="pdfMap"><a href="#"><span class="linkIcone"></span>pdf</a></span>
+			<?php if($node->field_url_carte['und'][0]['value']): ?>
+			<span class="urlMap"><a href="<?php print $node->field_url_carte['und'][0]['value']; ?>" target="_blank"><span class="linkIcone"></span>url</a></span>
+			<?php endif; ?>
+			<?php 
+				$htmlimage = render($content['field_image_carte']);
+				if( preg_match('/<img .* src=\"(.*)\"/U', $htmlimage, $matches) ):
+			?>
+			<span class="imgMap"><a href="<?php print $matches[1]; ?>"><span class="linkIcone"></span>img</a></span>
+			<?php endif; ?>
+			<?php
+				$htmlfile = render($content['field_fichier_carte']);
+				if( preg_match('/<a(.*) href=\"(.*)\" (.*)>/U', $htmlfile, $matches) ):
+			?>
+			<span class="pdfMap"><a <?php print $matches[1]; ?> href="<?php print $matches[2]; ?>" <?php print $matches[3]; ?>><span class="linkIcone"></span>pdf</a></span>
+			<?php endif; ?>
 		</div>
 		<div class="keyWordMap">Mots clés : <span class="keyWord"><?php
 			$content['field_mots_cles']['#label_display'] = 'hidden';
