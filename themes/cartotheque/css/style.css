@@ -144,7 +144,7 @@ section.searchMap{
 	padding-top:15px;
 	padding-bottom:15px;
 }
-section.searchMap .input-group span.search{
+.input-group span.search{
 background-image: url("../images/i_search.png");
 background-repeat: no-repeat;
 padding-right: 32px;

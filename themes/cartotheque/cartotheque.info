@@ -2,11 +2,13 @@ name = Cartothèque
 ;description = For beginning of theme development. As a initial starting point for Drupal theme development. Theme features RESPONSIVE and light weight design. Theme is develop by Shivcharan Patil(Shiv). Theme developer is also available at <a href="http://itapplication.net" target="_blank">itApplication.net</a> or email at shiv@itweb.in to customize this theme or create/develop entirely new theme as per your requirements.
 core = 7.x
 
+stylesheets[all][] = css/jquery-ui.css
 stylesheets[all][] = css/layout.css
 stylesheets[all][] = css/style.css
 
 scripts[] = js/scripts.min.js
 scripts[] = js/npm.js
+scripts[] = js/jquery-ui.js
 scripts[] = js/responsiveslides.min.js
 scripts[] = js/cartotheque.js
 

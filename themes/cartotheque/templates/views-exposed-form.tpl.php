@@ -26,9 +26,31 @@
     print $q;
   ?>
 <?php endif; ?>
+
+
+<?php $widget_count=0; ?>
 <div class="views-exposed-form">
   <div class="views-exposed-widgets clearfix">
-    <?php foreach ($widgets as $id => $widget): ?>
+<?php
+	foreach ($widgets as $id => $widget) {
+		$htmlwidget = $widget->widget;
+		// Si le widget est un textfield, on ajoute la loupe
+		if(preg_match('/<div.*form-type-textfield.*>.*<input(.*)class="(.*)"(.*)\/>/s', $htmlwidget, $matches)) {
+			echo '<div class="input-group">';
+			echo '<span class="input-group-addon search" id="basic-addon-search"></span>';
+			echo '<input '.$matches[1].' class="'.$matches[2].' form-control" '.$matches[3].' placeholder="Rechercher" aria-describedby="basic-addon-search" />';
+			echo '</div>';
+		}
+	}
+?>
+
+<div id="accordion">
+<h3>Recherche avancée</h3>
+<?php
+	// Puis on affiche les autres champs
+	foreach ($widgets as $id => $widget) :
+		if(preg_match('/<div.*form-type-textfield.*>.*<input(.*)class="(.*)"(.*)\/>/s', $htmlwidget)) continue;
+?>
       <div id="<?php print $widget->id; ?>-wrapper" class="views-exposed-widget views-widget-<?php print $id; ?>">
         <?php if (!empty($widget->label)): ?>
           <label for="<?php print $widget->id; ?>">
@@ -41,17 +63,7 @@
           </div>
         <?php endif; ?>
         <div class="views-widget">
-	<?php
-		$htmlwidget = $widget->widget;
-		// Si le widget est un textfield, on ajoute la loupe
-		if(preg_match('/<div.*form-type-textfield.*>.*<input(.*)class="(.*)"(.*)\/>/s', $htmlwidget, $matches)) {
-			echo '<div class="input-group">';
-			echo '<span class="input-group-addon search" id="basic-addon-search"></span>';
-			echo '<input '.$matches[1].' class="'.$matches[2].' form-control" '.$matches[3].' placeholder="Rechercher" aria-describedby="basic-addon-search" />';
-			echo '</div>';
-		}
-		else print $htmlwidget;
-	?>
+		<?php print $widget->widget; ?>
         </div>
         <?php if (!empty($widget->description)): ?>
           <div class="description">
@@ -60,6 +72,8 @@
         <?php endif; ?>
       </div>
     <?php endforeach; ?>
+</div>
+
     <?php if (!empty($sort_by)): ?>
       <div class="views-exposed-widget views-widget-sort-by">
         <?php print $sort_by; ?>
