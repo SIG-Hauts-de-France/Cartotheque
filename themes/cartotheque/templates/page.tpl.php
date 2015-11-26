@@ -172,43 +172,13 @@
 		<!-- Maps block -->
 		<section class="row actus">
 			<div class="col-sm-3">
-			<?php print render($page['home_last_maps']); ?>
-			<h2>Dernières cartes ajoutées</h2>
-			<div class="row maps leftMaps">
-				<div class="col-xs-6 col-sm-12 col-md-6"><a href="#"><img src="images/ap-carte-home.jpg" class="img-responsive" alt="" />
-				<span>Titre de la carte</span></a><div class="mapZoom"><img src="images/carte-home.jpg" alt="" /><span>Titre de la carte</span></div></div>
-				<div class="col-xs-6 col-sm-12 col-md-6"><a href="#"><img src="images/ap-carte-home.jpg" class="img-responsive" alt="" />
-				<span>Titre de la carte</span></a><div class="mapZoom"><img src="images/carte-home.jpg" alt="" /><span>Titre de la carte</span></div></div>
-				<div class="col-xs-6 col-sm-12 col-md-6"><a href="#"><img src="images/ap-carte-home.jpg" class="img-responsive" alt="" />
-				<span>Titre de la carte</span></a><div class="mapZoom"><img src="images/carte-home.jpg" alt="" /><span>Titre de la carte</span></div></div>
-				<div class="col-xs-6 col-sm-12 col-md-6"><a href="#"><img src="images/ap-carte-home.jpg" class="img-responsive" alt="" />
-				<span>Titre de la carte</span></a><div class="mapZoom"><img src="images/carte-home.jpg" alt="" /><span>Titre de la carte</span></div></div>
-			</div>
+				<?php print render($page['home_last_maps']); ?>
 			</div>
 
 			<div class="col-sm-6 home-month-maps"><?php print render($page['home_month_maps']); ?></div>
 
 			<div class="col-sm-3">
-			<?php print render($page['home_more_downloaded_maps']); ?>
-				<h2>Cartes les plus téléchargées</h2>
-				<div class="row maps rightMaps">
-					<div class="col-xs-6 col-sm-12 col-md-6">
-						<a href="#"><img src="images/ap-carte-home.jpg" class="img-responsive" alt="" /><span>Titre de la carte</span></a>
-						<div class="mapZoom"><img src="images/carte-home.jpg" alt="" /><span>Titre de la carte</span></div>
-					</div>
-					<div class="col-xs-6 col-sm-12 col-md-6">
-						<a href="#"><img src="images/ap-carte-home.jpg" class="img-responsive" alt="" /><span>Titre de la carte</span></a>
-						<div class="mapZoom"><img src="images/carte-home.jpg" alt="" /><span>Titre de la carte</span></div>
-					</div>
-					<div class="col-xs-6 col-sm-12 col-md-6">
-						<a href="#"><img src="images/ap-carte-home.jpg" class="img-responsive" alt="" /><span>Titre de la carte</span></a>
-						<div class="mapZoom"><img src="images/carte-home.jpg" alt="" /><span>Titre de la carte</span></div>
-					</div>
-					<div class="col-xs-6 col-sm-12 col-md-6">
-						<a href="#"><img src="images/ap-carte-home.jpg" class="img-responsive" alt="" /><span>Titre de la carte</span></a>
-						<div class="mapZoom"><img src="images/carte-home.jpg" alt="" /><span>Titre de la carte</span></div>
-					</div>
-				</div>
+				<?php print render($page['home_more_downloaded_maps']); ?>
 			</div>
 		</section>
       	</div> <!-- /#content -->
