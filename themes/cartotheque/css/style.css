@@ -192,13 +192,13 @@ section.actus div.maps.leftMaps div.mapZoom{
 	left:20px;
 }
 section.actus  div.mapZoom:after {
-	content:"ch";
+	/*content:"ch";*/
 	/*background: url(../images/triangle-gris.png);*/
 }
 section.actus div.maps.rightMaps div.mapZoom{
 	right:20px;
 }
-section.actus div.maps div:hover div.mapZoom{
+section.actus div.maps div:hover > div.mapZoom{
 	display: block;
 }
 
