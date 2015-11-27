@@ -178,7 +178,7 @@ function tic_carto_count_file_download_access_alter(&$grants, $file, $entity_typ
 		->condition('nid', $entity->nid, '=')
 		->execute()
 	;
-	// first time, create the counter record
+	// first time ?, create the counter record
 	if($updated == 0) {
 		db_insert('tic_carto_count')
 			->fields(array(
@@ -319,4 +319,19 @@ function tic_carto_count_node_delete($node) {
 		->condition('nid', $node->nid)
 		->execute()
 	;
+}
+
+function tic_carto_count_get_node_download_count($nid) {
+	$count = db_select('tic_carto_count', 'cc')
+		->fields('cc', array('count'))
+		->condition('cc.nid', $nid)
+		->execute()
+		->fetchCol()
+	;
+	
+	if(is_array($count)) {
+		return $count[0];
+	}
+	
+	return "0";
 }

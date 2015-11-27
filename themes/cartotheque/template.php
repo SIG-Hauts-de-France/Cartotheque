@@ -131,3 +131,24 @@ function cartotheque_preprocess_views_view(&$vars) {
 	//dsm( $vars);
 }
 
+function cartotheque_preprocess_node(&$vars) {
+	$vars['download_count'] = '';
+	$vars['stats_total_count'] = '';
+	
+	if ($vars['node']->type == 'carte') {
+		if (function_exists('statistics_get')) {
+			$stats = statistics_get($vars['node']->nid);
+			if ($stats === false) {
+				$vars['stats_total_count'] = "0";
+			}
+			else {
+				$vars['stats_total_count'] = $stats['totalcount'];
+			}
+		}
+		
+		if (function_exists('tic_carto_count_get_node_download_count')) {
+			$downloadCount = tic_carto_count_get_node_download_count($vars['node']->nid);
+			$vars['download_count'] = $downloadCount;
+		}
+	}
+}

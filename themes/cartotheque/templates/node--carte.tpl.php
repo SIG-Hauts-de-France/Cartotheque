@@ -110,7 +110,7 @@
 	</dl>
 	</div>
 	<div class="col-xs-4" style="text-align:right;">
-	<div class="nbAction"><?php echo '?' ?><span class="nbImg"></span> ?<span class="nbPdf"></span></div>
+	<div class="nbAction"><?php print $stats_total_count ?><span class="nbImg"></span> <?php print $download_count ?><span class="nbPdf"></span></div>
 	</div>
 	<div class="hidden-xs col-sm-12 infosGenerales">
 		<h4>Informations</h4>
