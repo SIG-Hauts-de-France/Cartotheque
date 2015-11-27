@@ -157,7 +157,7 @@
 	<div class="descMapFiche">
 		<?php print render($content['field_description']); ?>
 		<div class="linkTheMap">
-			<?php if($node->field_url_carte['und'][0]['value']): ?>
+			<?php if($node->field_type_de_carte['und'][0]['value'] == 'Dynamique'): ?>
 			<span class="urlMap"><a href="<?php print $node->field_url_carte['und'][0]['value']; ?>" target="_blank"><span class="linkIcone"></span>url</a></span>
 			<?php endif; ?>
 			<?php 
