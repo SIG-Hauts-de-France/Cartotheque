@@ -226,7 +226,7 @@ function tic_geosource_form_validate(&$form, &$form_state) {
 function tic_geosource_addcontact_ajax_submit($form, &$form_state) {
 	global $user;
 	
-	if (!user_access('create carto content')) {
+	if (!user_access('create contact content')) {
 		$ret = array('code' => 'error', 'reason' => 'Vous n\'avez pas la permission de créer des contacts');
 		drupal_json_output($ret);
 		drupal_exit();
