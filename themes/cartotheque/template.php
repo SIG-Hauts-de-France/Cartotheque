@@ -139,16 +139,19 @@ function cartotheque_preprocess_node(&$vars) {
 		//Collections
 		//var_dump($vars['field_collections']); die();
 		$vars['collections'] = '<table class="table table-hover">';
+		$vars['collections_count'] = 0;
 		$collections = $vars['field_collections'];
 		
 		$num = 1;
 		foreach($collections as $col) {
 			//var_dump($col); die();
-			$vars['collections'] .= '<tr><th scope="row">'.$num.'</th><td><a href="/?q=map-list&field_collections='.$col['taxonomy_term']->tid.'">'.$col['taxonomy_term']->name.'</a>';
+			$vars['collections'] .= '<tr><th scope="row">'.$num.'</th><td><a href="/?q=map-list&field_collections_tid='.$col['taxonomy_term']->tid.'">'.$col['taxonomy_term']->name.'</a>';
 			$num++;
 		}
 		
 		$vars['collections'] .= '</table>';
+		// Conservation du nombre de collections pour faciliter l'affichage
+		$vars['collections_count'] = --$num;
 		
 		// Statistiques d'accès
 		if (function_exists('statistics_get')) {

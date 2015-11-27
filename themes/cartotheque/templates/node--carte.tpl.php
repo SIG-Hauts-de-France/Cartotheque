@@ -83,7 +83,9 @@
   <?php print render($title_prefix); ?>
   <h2<?php print $title_attributes; ?>>
 	<a href="<?php print $node_url; ?>"><?php print $title; ?></a>
+	<?php if ($collections_count > 0): ?>
 	<span class="tree"></span>
+	<?php endif; ?>
 	<span class="type"><?php  print render($content['field_type_de_carte']); ?></span>
   </h2>
   <?php print render($title_suffix); ?>
@@ -179,6 +181,7 @@
 			?></span>
 		</div>
 	</div>
+	<?php if ($collections_count > 0): ?>
 	<div class="collectionsMap">
 		<h4>Collection(s) a laquelle(s) appartient la carte</h4>
 		<?php
@@ -186,7 +189,7 @@
 			print render($collections);
 		?>
 	</div>
-		
+	<?php endif; ?>
 </div>
 
 <div class="hidden-xs col-sm-12 infosGenerales">
