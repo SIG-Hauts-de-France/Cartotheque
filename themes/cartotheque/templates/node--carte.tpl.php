@@ -95,7 +95,7 @@
   <?php endif; ?>
 
 <div class="col-sm-5">
-	<div class="imgMapFiche"><?php print render($content['field_imagette']); ?></div>
+	<div class="imgMapFiche"><?php var_dump($node->field_imagette); print render($content['field_imagette']); ?></div>
 	<div class="col-xs-8 infoMap">
 	<dl>
 		<?php $content['field_numero_de_carte']['#label_display'] = 'hidden';
@@ -179,6 +179,14 @@
 			?></span>
 		</div>
 	</div>
+	<div class="collectionsMap">
+		<h4>Collection(s) a laquelle(s) appartient la carte</h4>
+		<?php
+			$content['field_collections']['#label_display'] = 'hidden';
+			print render($collections);
+		?>
+	</div>
+		
 </div>
 
 <div class="hidden-xs col-sm-12 infosGenerales">
@@ -190,6 +198,8 @@
       hide($content['comments']);
       hide($content['links']);
       hide($content['field_type_de_carte']);
+	  hide($content['field_uuid']);
+	  hide($content['field_collections']);
       print render($content);
     ?>
 </div>
