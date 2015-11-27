@@ -15,6 +15,9 @@ footer{
 	min-height:50px;
 	margin-top:40px;
 }
+footer ul.menu {
+	float: right;
+}
 header img{
 	float:left; 
 	margin:40px;
@@ -337,6 +340,7 @@ div.map h2 span.tree{
 div.theMap{
 	display:table;
 	clear:both;
+	width: 100%;
 }
 div.imgMap, div.descMap{
 	display:table-cell;
@@ -344,6 +348,9 @@ div.imgMap, div.descMap{
 	vertical-align:top;
 	padding-left:10px;
 	padding-right:10px;
+}
+div.imgMap{
+	width: 270px;
 }
 div.imgMap img{
 	width:250px;
@@ -377,7 +384,7 @@ div.infoMap dt, .infosGenerales dt{
 div.descMap p{
 	text-align:justify;
 }
-div.imgMapFiche {
+div.imgMapFiche img, div.imgMap img {
 	border:solid 1px #a4b2bb;
 }
 
