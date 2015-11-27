@@ -155,6 +155,7 @@
 		<!-- Search block -->
 		<section class="row searchMap">
 			<div class="col-sm-6"><?php print render($page['search']); ?></div>
+			<div class="col-sm-6"><?php print render($page['tags']); ?></div>
 		</section>
 
 		<!-- Maps block -->
