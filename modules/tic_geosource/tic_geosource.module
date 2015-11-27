@@ -135,6 +135,7 @@ function tic_geosource_form_alter(&$form, &$form_state, $form_id) {
 		
 		// champs non editables
 		$form['field_uuid']['#access'] = FALSE;
+		$form['field_imagette']['#access'] = FALSE;
 		
 		//Si editition, pas possible de changer type de carte
 		if ($form['nid']['#value']) {
@@ -268,6 +269,23 @@ function tic_geosource_node_delete($node) {
 }
 
 /**
+ * Generation de l'imagette de la carte
+ *
+ * @param stdClass Drupal node object
+ */
+function tic_geosource_generate_map_thumbnail($node) {
+	$fid = $node->field_image_carte['und'][0]['fid'];
+	$file = file_load($fid);
+	
+	//image_style_create_derivative
+	$node->field_imagette['und'][0] = array(
+		'fid' => $fid,
+		'display' => 1,
+		'description' => '',
+	);
+}
+
+/**
  * Implements hook_node_presave
  *
  */
@@ -276,6 +294,8 @@ function tic_geosource_node_presave($node) {
 	if ($node->type != 'carte') {
 		return;
 	}
+	
+	tic_geosource_generate_map_thumbnail($node);
 	
 	// Les brouillons ne sont pas envoyés sur Geosource
 	if ($node->status == 0) {
