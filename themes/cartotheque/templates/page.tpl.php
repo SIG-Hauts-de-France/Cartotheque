@@ -172,7 +172,7 @@
 		<?php if ($page['highlighted']): ?><div id="highlighted"><?php print render($page['highlighted']); ?></div><?php endif; ?>
 		<section>
 		<?php if(isset($node) && $node->type == "carte" ): ?>
-			<div class="backList"><a href="#"><span></span>Retour à la recherche</a></div>
+			<div class="backList"><a href="/?q=map-list"><span></span>Retour à la recherche</a></div>
 			<div class="row map">
 			<?php if ($tabs): ?><div class="tabs"><?php print render($tabs); ?></div><?php endif; ?>
 			<?php print render($page['help']); ?>
