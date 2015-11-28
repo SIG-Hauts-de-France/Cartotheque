@@ -31,7 +31,6 @@
 	<?php foreach ($widgets as $id => $widget): ?>
 	<?php if($widget->id == "edit-combine") print $widget->widget; ?>
 	<?php endforeach; ?>
-	<p class="searchMore"><span></span><a href="">Recherche avancée</a></p>
 <?php else: ?>
 <div class="views-exposed-form">
   <div class="views-exposed-widgets clearfix">

@@ -118,21 +118,20 @@
 		<h4>Informations</h4>
 		<dl>
 			<?php if(array_key_exists('field_auteur',$content)): ?>
-			<?php $content['field_auteur']['#label_display'] = 'hidden'; ?>
-			<dt><?php print $content['field_auteur']['#title']; ?></dt>
-			<dd><?php print render($content['field_auteur']); ?></dd>
+				<?php $content['field_auteur']['#label_display'] = 'hidden'; ?>
+				<dt><?php print $content['field_auteur']['#title']; ?></dt>
+				<dd><?php print render($content['field_auteur']); ?></dd>
 			<?php endif; ?>
+
 			<?php $content['field_emprise_geographique']['#label_display'] = 'hidden'; ?>
 			<dt><?php print $content['field_emprise_geographique']['#title']; ?>:</dt>
 			<dd><?php print render($content['field_emprise_geographique']); ?></dd>
-			<?php
-				if ($node->field_type_de_carte['und'][0]['value'] == 'Statique'):
-					$content['field_echelle']['#label_display'] = 'hidden'; ?>
-			<dt><?php print $content['field_echelle']['#title']; ?>:</dt>
-			<dd><?php print render($content['field_echelle']); ?></dd>
-			<?php
-				endif;
-			?>
+
+			<?php if ($node->field_type_de_carte['und'][0]['value'] == 'Statique'):
+				$content['field_echelle']['#label_display'] = 'hidden'; ?>
+				<dt><?php print $content['field_echelle']['#title']; ?>:</dt>
+				<dd><?php print render($content['field_echelle']); ?></dd>
+			<?php endif; ?>
 		</dl>
 		<dl class="themaMap">
 			<p><u>Thématiques:</u></p>
@@ -183,7 +182,7 @@
 	</div>
 	<?php if ($collections_count > 0): ?>
 	<div class="collectionsMap">
-		<h4>Collection(s) a laquelle(s) appartient la carte</h4>
+		<h4>Collection(s) à laquelle(s) appartient la carte</h4>
 		<?php
 			$content['field_collections']['#label_display'] = 'hidden';
 			print render($collections);
@@ -196,15 +195,15 @@
 </div>
 
 <div class="content"<?php print $content_attributes; ?>>
-    <?php
-      // We hide the comments and links now so that we can render them later.
-      hide($content['comments']);
-      hide($content['links']);
-      hide($content['field_type_de_carte']);
-	  hide($content['field_uuid']);
-	  hide($content['field_collections']);
-      print render($content);
-    ?>
+<?php
+	// We hide the comments and links now so that we can render them later.
+	hide($content['comments']);
+	hide($content['links']);
+	hide($content['field_type_de_carte']);
+	hide($content['field_uuid']);
+	hide($content['field_collections']);
+	//print render($content);
+?>
 </div>
 
 

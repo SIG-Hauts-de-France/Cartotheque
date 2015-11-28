@@ -137,7 +137,7 @@ function cartotheque_preprocess_node(&$vars) {
 	
 	if ($vars['node']->type == 'carte') {
 		//Collections
-		//var_dump($vars['field_collections']); die();
+		//dsm($vars['field_collections']); die();
 		$vars['collections'] = '<table class="table table-hover">';
 		$vars['collections_count'] = 0;
 		$collections = $vars['field_collections'];
@@ -169,4 +169,33 @@ function cartotheque_preprocess_node(&$vars) {
 			$vars['download_count'] = $downloadCount;
 		}
 	}
+}
+
+
+function cartotheque_menu_tree(array $variables) {
+	if($variables['theme_hook_original']=="menu_tree__menu_advanced_search_menu")
+		return '<ul class="nav navbar-nav searchMore">' . $variables['tree'] . '</ul>';
+	return '<ul class="nav navbar-nav">' . $variables['tree'] . '</ul>';
+}
+function cartotheque_menu_link(array $variables) {
+	$element = $variables['element'];
+	$sub_menu = '';
+
+	$switch = $element['#original_link']['has_children'];
+
+	if ($element['#below']) {
+		$sub_menu = drupal_render($element['#below']);
+	}
+	$element['#localized_options']['html'] = TRUE;
+	#This adds the span only to the parent Title: If you need the span on all text Titles Just remove the if else statement and leave  $linktext = '<span class="your_class">' . $element['#title'] . '</span>'; : 
+	if($switch == 1) {
+		$linktext = '<span class="your_class">' . $element['#title'] . '</span>';
+	} else {
+		$linktext = $element['#title'];
+	}
+	$output = l($linktext, $element['#href'], $element['#localized_options']);
+	if($element['#theme']=="menu_link__menu_advanced_search_menu") {
+		return '<li' . drupal_attributes($element['#attributes']) . '><span></span>' . $output . $sub_menu . "</li>\n";
+	}
+	return '<li' . drupal_attributes($element['#attributes']) . '>' . $output . $sub_menu . "</li>\n";
 }
