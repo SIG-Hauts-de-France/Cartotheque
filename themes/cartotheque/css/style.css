@@ -280,24 +280,29 @@ div.orderList{
 	margin-bottom:20px;
 	/*margin-right:20px;*/
 }
-div.orderList span{
+div.orderList label{
+display:none;
+}
+div.orderList span, div.form-type-bef-link {
 	display:inline-block;
 	width:22px;
 	height:16px;
 	background-image:url(../images/i_order.png);
 	background-repeat: no-repeat;
+	overflow:hidden;
 }
-div.orderList span a{
+div.orderList span a, div.form-type-bef-link a{
 	display:block;
 	height:16px;
+	color: transparent;
 }
-div.orderList span.orderZa{
+div.orderList span.orderZa, div.form-item-edit-sort-bef-combine-created-desc{
 	background-position: -22px 0;
 }
-div.orderList span.order01{
+div.orderList span.order01, div.form-item-edit-sort-bef-combine-title-asc{
 	background-position: -44px 0;
 }
-div.orderList span.order10{
+div.orderList span.order10, div.form-item-edit-sort-bef-combine-title-desc{
 	background-position: -66px 0;
 }
 

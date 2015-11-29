@@ -32,34 +32,32 @@
 	<?php if($widget->id == "edit-combine") print $widget->widget; ?>
 	<?php endforeach; ?>
 <?php else: ?>
-<div class="views-exposed-form">
-  <div class="views-exposed-widgets clearfix">
-
-	<div class="filtreList row">
-		<?php if (!empty($items_per_page)): ?>
-		<div class="form-group col-sm-9">
-			<?php print $items_per_page; ?>
-		</div>
-		<?php endif; ?>
-		<!--
-		<div class="orderList col-sm-3">
-			<span class="orderAz"><a href=""></a></span>
-			<span class="orderZa"><a href=""></a></span>
-			<span class="order01"><a href=""></a></span>
-			<span class="order10"><a href=""></a></span>
-		</div>
-		-->
-	</div>
-
 <?php
 	//On trie les champs
 	$combine = array(); $select = array(); $checkbox = array(); $other = array();
 	foreach ($widgets as $id => $widget) {
 		if($id=="filter-combine") $combine[] = $widget;
+		elseif($id=="sort-sort_bef_combine") $filter = $widget;
 		else $other[] = $widget;
 	}
 
 ?>
+<div class="views-exposed-form">
+  <div class="views-exposed-widgets clearfix">
+
+	<div class="filtreList row">
+		<div class="form-group col-sm-9">
+		<?php if (!empty($items_per_page)): ?>
+			<?php print $items_per_page; ?>
+		<?php endif; ?>
+		</div>
+		<div class="form-group orderList col-sm-3">
+		<?php if (!empty($filter)): ?>
+			<?php print $filter->widget; ?>
+		<?php endif; ?>
+		</div>
+	</div>
+
 
 	<?php foreach($combine as $id => $widget): ?>
 		<?php print $widget->widget; ?>
