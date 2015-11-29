@@ -46,12 +46,12 @@
   <div class="views-exposed-widgets clearfix">
 
 	<div class="filtreList row">
-		<div class="form-group col-sm-9">
+		<div class="form-group col-sm-7">
 		<?php if (!empty($items_per_page)): ?>
 			<?php print $items_per_page; ?>
 		<?php endif; ?>
 		</div>
-		<div class="form-group orderList col-sm-3">
+		<div class="form-group orderList col-sm-5">
 		<?php if (!empty($filter)): ?>
 			<?php print $filter->widget; ?>
 		<?php endif; ?>
