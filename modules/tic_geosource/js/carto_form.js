@@ -57,6 +57,7 @@ jQuery(document).ready(function() {
 					if(data.code == 'success') {
 						jQuery('#edit-field-auteur-und').append('<option value="'+data.nid+'">'+data.title+'</option>');
 						jQuery('#createContact').html('<p>Le contact a bien été ajouté !</p>');
+						jQuery('#edit-field-auteur-und').val(data.nid);
 						//TODO: changer la valeur active du select
 					}
 					else {

@@ -61,6 +61,7 @@ function tic_geosource_check_record($uuid) {
 		// le node n'existe pas dans Geosource
 		$node = tic_geosource_get_node_by_uuid($uuid);
 		if($node) {
+			// Suppression ou depublication ?
 			node_delete($node->nid);
 			watchdog('tic_geosource', 'Suppression du node '.$uuid.' supprimé dans Geosource');
 		}
@@ -356,15 +357,18 @@ function tic_geosource_record_to_node($record) {
 		$node->status = 1; //publié par defaut
 		$node->comment = 0; //commentaires désactivés
 		$node->promote = 0;
+		$node->language = 'fr';
 		$node->field_uuid['und'][0]['value'] = $uuid;
 	}
 	
-	// TODO:
-	// image et fichier ?
-	// carte statique ou interactive ? pas moyen de savoir depuis le XML (extraire de geosource)
-	
+	// TODO: image et fichier ?
 	if ($scale !== false) {
 		$node->field_echelle['und'][0]['value'] = $scale;
+	}
+	
+	$categoryTid = tic_geosource_get_tid_from_term_name('categorie', $category);
+	if ($categoryTid) {
+		$node->field_categorie['und'][0]['tid'] = $categoryTid;
 	}
 	
 	// atttributs
@@ -374,7 +378,6 @@ function tic_geosource_record_to_node($record) {
 	$node->field_url_source_des_donnees['und'][0]['value'] = $sourceInfos['url'];
 	$node->field_date_source_des_donnees['und'][0]['value'] = $sourceInfos['date'];
 	$node->field_source_des_donnees['und'][0]['value'] = $sourceInfos['text'];
-	$node->field_categorie['und'][0]['tid'] = tic_geosource_get_tid_from_term_name('categorie', $category);
 	$node->field_emprise_geographique['und'][0]['value'] = $empriseGeo;
 	$node->field_date_de_creation['und'][0]['value'] = $creationDate;
 	$node->field_date_de_mise_jour['und'][0]['value'] = $updateDate;
@@ -389,13 +392,17 @@ function tic_geosource_record_to_node($record) {
 	$node->field_mots_cles['und'] = array();
 	foreach($kt['keywords'] as $keyword) {
 		$tid = tic_geosource_get_tid_from_term_name('mots_cles', $keyword);
-		$node->field_mots_cles['und'][]['tid'] = $tid;
+		if ($tid) {
+			$node->field_mots_cles['und'][]['tid'] = $tid;
+		}
 	}
 	
 	$node->field_thematique['und'] = array();
 	foreach($kt['themes'] as $theme) {
 		$tid = tic_geosource_get_tid_from_term_name('thematique_gemet', $theme);
-		$node->field_thematique['und'][]['tid'] = $tid;
+		if ($tid) {
+			$node->field_thematique['und'][]['tid'] = $tid;
+		}
 	}
 	
 	//Fichiers
@@ -456,10 +463,12 @@ function tic_geosource_get_node_by_uuid($uuid) {
 /**
  * Get vocabulary term id (save the term if it does not exists)
  *
+ * @param string vocabulary
  * @param string Term name
- * @return int term ID
+ * @param bool save the term if it does not exists
+ * @return int term ID or false
  */
-function tic_geosource_get_tid_from_term_name($vocabulary, $term_name) {
+function tic_geosource_get_tid_from_term_name($vocabulary, $term_name, $save = false) {
 	//$vocabulary = 'thematique_gemet';
 	$arr_terms = taxonomy_get_term_by_name($term_name, $vocabulary);
 	if (!empty($arr_terms)) {
@@ -467,6 +476,8 @@ function tic_geosource_get_tid_from_term_name($vocabulary, $term_name) {
 		$tid = $arr_terms[0]->tid;
 	}
 	else {
+		if ($save == false) { return false; }
+		
 		$vobj = taxonomy_vocabulary_machine_name_load($vocabulary);
 		$term = new stdClass();
 		$term->name = $term_name;
@@ -504,9 +515,9 @@ function tic_geosource_create_contact($name, $email) {
 	$contact->type = 'contact';
 	$contact->title = $name;
 	$contact->uid = $user->uid;
-	$contact->language = LANGUAGE_NONE;
+	$contact->language = 'fr';
 	
-	//TODO: vérifier que le node a bien été sauvé; ajouter langue
+	//TODO: vérifier que le node a bien été sauvé
 	node_save($contact);
 	$node_wrapper = entity_metadata_wrapper('node', $contact);
 	$node_wrapper->field_adresse_email->set($email);

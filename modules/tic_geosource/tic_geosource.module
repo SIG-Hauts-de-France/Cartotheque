@@ -112,8 +112,6 @@ function tic_geosource_menu() {
  */
 function tic_geosource_form_alter(&$form, &$form_state, $form_id) {
 	
-	// TODO: si edition de carte, enlever le champ 'type de carte'
-	// adapter les champs en fonction du type de carte (statique ou dynamique
 	if ($form_id == 'carte_node_form') {
 		$form_state['no_cache'] = TRUE;
 		
@@ -152,9 +150,6 @@ function tic_geosource_form_alter(&$form, &$form_state, $form_id) {
 function tic_geosource_form_validate(&$form, &$form_state) {
 	
 	//formalisme numero de carte
-	//checks différents si carte statique ou dynamique
-	
-	//TODO limiter au formulaire de creation/edition de carte
 	
 	drupal_add_library('system', 'ui.dialog');
 	$form['#attached']['js'] = array(
@@ -233,7 +228,7 @@ function tic_geosource_addcontact_ajax_submit($form, &$form_state) {
 		drupal_exit();
 	}
 	
-	//TODO: Verifier si les donnees sont ok et si l'email n'est pas deja utilisé
+	//TODO: Verifier si l'email n'est pas deja utilisé ?
 	$name = $_GET['nom'];
 	$email = $_GET['email'];
 	
@@ -274,6 +269,9 @@ function tic_geosource_node_delete($node) {
  * @param stdClass Drupal node object
  */
 function tic_geosource_generate_map_thumbnail($node) {
+	if (!isset($node->field_image_carte['und'][0]['fid'])) {
+		return;
+	}
 	$fid = $node->field_image_carte['und'][0]['fid'];
 	$file = file_load($fid);
 	
@@ -298,9 +296,9 @@ function tic_geosource_node_presave($node) {
 	tic_geosource_generate_map_thumbnail($node);
 	
 	// Les brouillons ne sont pas envoyés sur Geosource
-	if ($node->status == 0) {
-		return;
-	}
+	//if ($node->status == 0) {
+	//	return;
+	//}
 	
 	// disabled is set during cron executions
 	$disabled = &drupal_static('tic_geosource_disable_geosource_push', false);
@@ -308,8 +306,12 @@ function tic_geosource_node_presave($node) {
 		return;
 	}
 	
+	
 	// a node can exists in drupal but not in geosource yet
 	if (! isset($node->field_uuid['und'][0]['value'])) {
+		// Do not push drafts to geosource
+		if ($node->status == 0) { return; }
+		
 		$uuid = tic_geosource_insert_record($node);
 		if ($uuid) {
 			$node->field_uuid['und'][0]['value'] = $uuid;
@@ -362,9 +364,10 @@ function tic_geosource_load_csw_client() {
  */
 function tic_geosource_load_divengine() {
 	// Reconfigure div to avoid conflicts with xml language
-	define('DIV_TAG_MACRO_BEGIN', '<?php');
-	
-	require_once dirname(__FILE__) . '/vendor/div.php';
+	if (!defined('DIV_TAG_MACRO_BEGIN')) {
+		define('DIV_TAG_MACRO_BEGIN', '<?php');
+		require_once dirname(__FILE__) . '/vendor/div.php';
+	}
 }
 
 /**
@@ -659,6 +662,7 @@ function tic_geosource_insert_record($node) {
 	
 	if (is_array($uuid)) {
 		tic_geosource_add_map_category($uuid[0]);
+		$client->publish($uuid[0]);
 		return $uuid[0];
 	}
 	else {
@@ -703,6 +707,14 @@ function tic_geosource_update_record($node) {
 	}
 	
 	tic_geosource_add_map_category($node->field_uuid['und'][0]['value']);
+	
+	// publier ou dépublier en fonction de l'état de la fiche drupal
+	if ($node->status == 0) {
+		$client->unpublish($node->field_uuid['und'][0]['value']);
+	}
+	else {
+		$client->publish($node->field_uuid['und'][0]['value']);
+	}
 	
 	return $updated;
 }
@@ -774,7 +786,7 @@ function tic_geosource_cron() {
 	module_load_include('inc', 'tic_geosource', 'includes/tic_geosource.utils');
 	
 	// synchro thesaurus, themes et mots cles
-	tic_geosource_load_thesaurus();
+	//tic_geosource_load_thesaurus();
 	
 	$client = tic_geosource_load_csw_client();
 	//TODO: changes from last cron run
