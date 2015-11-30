@@ -391,7 +391,11 @@ div.infoMap dt, .infosGenerales dt{
 div.descMap p{
 	text-align:justify;
 }
-div.imgMapFiche img, div.imgMap img {
+div.imgMapFiche {
+text-align:center;
+border:solid 1px #a4b2bb;
+}
+div.imgMapFiche, div.imgMap img {
 	border:solid 1px #a4b2bb;
 }
 

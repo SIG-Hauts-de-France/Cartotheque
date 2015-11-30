@@ -79,28 +79,33 @@
  *
  * @ingroup themeable
  */
+
+
+$type_carte = strtolower($node->field_type_de_carte['und'][0]['value']);
+
 ?>
-  <?php print render($title_prefix); ?>
-  <h2<?php print $title_attributes; ?>>
+
+<?php print render($title_prefix); ?>
+<h2<?php print $title_attributes; ?>>
 	<a href="<?php print $node_url; ?>"><?php print $title; ?></a>
 	<?php if ($collections_count > 0): ?>
 	<span class="tree"></span>
 	<?php endif; ?>
-	<span class="type"><?php  print render($content['field_type_de_carte']); ?></span>
-  </h2>
-  <?php print render($title_suffix); ?>
+	<span class="type"><?php print render($content['field_type_de_carte']); ?></span>
+</h2>
+<?php print render($title_suffix); ?>
 
-  <?php if ($display_submitted): ?>
-    <div class="submitted">
-      <?php print $submitted; ?>
-    </div>
-  <?php endif; ?>
+<?php if ($display_submitted): ?>
+	<div class="submitted"><?php print $submitted; ?></div>
+<?php endif; ?>
 
 <div class="col-sm-5">
 	<div class="imgMapFiche"><?php print render($content['field_imagette']); ?></div>
+	
 	<div class="col-xs-8 infoMap">
 	<dl>
-		<?php $content['field_numero_de_carte']['#label_display'] = 'hidden';
+		<?php
+			$content['field_numero_de_carte']['#label_display'] = 'hidden';
 			if (strtolower($node->field_type_de_carte['und'][0]['value']) == 'statique') { 
 				print '<dt>'; print $content['field_numero_de_carte']['#title']; print ':</dt>';
 				print '<dd>'; print render($content['field_numero_de_carte']); print '</dd>';
@@ -111,50 +116,64 @@
 		<dd><?php print render($content['field_date_de_mise_jour']); ?></dd>
 	</dl>
 	</div>
+	
 	<div class="col-xs-4" style="text-align:right;">
-	<div class="nbAction"><?php print $stats_total_count ?><span class="nbImg"></span>
-	<?php if (strtolower($node->field_type_de_carte['und'][0]['value']) == 'statique'): ?>
-	<?php print $download_count ?><span class="nbPdf"></span>
-	<?php endif; ?>
+		<div class="nbAction">
+			<?php print $stats_total_count ?><span class="nbImg"></span>
+			<?php if ($type_carte == 'statique'): ?>
+			<?php print $download_count ?><span class="nbPdf"></span>
+			<?php endif; ?>
+		</div>
 	</div>
-	</div>
+
+	<?php
+		$infosGenerales = '<h4>Informations</h4>';
+		
+		$infosGenerales .= "<dl>";
+		if(array_key_exists('field_auteur',$content)) {
+			$content['field_auteur']['#label_display'] = 'hidden';
+			$infosGenerales .= "<dt>".$content['field_auteur']['#title'].":</dt>";
+			$infosGenerales .= "<dd>".render($content['field_auteur'])."</dd>";
+		}
+		if(array_key_exists('field_emprise_geographique',$content)) {
+			$content['field_emprise_geographique']['#label_display'] = 'hidden';
+			$infosGenerales .= "<dt>".$content['field_emprise_geographique']['#title'].":</dt>";
+			$infosGenerales .= "<dd>".render($content['field_emprise_geographique'])."</dd>";
+		}
+		if($type_carte == 'statique' && array_key_exists('field_echelle',$content)) {
+			$content['field_echelle']['#label_display'] = 'hidden';
+			$infosGenerales .= "<dt>".$content['field_echelle']['#title'].":</dt>";
+			$infosGenerales .= "<dd>".render($content['field_echelle'])."</dd>";
+		}
+		$infosGenerales .= "</dl>";
+
+		$infosGenerales .= '<dl class="themaMap">';
+		$infosGenerales .= '<p><u>Thématiques:</u></p>';		
+		if(array_key_exists('field_categorie',$content)) {
+			$content['field_categorie']['#label_display'] = 'hidden';
+			$infosGenerales .= '<dt>'.$content['field_categorie']['#title'].':</dt>';
+			$infosGenerales .= '<dd>'.render($content['field_categorie']).'</dd>';
+		}
+		if(array_key_exists('field_thematique',$content)) {
+			$content['field_thematique']['#label_display'] = 'hidden';
+			$infosGenerales .= '<dt>'.$content['field_thematique']['#title'].':</dt>';
+			$infosGenerales .= '<dd>'.render($content['field_thematique']).'</dd>';
+		}
+		$infosGenerales .= '</dl>';
+	
+		$infosGenerales .= "<dl>";
+		$infosGenerales .= '<dt>Sources de données :</dt>';
+		$infosGenerales .= '<dd>' .
+					render($content['field_date_source_des_donnees']) .
+					render($content['field_source_des_donnees']) .
+					render($content['field_url_source_des_donnees']) .
+					'</dd>';
+		$infosGenerales .= '</dl>';
+		
+	?>
+
 	<div class="hidden-xs col-sm-12 infosGenerales">
-		<h4>Informations</h4>
-		<dl>
-			<?php if(array_key_exists('field_auteur',$content)): ?>
-				<?php $content['field_auteur']['#label_display'] = 'hidden'; ?>
-				<dt><?php print $content['field_auteur']['#title']; ?></dt>
-				<dd><?php print render($content['field_auteur']); ?></dd>
-			<?php endif; ?>
-
-			<?php $content['field_emprise_geographique']['#label_display'] = 'hidden'; ?>
-			<dt><?php print $content['field_emprise_geographique']['#title']; ?>:</dt>
-			<dd><?php print render($content['field_emprise_geographique']); ?></dd>
-
-			<?php if ($node->field_type_de_carte['und'][0]['value'] == 'Statique'):
-				$content['field_echelle']['#label_display'] = 'hidden'; ?>
-				<dt><?php print $content['field_echelle']['#title']; ?>:</dt>
-				<dd><?php print render($content['field_echelle']); ?></dd>
-			<?php endif; ?>
-		</dl>
-		<dl class="themaMap">
-			<p><u>Thématiques:</u></p>
-			<!--<dt>Catégorie:</dt><dd>Altitude</dd>-->
-			<?php $content['field_categorie']['#label_display'] = 'hidden'; ?>
-			<dt><?php print $content['field_categorie']['#title']; ?>:</dt>
-			<dd><?php print render($content['field_categorie']); ?></dd>
-			<!--<dt>Collection(s):</dt><dd>ATLAS, Collection 2 ...</dd>-->
-			<?php $content['field_thematique']['#label_display'] = 'hidden'; ?>
-			<dt><?php print $content['field_thematique']['#title']; ?>:</dt>
-			<dd><?php print render($content['field_thematique']); ?></dd>
-		</dl>
-		<dl>
-			<dt>Sources de données :</dt>
-			<dd><?php print render($content['field_date_source_des_donnees']); ?>
-			<?php print render($content['field_source_des_donnees']); ?>
-			<?php print render($content['field_url_source_des_donnees']); ?>
-			</dd>
-		</dl>
+		<?php print $infosGenerales; ?>
 	</div>
 </div>
 
@@ -162,22 +181,27 @@
 	<div class="descMapFiche">
 		<?php print render($content['field_description']); ?>
 		<div class="linkTheMap">
-			<?php if(strtolower($node->field_type_de_carte['und'][0]['value']) == 'dynamique'): ?>
-			<span class="urlMap"><a href="<?php print $node->field_url_carte['und'][0]['value']; ?>" target="_blank"><span class="linkIcone"></span>url</a></span>
+			<?php if($type_carte == 'dynamique'): ?>
+				<span class="urlMap"><a href="<?php print $node->field_url_carte['und'][0]['value']; ?>" target="_blank"><span class="linkIcone"></span>url</a></span>
 			<?php endif; ?>
-			<?php if (strtolower($node->field_type_de_carte['und'][0]['value']) == 'statique '):
-				$htmlimage = render($content['field_image_carte']);
-				if( preg_match('/<img .* src=\"(.*)\"/U', $htmlimage, $matches) ):
+		
+			<?php 
+				if ($type_carte == 'statique') {
+				
+					$htmlimage = render($content['field_image_carte']);
+					if( preg_match('/<img .* src=\"(.*)\"/U', $htmlimage, $matches) ) {
+						print '<span class="imgMap"><a href="'.$matches[1].'"><span class="linkIcone"></span>img</a></span>&nbsp;';
+					}
+					elseif( preg_match('/<a(.*) href=\"(.*)\"(.*)>/U', $htmlimage, $matches) ) {
+						print '<span class="imgMap"><a '.$matches[1].' href="'.$matches[2].'" '.$matches[3].'><span class="linkIcone"></span>img</a></span>&nbsp;';
+					}
+
+					$htmlfile = render($content['field_fichier_carte']);
+					if( preg_match('/<a(.*) href=\"(.*)\" (.*)>/U', $htmlfile, $matches) ) {
+						print '<span class="pdfMap"><a '.$matches[1].' href="'.$matches[2].'" '.$matches[3].'><span class="linkIcone"></span>pdf</a></span>&nbsp;';
+					}
+				}
 			?>
-			<span class="imgMap"><a href="<?php print $matches[1]; ?>"><span class="linkIcone"></span>img</a></span>
-			<?php endif; ?>
-			<?php
-				$htmlfile = render($content['field_fichier_carte']);
-				if( preg_match('/<a(.*) href=\"(.*)\" (.*)>/U', $htmlfile, $matches) ):
-			?>
-			<span class="pdfMap"><a <?php print $matches[1]; ?> href="<?php print $matches[2]; ?>" <?php print $matches[3]; ?>><span class="linkIcone"></span>pdf</a></span>
-			<?php endif; ?>
-			<?php endif; ?>
 		</div>
 		<div class="keyWordMap">Mots clés : <span class="keyWord"><?php
 			$content['field_mots_cles']['#label_display'] = 'hidden';
@@ -196,7 +220,8 @@
 	<?php endif; ?>
 </div>
 
-<div class="hidden-xs col-sm-12 infosGenerales">
+<div class="visible-xs col-xs-12 infosGenerales">
+	<?php print $infosGenerales; ?>
 </div>
 
 <div class="content"<?php print $content_attributes; ?>>
