@@ -169,6 +169,10 @@ function cartotheque_preprocess_node(&$vars) {
 			$vars['download_count'] = $downloadCount;
 		}
 	}
+	{
+		// Ne pas afficher le nombre de vues
+		$vars['content']['links']['statistics'] = array();
+	}
 }
 
 
