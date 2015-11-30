@@ -8,6 +8,7 @@ jQuery(document).ready(function() {
 	var dateSourceData = jQuery('#edit-field-date-source-des-donnees');
 	var dateMiseAJour = jQuery('#edit-field-date-de-mise-jour');
 	var urlCarte = jQuery('#edit-field-url-carte');
+	var fichierCarte = jQuery('#edit-field-fichier-carte');
 	
 	function cartoDynamiqueForm() {
 		echelleInputDiv.slideUp();
@@ -15,6 +16,7 @@ jQuery(document).ready(function() {
 		sourceData.slideUp();
 		urlSourceData.slideUp();
 		dateSourceData.slideUp();
+		fichierCarte.slideUp();
 		
 		dateMiseAJour.slideDown();
 		urlCarte.slideDown();
@@ -26,6 +28,7 @@ jQuery(document).ready(function() {
 		sourceData.slideDown();
 		urlSourceData.slideDown();
 		dateSourceData.slideDown();
+		fichierCarte.slideDown();
 		
 		dateMiseAJour.slideUp();
 		urlCarte.slideUp();
