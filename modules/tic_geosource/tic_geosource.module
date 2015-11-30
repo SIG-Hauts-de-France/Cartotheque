@@ -3,6 +3,12 @@
  *
  */
 
+// Defines utilisés pour la gestion des droits
+define('TIC_GEOSOURCE_REALM', 'tic_geosource');
+define('TIC_GEOSOURCE_GRANT_ID_EXTERNE', 0);
+define('TIC_GEOSOURCE_GRANT_ID_INTERNE', 1);
+define('TIC_GEOSOURCE_GRANT_ID_ARCHIVE', 2);
+
 // DEBUG
 function tic_geosource_node_view($node, $v, $e) {
 	return;
@@ -924,7 +930,7 @@ function tic_geosource_node_access($node, $op, $account) {
 	}
 	
 	// Droit d'affichage ou non en fonction du statut de la fiche
-	switch ($node->field_statut['und'][0]) {
+	switch (strtolower($node->field_statut['und'][0]['value'])) {
 		case 'externe':
 			return true;
 			break;
@@ -945,4 +951,73 @@ function tic_geosource_node_access($node, $op, $account) {
 			return NODE_ACCESS_DENY;
 			break;
 	}
+}
+
+/**
+ * Implements hook_node_grants
+ *
+ */
+function tic_geosource_node_grants($account, $op) {
+	$grants[TIC_GEOSOURCE_REALM] = array(
+		TIC_GEOSOURCE_GRANT_ID_EXTERNE,
+	);
+	
+	// Si l'utilisateur fait partie du groupe utilisateur interne
+	$interRole = user_role_load_by_name('Utilisateur interne');
+	if ($internRole) {
+		if (user_has_role($internRole->rid)) {
+			$grants[TIC_GEOSOURCE_REALM][] = TIC_GEOSOURCE_GRANT_ID_INTERNE;
+		}
+	}
+	
+	$adminRole = user_role_load_by_name('administrator');
+	if ($adminRole) {
+		if (user_has_role($adminRole->rid)) {
+			$grants[TIC_GEOSOURCE_REALM][] = TIC_GEOSOURCE_GRANT_ID_ARCHIVE;
+		}
+	}
+	
+	return $grants;
+}
+
+/**
+ * Implements hook_node_access_records
+ *
+ */
+function tic_geosource_node_access_records($node) {
+	if (strtolower($node->field_statut['und'][0]['value']) == 'interne') {
+		// Node interne
+		$grants[] = array(
+			'realm' => TIC_GEOSOURCE_REALM,
+			'gid' => TIC_GEOSOURCE_GRANT_ID_INTERNE,
+			'grant_view' => 1,
+			'grant_update' => 0,
+			'grant_delete' => 0,
+			'priority' => 0,
+		);
+	}
+	elseif(strtolower($node->field_statut['und'][0]['value']) == 'externe') {
+		$grants[] = array(
+			'realm' => TIC_GEOSOURCE_REALM,
+			'gid' => TIC_GEOSOURCE_GRANT_ID_EXTERNE,
+			'grant_view' => 1,
+			'grant_update' => 0,
+			'grant_delete' => 0,
+			'priority' => 0,
+		);
+	// Node externe
+	}
+	else {
+		// node archivé
+		$grants[] = array(
+			'realm' => TIC_GEOSOURCE_REALM,
+			'gid' => TIC_GEOSOURCE_GRANT_ID_ARCHIVE,
+			'grant_view' => 1,
+			'grant_update' => 0,
+			'grant_delete' => 0,
+			'priority' => 0,
+		);
+	}
+	
+	return $grants;
 }
