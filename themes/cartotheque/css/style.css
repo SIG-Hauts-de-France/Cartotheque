@@ -609,3 +609,6 @@ div.keyWordMap span.keyWord{
 	padding-left: 30px;
 	line-height:35px;
 }
+.collectionsMap th{
+border-bottom:0;
+}

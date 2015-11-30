@@ -114,8 +114,9 @@
 	<div class="col-xs-4" style="text-align:right;">
 	<div class="nbAction"><?php print $stats_total_count ?><span class="nbImg"></span>
 	<?php if (strtolower($node->field_type_de_carte['und'][0]['value']) == 'statique'): ?>
-	<?php print $download_count ?><span class="nbPdf"></span></div>
+	<?php print $download_count ?><span class="nbPdf"></span>
 	<?php endif; ?>
+	</div>
 	</div>
 	<div class="hidden-xs col-sm-12 infosGenerales">
 		<h4>Informations</h4>
