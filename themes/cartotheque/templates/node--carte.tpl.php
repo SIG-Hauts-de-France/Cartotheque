@@ -101,7 +101,7 @@
 	<div class="col-xs-8 infoMap">
 	<dl>
 		<?php $content['field_numero_de_carte']['#label_display'] = 'hidden';
-			if ($node->field_type_de_carte['und'][0]['value'] == 'Statique') { 
+			if (strtolower($node->field_type_de_carte['und'][0]['value']) == 'statique') { 
 				print '<dt>'; print $content['field_numero_de_carte']['#title']; print ':</dt>';
 				print '<dd>'; print render($content['field_numero_de_carte']); print '</dd>';
 			}
@@ -112,7 +112,10 @@
 	</dl>
 	</div>
 	<div class="col-xs-4" style="text-align:right;">
-	<div class="nbAction"><?php print $stats_total_count ?><span class="nbImg"></span> <?php print $download_count ?><span class="nbPdf"></span></div>
+	<div class="nbAction"><?php print $stats_total_count ?><span class="nbImg">
+	<?php if (strtolower($node->field_type_de_carte['und'][0]['value']) == 'statique'): ?>
+	</span> <?php print $download_count ?><span class="nbPdf"></span></div>
+	<?php endif; ?>
 	</div>
 	<div class="hidden-xs col-sm-12 infosGenerales">
 		<h4>Informations</h4>

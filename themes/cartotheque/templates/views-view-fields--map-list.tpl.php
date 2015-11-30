@@ -55,7 +55,9 @@
 	<div class="nbAction">
 		<?php print $fields['totalcount']->content; ?>
 		<span class="nbImg"> </span>
+		<?php if (strtolower($fields['field_type_de_carte']->content) == 'statique'): ?>
 		<?php print $fields['count']->content; ?>
 		<span class="nbPdf"> </span>
+		<?php endif; ?>
 	</div>
 </div>
