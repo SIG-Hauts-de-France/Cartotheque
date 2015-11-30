@@ -291,6 +291,13 @@ function tic_geosource_node_delete($node) {
 		return;
 	}
 	
+	// On ne supprime pas les cartes récupérées de Geosource
+	if (isset($node->field_isharvested)) {
+		if ($node->field_isharvested == '1') {
+			return;
+		}
+	}
+	
 	//Supprimer la ressource de Geosource
 	// a node can exists in drupal but not in geosource yet
 	if (isset($node->field_uuid['und'][0]['value'])) {
@@ -907,10 +914,35 @@ function tic_geosource_node_access($node, $op, $account) {
 		return;
 	}
 	
+	if (!$node->type == 'carte') { return; }
+	
 	// Les cartes récupérées de Geosource ne sont pas éditables
-	if ($node->type == 'carte' && $op == 'update') {
+	if ($op == 'update') {
 		if ($node->field_isharvested['und'][0]['value'] == "1") {
 			return NODE_ACCESS_DENY;
 		}
+	}
+	
+	// Droit d'affichage ou non en fonction du statut de la fiche
+	switch ($node->field_statut['und'][0]) {
+		case 'externe':
+			return true;
+			break;
+		case 'interne':
+			//TODO: check user role
+			$internRole = user_role_load_by_name('Utilisateur interne');
+			if ($internRole) {
+				return user_has_role($internRole->rid);
+			}
+			return NODE_ACCESS_DENY;
+			break;
+		case 'archive':
+			// Note: les admins n'executent pas ce hook
+			return NODE_ACCESS_DENY;
+			break;
+		default:
+			// should not happen so deny
+			return NODE_ACCESS_DENY;
+			break;
 	}
 }

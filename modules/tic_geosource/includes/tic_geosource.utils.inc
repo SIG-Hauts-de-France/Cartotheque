@@ -360,6 +360,7 @@ function tic_geosource_record_to_node($record) {
 		$node->language = 'fr';
 		$node->field_uuid['und'][0]['value'] = $uuid;
 		$node->field_isharvested['und'][0]['value'] = 1; // Carte récupérée de Geosource
+		$node->field_statut['und'][0]['value'] = 'interne'; // Carte de geosource publiees en interne par defaut
 	}
 	
 	// TODO: image et fichier ?
