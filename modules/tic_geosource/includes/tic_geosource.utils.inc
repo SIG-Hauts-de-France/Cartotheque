@@ -359,6 +359,7 @@ function tic_geosource_record_to_node($record) {
 		$node->promote = 0;
 		$node->language = 'fr';
 		$node->field_uuid['und'][0]['value'] = $uuid;
+		$node->field_isharvested['und'][0]['value'] = 1; // Carte récupérée de Geosource
 	}
 	
 	// TODO: image et fichier ?

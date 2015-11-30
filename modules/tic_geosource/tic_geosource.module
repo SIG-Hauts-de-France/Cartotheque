@@ -134,6 +134,7 @@ function tic_geosource_form_alter(&$form, &$form_state, $form_id) {
 		// champs non editables
 		$form['field_uuid']['#access'] = FALSE;
 		$form['field_imagette']['#access'] = FALSE;
+		$form['field_isharvested']['#access'] = false;
 		
 		//Si editition, pas possible de changer type de carte
 		if ($form['nid']['#value']) {
@@ -316,19 +317,17 @@ function tic_geosource_node_presave($node) {
 		return;
 	}
 	
-	tic_geosource_generate_map_thumbnail($node);
+	// Cette fiche n'est pas récupérée de Geosource
+	$node->field_isharvested['und'][0]['value'] = 0;
+	// TODO: cartothèque pour le fiches entrées directement ?
 	
-	// Les brouillons ne sont pas envoyés sur Geosource
-	//if ($node->status == 0) {
-	//	return;
-	//}
+	tic_geosource_generate_map_thumbnail($node);
 	
 	// disabled is set during cron executions
 	$disabled = &drupal_static('tic_geosource_disable_geosource_push', false);
 	if ($disabled) {
 		return;
 	}
-	
 	
 	// a node can exists in drupal but not in geosource yet
 	if (! isset($node->field_uuid['und'][0]['value'])) {
@@ -886,4 +885,21 @@ function tic_geosource_get_next_map_identifier() {
 	}
 	
 	return $id;
+}
+
+/**
+ * Implements hook_node_access
+ *
+ */
+function tic_geosource_node_access($node, $op, $account) {
+	if (!is_object($node)) {
+		return;
+	}
+	
+	// Les cartes récupérées de Geosource ne sont pas éditables
+	if ($node->type == 'carte' && $op == 'update') {
+		if ($node->field_isharvested['und'][0]['value'] == "1") {
+			return NODE_ACCESS_DENY;
+		}
+	}
 }
