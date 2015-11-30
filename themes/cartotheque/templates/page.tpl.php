@@ -151,13 +151,16 @@
 		</div>
 		<p>les cartes et leurs métadonnées de la Région<br/><strong><?php if($site_slogan) print $site_slogan; ?></strong></p>
 		</section>
-
+		
 		<!-- Search block -->
 		<section class="row searchMap">
-			<div class="col-sm-6"><?php print render($page['search']); ?></div>
+			<div class="col-sm-6">
+				<?php print render($page['search']); ?>
+				<p class="searchMore"><span></span><a href="?q=map-list">Recherche avancée</a></p>
+			</div>
 			<div class="col-sm-6"><?php print render($page['tags']); ?></div>
 		</section>
-
+		
 		<!-- Maps block -->
 		<section class="row actus">
 			<div class="col-sm-3"><?php print render($page['home_last_maps']); ?></div>
