@@ -144,7 +144,7 @@ function cartotheque_preprocess_node(&$vars) {
 		$num = 1;
 		foreach($collections as $col) {
 			//var_dump($col); die();
-			$vars['collections'] .= '<tr><th scope="row">'.$num.'</th><td><a href="/?q=map-list&field_collections_tid='.$col['taxonomy_term']->tid.'">'.$col['taxonomy_term']->name.'</a>';
+			$vars['collections'] .= '<tr><th scope="row">'.$num.'</th><td><a href="'.theme_get_setting('cartotheque_map_list_url').'&field_collections_tid[]='.$col['taxonomy_term']->tid.'">'.$col['taxonomy_term']->name.'</a>';
 			$num++;
 		}
 		

@@ -485,8 +485,9 @@ aside input, aside select{
 
 .pagination > .active > a{
 	background-color: #95A6B1;
-border-color: #95A6B1;
+	border-color: #95A6B1;
 }
+ul.pager { margin-top: 25px; }
 
 
 
