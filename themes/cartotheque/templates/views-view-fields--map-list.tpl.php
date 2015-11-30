@@ -39,13 +39,18 @@
 		<div class="descMap">
 			<?php print $fields['field_description']->content; ?>
 			<div class="linkMap">
+				<?php if (strtolower($fields['field_type_de_carte']->content) == 'statique'): ?>
 				<span class="linkImg">
 					<a href="<?php print $fields['field_image_carte']->content; ?>"> </a>
 				</span>
 				<span class="linkPdf">
 					<a href="<?php print $fields['field_fichier_carte']->content; ?>"> </a>
 				</span>
-				
+				<?php else: ?>
+					<span class="linkWeb">
+						<a href="<?php print $fields['field_url_carte']->content; ?>" target="_blank"> </a>
+					</span>
+				<?php endif; ?>
 				<span class="readMore">
 					<?php print $fields['view_node']->content; ?>
 				</span>
