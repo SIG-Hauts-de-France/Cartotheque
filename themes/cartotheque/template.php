@@ -58,7 +58,6 @@ function cartotheque_preprocess_textfield(&$variables) {
 	$variables['element']['#field_prefix'] = 'Help';
 }
 
-
 function cartotheque_form_element(&$variables) {
 	$element = &$variables['element'];
 
@@ -203,3 +202,6 @@ function cartotheque_menu_link(array $variables) {
 	}
 	return '<li' . drupal_attributes($element['#attributes']) . '>' . $output . $sub_menu . "</li>\n";
 }
+
+
+

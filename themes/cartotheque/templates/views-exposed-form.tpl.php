@@ -34,10 +34,11 @@
 <?php else: ?>
 <?php
 	//On trie les champs
-	$combine = array(); $select = array(); $checkbox = array(); $other = array();
+	$combine = array(); $other = array(); $filter = array(); $secondary = array();
 	foreach ($widgets as $id => $widget) {
 		if($id=="filter-combine") $combine[] = $widget;
 		elseif($id=="sort-sort_bef_combine") $filter = $widget;
+		elseif($id=="filter-secondary") $secondary[] = $widget;
 		else $other[] = $widget;
 	}
 
@@ -89,9 +90,28 @@
       </div>
 <?php endforeach; ?>
 </div>
-<h3>Critères</h3>
-<div>
-</div>
+<?php foreach($secondary as $id => $widget): ?>
+      <div id="<?php print $widget->id; ?>-wrapper" class="views-exposed-widget views-widget-<?php print $id; ?>">
+        <?php if (!empty($widget->label)): ?>
+          <label for="<?php print $widget->id; ?>">
+            <?php print $widget->label; ?>
+          </label>
+        <?php endif; ?>
+        <?php if (!empty($widget->operator)): ?>
+          <div class="views-operator">
+            <?php print $widget->operator; ?>
+          </div>
+        <?php endif; ?>
+        <div class="views-widget">
+          <?php print $widget->widget; ?>
+        </div>
+        <?php if (!empty($widget->description)): ?>
+          <div class="description">
+            <?php print $widget->description; ?>
+          </div>
+        <?php endif; ?>
+      </div>
+<?php endforeach; ?>
 </div>
 
     <?php if (!empty($sort_by)): ?>
