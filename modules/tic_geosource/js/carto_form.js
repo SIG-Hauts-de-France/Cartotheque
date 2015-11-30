@@ -2,42 +2,20 @@
 
 jQuery(document).ready(function() {
 	
-	var mapType = jQuery('#edit-field-type-de-carte-und');
-	var echelleInputDiv = jQuery('.form-item-field-echelle-und');
+	//var mapType = jQuery('#edit-field-type-de-carte-und');
+	//var echelleInputDiv = jQuery('.form-item-field-echelle-und');
 	var thematiqueSelect = jQuery('#edit-field-thematique-und');
 	var addContactLink = jQuery('#addContactLink');
 	var addContactWindow = jQuery('#createContact');
-	var numeroDeCarte = jQuery('#edit-field-numero-de-carte');
-	var sourceData = jQuery('#edit-field-source-des-donnees');
-	var urlSourceData = jQuery('#edit-field-url-source-des-donnees');
-	var dateSourceData = jQuery('#edit-field-date-source-des-donnees');
-	var dateMiseAJour = jQuery('#edit-field-date-de-mise-jour');
-	var urlCarte = jQuery('#edit-field-url-carte');
+	//var numeroDeCarte = jQuery('#edit-field-numero-de-carte');
+	//var sourceData = jQuery('#edit-field-source-des-donnees');
+	//var urlSourceData = jQuery('#edit-field-url-source-des-donnees');
+	//var dateSourceData = jQuery('#edit-field-date-source-des-donnees');
+	//var dateMiseAJour = jQuery('#edit-field-date-de-mise-jour');
+	//var urlCarte = jQuery('#edit-field-url-carte');
 	
 	// Attacher chosen sur le select categories
 	thematiqueSelect.chosen();
-	
-	function cartoDynamiqueForm() {
-		echelleInputDiv.slideUp();
-		numeroDeCarte.slideUp();
-		sourceData.slideUp();
-		urlSourceData.slideUp();
-		dateSourceData.slideUp();
-		
-		dateMiseAJour.slideDown();
-		urlCarte.slideDown();
-	}
-	
-	function cartoStatiqueForm() {
-		echelleInputDiv.slideDown();
-		numeroDeCarte.slideDown();
-		sourceData.slideDown();
-		urlSourceData.slideDown();
-		dateSourceData.slideDown();
-		
-		dateMiseAJour.slideUp();
-		urlCarte.slideUp();
-	}
 	
 	addContactLink.click(function(e) {
 		e.preventDefault();
@@ -58,7 +36,6 @@ jQuery(document).ready(function() {
 						jQuery('#edit-field-auteur-und').append('<option value="'+data.nid+'">'+data.title+'</option>');
 						jQuery('#createContact').html('<p>Le contact a bien été ajouté !</p>');
 						jQuery('#edit-field-auteur-und').val(data.nid);
-						//TODO: changer la valeur active du select
 					}
 					else {
 						//TODO: ajouter classe error au champ non validé + message erreur dans la dialog box
@@ -73,21 +50,4 @@ jQuery(document).ready(function() {
 		jQuery('#createContact').dialog();
 	});
 	
-	var currentMapType = mapType.val();
-	
-	if (mapType.val() == 'Statique') {
-		cartoStatiqueForm();
-	}
-	else {
-		cartoDynamiqueForm();
-	}
-	
-	mapType.change(function() {
-		if (mapType.val() == 'Statique') {
-			cartoStatiqueForm();
-		}
-		else {
-			cartoDynamiqueForm();
-		}
-	});
 });

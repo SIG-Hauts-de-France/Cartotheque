@@ -137,7 +137,25 @@ function tic_geosource_form_alter(&$form, &$form_state, $form_id) {
 		
 		//Si editition, pas possible de changer type de carte
 		if ($form['nid']['#value']) {
+			
 			$form['field_type_de_carte']['#access'] = FALSE;
+			
+			// Suppression des champs en fonction du type de carte
+			if ($form['#node']->field_type_de_carte['und'][0]['value'] == 'statique') {
+				$form['field_date_de_mise_jour']['#access'] = false;
+				$form['field_url_carte']['#access'] = false;
+			}
+			else {
+				$form['field_numero_de_carte']['#access'] = false;
+				$form['field_echelle']['#access'] = false;
+				$form['field_source_des_donnees']['#access'] = false;
+				$form['field_url_source_des_donnees']['#access'] = false;
+				$form['field_date_source_des_donnees']['#access'] = false;
+			}
+		}
+		else {
+			// Nouvelle carte; ajouter js adaptation formulaire
+			$form['#attached']['js'][] = drupal_get_path('module', 'tic_geosource') . '/js/adapt_form.js';
 		}
 		
 		return $form;
@@ -162,8 +180,13 @@ function tic_geosource_form_validate(&$form, &$form_state) {
 		array('group' => CSS_THEME, 'type' => 'file')
 	);
 	
+	// Si edition de carte; assigner automatiquement le type de carte pour la validation
+	if ($form['nid']['#value']) {
+		$form_state['values']['field_type_de_carte']['und'][0]['value'] = $form['#node']->field_type_de_carte['und'][0]['value'];
+	}
+	
 	$type = $form_state['values']['field_type_de_carte']['und'][0]['value'];
-	if ($type == 'Statique') {
+	if (strtolower($type) == 'statique') {
 		//statique seulement: numero de carte obligatoire
 		if (!isset($form_state['values']['field_numero_de_carte']['und'][0]['value'])) {
 			form_set_error('field_numero_de_carte', 'Le numéro de carte est obligatoire');
@@ -193,7 +216,7 @@ function tic_geosource_form_validate(&$form, &$form_state) {
 		// - collection de carte
 		//TODO
 	}
-	elseif ($type == 'Dynamique') {
+	elseif (strtolower($type) == 'dynamique') {
 		//dynamique seulement: date de mise a jour obligatoire
 		if (!isset($form_state['values']['field_date_de_mise_jour']['und'][0]['value'])) {
 			form_set_error('field_date_de_mise_jour', 'Le champ date de mise a jour est obligatoire');
