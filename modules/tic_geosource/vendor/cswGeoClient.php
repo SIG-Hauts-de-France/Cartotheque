@@ -25,7 +25,8 @@ class cswGeoClient {
     private $_cswLogin;
     private $_cswPassword;
     private $_bAuthent;
-    private $_sessionID;
+	private $_sessionID;
+	private $_timeout;
 
    
     private $_response;
@@ -46,7 +47,9 @@ class cswGeoClient {
             $this->_cswPassword=$cswPassword;
             $this->_authentAddress=$authentAddress;
             $this->_bAuthent=true;
-        }
+		}
+		
+		$this->_timeout = 60;
     }
 
     /**
@@ -54,6 +57,7 @@ class cswGeoClient {
      * @return bool Request success / error
      */
     private function _callHTTPCSW($request) {
+		$request->setConfig('timeout', $this->_timeout);
 
         try {
             $resp= $request->send();
@@ -81,6 +85,7 @@ class cswGeoClient {
 	 * @return bool Request success / error
 	 */
 	private function _callHTTPAuth($request) {
+		$request->setConfig('timeout', $this->_timeout);
 		try {
 			$resp = $request->send();
 			if (301 == $resp->getStatus() or 302 == $resp->getStatus()) {
@@ -104,12 +109,13 @@ class cswGeoClient {
      *
      * @return bool authentication success or error
      */
-    private function _authentication($request) {
+	private function _authentication($request) {
         //only available for Geosource and Geonetwork
         //start by logout
         if ($this->_bAuthent) {
             //$req = new HTTP_Request2($this->_authentAddress.'/xml.user.logout', HTTP_Request2::METHOD_POST);
-            $req = new HTTP_Request2($this->_authentAddress.'/j_spring_security_logout', HTTP_Request2::METHOD_POST);
+			$req = new HTTP_Request2($this->_authentAddress.'/j_spring_security_logout', HTTP_Request2::METHOD_POST);
+			$req->setConfig('timeout', $this->_timeout);
 
             //if ($this->_callHTTPCSW($req)) {
             if ($this->_callHTTPAuth($req)) {
@@ -175,6 +181,7 @@ class cswGeoClient {
 	public function getGeoidFromUuid($uuid) {
 		$request = new HTTP_Request2($this->_authentAddress.'/srv/eng/q');
 		$request->setMethod(HTTP_Request2::METHOD_GET);
+		$request->setConfig('timeout', 60);
 		$url = $request->getUrl();
 		
 		$url->setQueryVariables(array(
