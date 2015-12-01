@@ -17,9 +17,9 @@ function tic_geosource_node_view($node, $v, $e) {
 	//return;
 	//var_dump($node); die();
 	
-	module_load_include('inc', 'tic_geosource', 'includes/tic_geosource.utils');
+	//module_load_include('inc', 'tic_geosource', 'includes/tic_geosource.utils');
 	//tic_geosource_check_record('78f93047-74f8-4419-ac3d-fc62e4b0477v');
-	die();
+	//die();
 	
 	//tic_geosource_load_thesaurus();
 	
@@ -41,7 +41,7 @@ function tic_geosource_node_view($node, $v, $e) {
 	//}
 	//tic_geosource_process_record('78f93047-74f8-4419-ac3d-fc62e4b0477b');
 	//tic_geosource_process_record('487f8b4c-2f96-42ec-9d7d-783f5efc8cc7');
-	die();
+	//die();
 	
 	return;
 }
@@ -117,9 +117,8 @@ function tic_geosource_menu() {
  *
  */
 function tic_geosource_form_alter(&$form, &$form_state, $form_id) {
-	
 	if ($form_id == 'carte_node_form') {
-		$form_state['no_cache'] = TRUE;
+		//$form_state['no_cache'] = TRUE;
 		
 		drupal_add_library('system', 'ui.dialog');
 		
@@ -133,9 +132,11 @@ function tic_geosource_form_alter(&$form, &$form_state, $form_id) {
 			array('group' => CSS_THEME, 'type' => 'file')
 		);
 		
-		$form["field_auteur"]['#suffix'] = '<a href="#" id="addContactLink">Ajouter un contact</a>';
+		// Cette fonction nécessite que le cache soit désactivé; ajax fichiers ne fonctionne pas avec
+		//$form["field_auteur"]['#suffix'] = '<a href="#" id="addContactLink">Ajouter un contact</a>';
 		
 		$form['#validate'][] = 'tic_geosource_form_validate';
+		
 		
 		// champs non editables
 		$form['field_uuid']['#access'] = FALSE;
@@ -171,10 +172,9 @@ function tic_geosource_form_alter(&$form, &$form_state, $form_id) {
 }
 
 /**
- * Implements hook_node_validate
+ * Implements hook_form_validate
  */
 function tic_geosource_form_validate(&$form, &$form_state) {
-	
 	//formalisme numero de carte
 	
 	drupal_add_library('system', 'ui.dialog');
