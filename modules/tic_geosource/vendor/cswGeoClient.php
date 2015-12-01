@@ -213,7 +213,10 @@ class cswGeoClient {
 		foreach ($categories as $cat) {
 			switch($cat) {
 				case 'map':
-						$urlVars['_1'] = 'on';
+					$urlVars['_1'] = 'on';
+					break;
+				case 'interactive':
+					$urlVars['_3'] = 'on';
 					break;
 			}
 		}

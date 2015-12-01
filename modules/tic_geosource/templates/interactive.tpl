@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<gmd:MD_Metadata xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gml="http://www.opengis.net/gml" xmlns:geonet="http://www.fao.org/geonetwork" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.isotc211.org/2005/gmd http://www.isotc211.org/2005/gmd/gmd.xsd http://www.isotc211.org/2005/srv http://schemas.opengis.net/iso/19139/20060504/srv/srv.xsd">
+<gmd:MD_Metadata xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gml="http://www.opengis.net/gml" xmlns:geonet="http://www.fao.org/geonetwork">
 ?$uuid
   <gmd:fileIdentifier>
     <gco:CharacterString>{$uuid}</gco:CharacterString>
@@ -34,7 +34,7 @@ $uuid?
         </gmd:CI_Contact>
       </gmd:contactInfo>
       <gmd:role>
-        <gmd:CI_RoleCode codeList="http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#CI_RoleCode" codeListValue="author" />
+        <gmd:CI_RoleCode codeListValue="pointOfContact" codeList="http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#CI_RoleCode" />
       </gmd:role>
     </gmd:CI_ResponsibleParty>
   </gmd:contact>
@@ -51,8 +51,8 @@ $uuid?
     <gmd:MD_ReferenceSystem>
       <gmd:referenceSystemIdentifier>
         <gmd:RS_Identifier>
-          <gmd:code nilReason="missing">
-            <gco:CharacterString />
+          <gmd:code>
+            <gco:CharacterString>Lambert 93</gco:CharacterString>
           </gmd:code>
         </gmd:RS_Identifier>
       </gmd:referenceSystemIdentifier>
@@ -68,31 +68,13 @@ $uuid?
           <gmd:date>
             <gmd:CI_Date>
               <gmd:date>
-                <gco:DateTime>{$creation_date}</gco:DateTime>
+                <gco:Date>{$creation_date}</gco:Date>
               </gmd:date>
               <gmd:dateType>
                 <gmd:CI_DateTypeCode codeList="http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#CI_DateTypeCode" codeListValue="publication" />
               </gmd:dateType>
             </gmd:CI_Date>
-?$update_date
-            <gmd:CI_Date>
-                <gmd:date>
-                  <gco:Date>{$update_date}</gco:Date>
-                </gmd:date>
-                <gmd:dateType>
-                  <gmd:CI_DateTypeCode codeList="http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#CI_DateTypeCode"
-                                             codeListValue="revision"/>
-              </gmd:dateType>
-            </gmd:CI_Date>
-$update_date?
           </gmd:date>
-          <gmd:identifier>
-            <gmd:MD_Identifier>
-              <gmd:code>
-                <gco:CharacterString>{$map_number}</gco:CharacterString>
-              </gmd:code>
-            </gmd:MD_Identifier>
-          </gmd:identifier>
           <gmd:presentationForm>
             <gmd:CI_PresentationFormCode codeListValue="mapDigital" codeList="http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#CI_PresentationFormCode" />
           </gmd:presentationForm>
@@ -124,18 +106,10 @@ $update_date?
             </gmd:CI_Contact>
           </gmd:contactInfo>
           <gmd:role>
-            <gmd:CI_RoleCode codeList="http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#CI_RoleCode" codeListValue="author" />
+            <gmd:CI_RoleCode codeListValue="pointOfContact" codeList="http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#CI_RoleCode" />
           </gmd:role>
         </gmd:CI_ResponsibleParty>
       </gmd:pointOfContact>
-         <gmd:resourceMaintenance>
-            <gmd:MD_MaintenanceInformation>
-               <gmd:maintenanceAndUpdateFrequency>
-                  <gmd:MD_MaintenanceFrequencyCode codeList="http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#MD_MaintenanceFrequencyCode"
-                                                   codeListValue="asNeeded"/>
-               </gmd:maintenanceAndUpdateFrequency>
-            </gmd:MD_MaintenanceInformation>
-         </gmd:resourceMaintenance>
 [$thumbnails]
          <gmd:graphicOverview>
             <gmd:MD_BrowseGraphic>
@@ -204,17 +178,6 @@ $update_date?
                </gmd:thesaurusName>
             </gmd:MD_Keywords>
       </gmd:descriptiveKeywords>
-      <gmd:spatialResolution>
-        <gmd:MD_Resolution>
-          <gmd:equivalentScale>
-            <gmd:MD_RepresentativeFraction>
-              <gmd:denominator nilReason="missing">
-                <gco:Integer />
-              </gmd:denominator>
-            </gmd:MD_RepresentativeFraction>
-          </gmd:equivalentScale>
-        </gmd:MD_Resolution>
-      </gmd:spatialResolution>
       <gmd:language>
         <gmd:LanguageCode codeList="http://www.loc.gov/standards/iso639-2/" codeListValue="fre" />
       </gmd:language>
@@ -242,7 +205,9 @@ $update_date?
           <gmd:temporalElement>
             <gmd:EX_TemporalExtent>
               <gmd:extent>
-                <gml:TimePeriod gml:id="d1768e183a1052958" />
+                <gml:TimeInstant gml:id="d17414e182a1052958">
+                  <gml:timePosition />
+                </gml:TimeInstant>
               </gmd:extent>
             </gmd:EX_TemporalExtent>
           </gmd:temporalElement>
@@ -252,6 +217,16 @@ $update_date?
   </gmd:identificationInfo>
   <gmd:distributionInfo>
     <gmd:MD_Distribution>
+      <gmd:distributionFormat>
+        <gmd:MD_Format>
+          <gmd:name>
+            <gco:CharacterString>PDF</gco:CharacterString>
+          </gmd:name>
+          <gmd:version>
+            <gco:CharacterString>1.7</gco:CharacterString>
+          </gmd:version>
+        </gmd:MD_Format>
+      </gmd:distributionFormat>
       <gmd:transferOptions>
         <gmd:MD_DigitalTransferOptions>
           <gmd:onLine>
@@ -280,7 +255,7 @@ $update_date?
                 <gco:CharacterString>WWW:DOWNLOAD-1.0-http--download</gco:CharacterString>
               </gmd:protocol>
               <gmd:name>
-                <gmx:MimeFileType xmlns:gmx="http://www.isotc211.org/2005/gmx" type="{$filetype}">{$name}</gmx:MimeFileType>
+                <gmx:MimeFileType xmlns:gmx="http://www.isotc211.org/2005/gmx" type="" />
               </gmd:name>
               <gmd:description>
                 <gco:CharacterString>{$name}</gco:CharacterString>
@@ -327,12 +302,11 @@ $update_date?
       </gmd:report>
       <gmd:lineage>
         <gmd:LI_Lineage>
-          <gmd:statement nilReason="missing">
-            <gco:CharacterString />
+          <gmd:statement>
+            <gco:CharacterString>{$source_description} {$source_url} {$source_date}</gco:CharacterString>
           </gmd:statement>
         </gmd:LI_Lineage>
       </gmd:lineage>
     </gmd:DQ_DataQuality>
   </gmd:dataQualityInfo>
 </gmd:MD_Metadata>
-

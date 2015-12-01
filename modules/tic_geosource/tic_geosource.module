@@ -488,7 +488,7 @@ function tic_geosource_bbox_to_region($north, $south, $east, $west) {
  *
  */
 function tic_geosource_is_static_map($node) {
-	if ($node->field_type_de_carte['und'][0]['value'] == 'statique') {
+	if (strtolower($node->field_type_de_carte['und'][0]['value']) == 'statique') {
 		return true;
 	}
 	
