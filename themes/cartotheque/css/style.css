@@ -399,6 +399,7 @@ div.imgMapFiche, div.imgMap img {
 	border:solid 1px #a4b2bb;
 	margin:auto;
 }
+div.imgMapFiche img { margin: auto; }
 
 div.linkMap{
 	position:absolute;

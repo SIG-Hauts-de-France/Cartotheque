@@ -128,7 +128,7 @@
 	<?php if (drupal_is_front_page()): ?>
 	<div id="mainContent" class="column">
         <a id="main-content"></a>
-		<section class="row tvt">
+		<section class="row tvt hidden-xs">
 		<div class="trouver">
 			<div class="lineIcone">
 				<div class="line"></div>
