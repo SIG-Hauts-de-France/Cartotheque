@@ -822,8 +822,7 @@ function tic_geosource_cron() {
 	$now = time();
 	
 	if (($now - $last) < $delay) {
-		// DEBUG TODO: decommenter le return
-		//return;
+		return;
 	}
 	
 	$date = new DateTime();
@@ -836,7 +835,7 @@ function tic_geosource_cron() {
 	
 	$client = tic_geosource_load_csw_client();
 	//TODO: changes from last cron run
-	$xml = $client->getRecordsModifiedSince(new DateTime('2012-07-08'));
+	$xml = $client->getRecordsModifiedSince($date);
 	$uuids = tic_geosource_get_result_uuids($xml);
 	
 	// Ajouter les uuids a traiter dans le queue
@@ -963,7 +962,7 @@ function tic_geosource_node_grants($account, $op) {
 	);
 	
 	// Si l'utilisateur fait partie du groupe utilisateur interne
-	$interRole = user_role_load_by_name('Utilisateur interne');
+	$internRole = user_role_load_by_name('Utilisateur interne');
 	if ($internRole) {
 		if (user_has_role($internRole->rid)) {
 			$grants[TIC_GEOSOURCE_REALM][] = TIC_GEOSOURCE_GRANT_ID_INTERNE;
