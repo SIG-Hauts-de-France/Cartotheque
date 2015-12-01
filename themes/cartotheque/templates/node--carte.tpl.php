@@ -106,7 +106,7 @@ $type_carte = strtolower($node->field_type_de_carte['und'][0]['value']);
 	<dl>
 		<?php
 			$content['field_numero_de_carte']['#label_display'] = 'hidden';
-			if (strtolower($node->field_type_de_carte['und'][0]['value']) == 'statique') { 
+			if ($type_carte == 'statique') { 
 				print '<dt>'; print $content['field_numero_de_carte']['#title']; print ':</dt>';
 				print '<dd>'; print render($content['field_numero_de_carte']); print '</dd>';
 			}
@@ -181,7 +181,7 @@ $type_carte = strtolower($node->field_type_de_carte['und'][0]['value']);
 	<div class="descMapFiche">
 		<?php print render($content['field_description']); ?>
 		<div class="linkTheMap">
-			<?php if($type_carte == 'dynamique'): ?>
+			<?php if($type_carte == 'dynamique' && $node->field_url_carte['und'][0]['value']): ?>
 				<span class="urlMap"><a href="<?php print $node->field_url_carte['und'][0]['value']; ?>" target="_blank"><span class="linkIcone"></span>url</a></span>
 			<?php endif; ?>
 		
