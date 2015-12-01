@@ -174,6 +174,11 @@ function cartotheque_preprocess_node(&$vars) {
 	}
 }
 
+//Images responsive
+function cartotheque_preprocess_image_style(&$vars) {
+	$vars['attributes']['class'][] = 'img-responsive';
+}
+
 
 function cartotheque_menu_tree(array $variables) {
 	if($variables['theme_hook_original']=="menu_tree__menu_advanced_search_menu")
