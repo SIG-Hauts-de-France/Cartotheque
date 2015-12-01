@@ -108,6 +108,14 @@ function tic_geosource_menu() {
 		'file' => 'includes/tic_geosource.settings.inc',
 	);
 	
+	$items['admin/config/services/geosource/sync'] = array(
+		'title' => 'Synchroniser Drupal avec Geosource',
+		'description' => 'Lancer la synchronisation entre Drupal et Geosource',
+		'page callback' => 'tic_geosource_sync',
+		'access arguments' => array('administer site configuration'),
+		'file' => 'includes/tic_geosource.settings.inc',
+	);
+	
 	return $items;
 }
 
@@ -530,6 +538,15 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
 		}
 	}
 	
+	// Mots cles thesaurus GEMET
+	$thesaurus = array();
+	if (isset($node->field_mots_cles_thesaurus['und'])) {
+		foreach ($node->field_mots_cles_thesaurus['und'] as $k) {
+			$term = taxonomy_term_load($k['tid']);
+			$thesaurus[] = tic_geosource_format_text($term->name);
+		}
+	}
+	
 	// categorie
 	$catTerm = taxonomy_term_load($node->field_categorie['und'][0]['tid']);
 	$category = tic_geosource_format_text($catTerm->name);
@@ -620,7 +637,6 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
 	}
 	else { $updateDate = false; }
 	
-	
 	// date de creation
 	if (isset($node->field_date_de_realisation['und'][0]['value'])) {
 		$dateRealisation = $node->field_date_de_realisation['und'][0]['value'];
@@ -661,6 +677,7 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
 		'source_description' => $sourceDesc,
 		'bbox' => $bbox,
 		'keywords' => $keywords,
+		'thesaurus' => $thesaurus,
 		'themes' => $thematiques,
 		'category' => $category,
 		'files' => $files,
@@ -821,7 +838,9 @@ function tic_geosource_cron() {
 	$delay = variable_get('geosource_sync_delay');
 	$now = time();
 	
-	if (($now - $last) < $delay) {
+	$elapse = $now - $last;
+	
+	if ($elapse < $delay) {
 		return;
 	}
 	
@@ -830,11 +849,7 @@ function tic_geosource_cron() {
 	
 	module_load_include('inc', 'tic_geosource', 'includes/tic_geosource.utils');
 	
-	// synchro thesaurus, themes et mots cles
-	//tic_geosource_load_thesaurus();
-	
 	$client = tic_geosource_load_csw_client();
-	//TODO: changes from last cron run
 	$xml = $client->getRecordsModifiedSince($date);
 	$uuids = tic_geosource_get_result_uuids($xml);
 	
@@ -954,6 +969,7 @@ function tic_geosource_node_access($node, $op, $account) {
 
 /**
  * Implements hook_node_grants
+ * TODO: limiter au type carte
  *
  */
 function tic_geosource_node_grants($account, $op) {
@@ -981,10 +997,22 @@ function tic_geosource_node_grants($account, $op) {
 
 /**
  * Implements hook_node_access_records
+ * Définit le droit d'accès au node en fonction de la valeur du champ diffusion (interne; externe; archive)
  *
  */
 function tic_geosource_node_access_records($node) {
-	if (strtolower($node->field_statut['und'][0]['value']) == 'interne') {
+	$statut = 'interne';
+	
+	if ($node->type != 'carte') { return; }
+	
+	if (isset($node->field_statut['und'][0]['value'])) {
+		$statut = strtolower($node->field_statut['und'][0]['value']);
+	}
+	else {
+		watchdog('tic_geosource', 'field statut non trouvé pour '.$node->title.': considéré comme diffusion interne');
+	}
+	
+	if ($statut == 'interne') {
 		// Node interne
 		$grants[] = array(
 			'realm' => TIC_GEOSOURCE_REALM,
@@ -995,7 +1023,8 @@ function tic_geosource_node_access_records($node) {
 			'priority' => 0,
 		);
 	}
-	elseif(strtolower($node->field_statut['und'][0]['value']) == 'externe') {
+	elseif($statut == 'externe') {
+		// Node externe
 		$grants[] = array(
 			'realm' => TIC_GEOSOURCE_REALM,
 			'gid' => TIC_GEOSOURCE_GRANT_ID_EXTERNE,
@@ -1004,7 +1033,6 @@ function tic_geosource_node_access_records($node) {
 			'grant_delete' => 0,
 			'priority' => 0,
 		);
-	// Node externe
 	}
 	else {
 		// node archivé

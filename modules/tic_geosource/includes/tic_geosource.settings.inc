@@ -53,6 +53,39 @@ function tic_geosource_config($form, &$form_state) {
 	return system_settings_form($form);
 }
 
+function tic_geosource_sync() {
+	$pageContent = array();
+	$error = false;
+	
+	module_load_include('inc', 'tic_geosource', 'includes/tic_geosource.utils');
+	
+	try {
+		$client = tic_geosource_load_csw_client();
+		//TODO: ajouter une méthode getAll dans cswGeoClient.php
+		$xml = $client->getRecordsModifiedSince(new DateTime('01-01-2000'));
+		$uuids = tic_geosource_get_result_uuids($xml);
+		
+		// Ajouter les uuids a traiter dans le queue
+		$queue = DrupalQueue::get('tic_geosource_sync');
+		foreach ($uuids as $uuid) {
+			$queue->createItem($uuid);
+		}
+	}
+	catch (Exception $e) {
+		$error = true;
+	}
+	
+	drupal_set_title('Synchronisation avec Geosource');
+	if ($error == false) {
+		$pageContent['#markup'] = '<p>La synchronisation avec Geosource a été lancée ('.count($uuids).' fiches dans la file d\'attente)</p>';
+	}
+	else {
+		$pageContent['#markup'] = '<p>Une erreur est survenue lors du lancement de la synchronisation avec Geosource</p>';
+	}
+	
+	return drupal_render($pageContent);
+}
+
 function tic_geosource_configtest() {
 	$pageContent = array();
 	$error = false;

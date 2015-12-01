@@ -132,6 +132,15 @@ $uuid?
             <gco:CharacterString>{$value}</gco:CharacterString>
           </gmd:keyword>
 [/$keywords]
+        </gmd:MD_Keywords>
+      </gmd:descriptiveKeywords>
+      <gmd:descriptiveKeywords>
+        <gmd:MD_Keywords>
+[$themes]
+          <gmd:keyword>
+            <gco:CharacterString>{$value}</gco:CharacterString>
+          </gmd:keyword>
+[/$themes]
           <gmd:type>
             <gmd:MD_KeywordTypeCode codeListValue="theme" codeList="http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/ML_gmxCodelists.xml#MD_KeywordTypeCode" />
           </gmd:type>
@@ -141,21 +150,17 @@ $uuid?
                                   xmlns:gmx="http://www.isotc211.org/2005/gmx"
                                   xmlns:srv="http://www.isotc211.org/2005/srv"
                                   xmlns:xlink="http://www.w3.org/1999/xlink">
-            <gmd:MD_Keywords>
-[$themes]
-               <gmd:keyword>
-                  <gco:CharacterString>{$value}</gco:CharacterString>
-               </gmd:keyword>
-[/$themes]
-               <gmd:type>
-                  <gmd:MD_KeywordTypeCode codeList="http://www.isotc211.org/2005/resources/codeList.xml#MD_KeywordTypeCode"
-                                          codeListValue="theme"/>
-               </gmd:type>
-               <gmd:thesaurusName>
-                  <gmd:CI_Citation>
-                     <gmd:title>
-                        <gco:CharacterString>GEMET - INSPIRE themes, version 1.0</gco:CharacterString>
-                     </gmd:title>
+        <gmd:MD_Keywords>
+[$thesaurus]
+          <gmd:keyword>
+            <gco:CharacterString>{$value}</gco:CharacterString>
+          </gmd:keyword>
+[/$thesaurus]
+          <gmd:thesaurusName>
+            <gmd:CI_Citation>
+              <gmd:title>
+                <gco:CharacterString>GEMET - INSPIRE themes, version 1.0</gco:CharacterString>
+                   </gmd:title>
                      <gmd:date>
                         <gmd:CI_Date>
                            <gmd:date>

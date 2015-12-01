@@ -229,7 +229,7 @@ function tic_geosource_get_record_thumbnail($record) {
 
 
 /**
- * Extraction des mots cles et themes
+ * Extraction des mots cles, mots cles thesaurus et themes
  * @param DOMDocument Geosource resource
  * @return array Tableau associatif themes et mots cles
  */
@@ -238,6 +238,8 @@ function tic_geosource_get_keywords_and_themes($record) {
 	
 	$ret['themes'] = array();
 	$ret['keywords'] = array();
+	// TODO: récupérer les mots cles thesaurus Gemet
+	$ret['keywords_thesaurus'] = array();
 	
 	$nodes = $record->getElementsByTagName('descriptiveKeywords');
 	if (! $nodes->length > 0) {
@@ -246,8 +248,13 @@ function tic_geosource_get_keywords_and_themes($record) {
 	
 	foreach ($nodes as $node) {
 		$thesaurus = $node->getElementsByTagName('thesaurusName');
+		$typeCode = $node->getElementsByTagName('type');
+		
 		if ($thesaurus->length > 0) {
 			$key = 'themes';
+		}
+		elseif($typeCode->length > 0) {
+			$key = 'keywords_thesaurus';
 		}
 		else {
 			$key = 'keywords';
@@ -298,6 +305,22 @@ function tic_geosource_get_source_info($record) {
 }
 
 /**
+ * Obtenir la date au format iso a partir d'une chaine
+ *
+ * @param string Chaine représentant une date
+ */
+function tic_geosource_format_date($raw) {
+	try {
+		$date = new DateTime($raw);
+	}
+	catch (Exception $e) {
+		$date = new DateTime('now');
+	}
+	
+	return $date->format('Y-m-d\TH:i:s');
+}
+
+/**
  * Save or update record as drupal node
  *
  * @param DOMDocument
@@ -323,9 +346,12 @@ function tic_geosource_record_to_node($record) {
 	$empriseGeo = tic_geosource_get_record_bbox_equivalent($record);
 	$sourceInfos = tic_geosource_get_source_info($record);
 	$kt = tic_geosource_get_keywords_and_themes($record);
-	$creationDate = tic_geosource_get_single_element_by_path($record, '//gmd:MD_Metadata/gmd:dateStamp');
-	$updateDate = tic_geosource_get_single_element_by_path($record, '//gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:date/gmd:CI_Date/gmd:date');
-
+	$rawCreationDate = tic_geosource_get_single_element_by_path($record, '//gmd:MD_Metadata/gmd:dateStamp');
+	$rawUpdateDate = tic_geosource_get_single_element_by_path($record, '//gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:date/gmd:CI_Date/gmd:date');
+	
+	$creationDate = tic_geosource_format_date($rawCreationDate);
+	$updateDate = tic_geosource_format_date($rawUpdateDate);
+	
 	$contact = false;
 	if ($contactEmail != '') {
 		$contact = tic_geosource_load_contact_by_email($contactEmail);
@@ -396,6 +422,14 @@ function tic_geosource_record_to_node($record) {
 		$tid = tic_geosource_get_tid_from_term_name('mots_cles', $keyword);
 		if ($tid) {
 			$node->field_mots_cles['und'][]['tid'] = $tid;
+		}
+	}
+	
+	$node->field_mots_cles_thesaurus['und'] = array();
+	foreach($kt['keywords_thesaurus'] as $keyword) {
+		$tid = tic_geosource_get_tid_from_term_name('mots_cles_thesaurus_gemet', $keyword);
+		if ($tid) {
+			$node->field_mots_cles_thesaurus['und'][]['tid'] = $tid;
 		}
 	}
 	

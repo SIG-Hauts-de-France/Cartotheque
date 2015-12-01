@@ -139,6 +139,15 @@ $uuid?
             <gco:CharacterString>{$value}</gco:CharacterString>
           </gmd:keyword>
 [/$keywords]
+        </gmd:MD_Keywords>
+      </gmd:descriptiveKeywords>
+      <gmd:descriptiveKeywords>
+        <gmd:MD_Keywords>
+[$themes]
+          <gmd:keyword>
+            <gco:CharacterString>{$value}</gco:CharacterString>
+          </gmd:keyword>
+[/$themes]
           <gmd:type>
             <gmd:MD_KeywordTypeCode codeListValue="theme" codeList="http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/ML_gmxCodelists.xml#MD_KeywordTypeCode" />
           </gmd:type>
@@ -149,15 +158,11 @@ $uuid?
                                   xmlns:srv="http://www.isotc211.org/2005/srv"
                                   xmlns:xlink="http://www.w3.org/1999/xlink">
             <gmd:MD_Keywords>
-[$themes]
+[$thesaurus]
                <gmd:keyword>
                   <gco:CharacterString>{$value}</gco:CharacterString>
                </gmd:keyword>
-[/$themes]
-               <gmd:type>
-                  <gmd:MD_KeywordTypeCode codeList="http://www.isotc211.org/2005/resources/codeList.xml#MD_KeywordTypeCode"
-                                          codeListValue="theme"/>
-               </gmd:type>
+[/$thesaurus]
                <gmd:thesaurusName>
                   <gmd:CI_Citation>
                      <gmd:title>
@@ -169,8 +174,7 @@ $uuid?
                               <gco:Date>2008-06-01</gco:Date>
                            </gmd:date>
                            <gmd:dateType>
-                              <gmd:CI_DateTypeCode codeList="http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/ML_gmxCodelists.xml#CI_DateTypeCode"
-                                                   codeListValue="publication"/>
+                              <gmd:CI_DateTypeCode codeList="http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/ML_gmxCodelists.xml#CI_DateTypeCode" codeListValue="publication"/>
                            </gmd:dateType>
                         </gmd:CI_Date>
                      </gmd:date>
@@ -190,7 +194,7 @@ $uuid?
           <gmd:equivalentScale>
             <gmd:MD_RepresentativeFraction>
               <gmd:denominator>
-                <gco:Integer>{$scale}</gco:Integer>
+                <gco:Integer>{$map_scale}</gco:Integer>
               </gmd:denominator>
             </gmd:MD_RepresentativeFraction>
           </gmd:equivalentScale>
