@@ -201,6 +201,30 @@ class cswGeoClient {
 		return false;
 	}
 	
+	public function jsonGetRecordByUuid($uuid) {
+		//http://npdc-p.memoris.fr/geosource/srv/eng/q?_content_type=json&fast=index&uuid=npdc_f_vecteur_v358
+		$request = new HTTP_Request2($this->_authentAddress.'/srv/eng/q');
+		$request->setMethod(HTTP_Request2::METHOD_GET);
+		$request->setConfig('timeout', $this->_timeout);
+		$url = $request->getUrl();
+		
+		$url->setQueryVariables(array(
+			'_content_type' => 'json',
+			'fast' => 'index',
+			'uuid' => $uuid,
+		));
+		
+		//Auth needed
+		$this->_authentication($request);
+		
+		if ($this->_callHTTPCSW($request)) {
+			$record = json_decode($this->_response, true);
+			return $record;
+		}
+		
+		return false;
+	}
+	
 	/**
 	 * Assigner une catégorie sur une ressource Geosource
 	 *

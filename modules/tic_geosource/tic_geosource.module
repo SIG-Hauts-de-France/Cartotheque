@@ -17,7 +17,9 @@ function tic_geosource_node_view($node, $v, $e) {
 	//return;
 	//var_dump($node); die();
 	
-	//module_load_include('inc', 'tic_geosource', 'includes/tic_geosource.utils');
+	module_load_include('inc', 'tic_geosource', 'includes/tic_geosource.utils');
+	tic_geosource_process_record_json('06a52b1d-a981-4ada-b98f-69720bf39e9a');
+	die();
 	//tic_geosource_check_record('78f93047-74f8-4419-ac3d-fc62e4b0477v');
 	//die();
 	
@@ -862,7 +864,7 @@ function tic_geosource_cron() {
 	$uuids = array();
 	$uuids = tic_geosource_get_all_records_uuids();
 	$checkQueue = DrupalQueue::get('tic_geosource_check_exists');
-	foreach($uuids as $uuid) {
+	foreach ($uuids as $uuid) {
 		$checkQueue->createItem($uuid);
 	}
 	
@@ -878,7 +880,7 @@ function tic_geosource_get_all_records_uuids() {
 	
 	$results = db_query('SELECT field_uuid_value FROM field_data_field_uuid');
 	
-	foreach($results as $record) {
+	foreach ($results as $record) {
 		$ret[] = $record->field_uuid_value;
 	}
 	return $ret;

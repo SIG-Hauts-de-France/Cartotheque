@@ -48,6 +48,133 @@ function tic_geosource_process_record($uuid) {
 	tic_geosource_record_to_node($dom);
 }
 
+function tic_geosource_process_record_json($uuid) {
+	$client = tic_geosource_load_csw_client();
+	$record = $client->jsonGetRecordByUuid($uuid);
+	if (!is_array($record)) {
+		watchdog('tic_geosource', 'Erreur lors de la synchronisation de la ressource '.$uuid);
+		return;
+	}
+	
+	tic_geosource_json_record_to_node($record);
+	var_dump($record); die();
+}
+
+function tic_geosource_json_record_to_node($record) {
+	//TODO: isset sur les valeurs avant assign
+	$uuid = $record['metadata']['geonet:info']['uuid'];
+	$title = $record['metadata']['defaultTitle'];
+	$abstract = $record['metadata']['abstract'];
+	$createDate = $record['metadata']['geonet:info']['createDate'];
+	$updateDate = $record['metadata']['geonet:info']['changeDate'];
+	$scale = $record['summary']['denominators'][0]['@name'];
+	$category = $record['summary']['topicCats'][0]['@name'];
+	//$numCarte = 
+	//$contactName = $record['metadata']['responsibleParty'][0];
+	//$contactEmail = (voir metadata responsibleParty
+	$contact = explode('|', $record['metadata']['responsibleParty'][0]);
+	$contactName = $contact[2];
+	$contactEmail = $contact[4];
+	
+	$author = tic_geosource_load_contact_by_email($contactEmail);
+	if (!$author) {
+		if ($contactName != '') {
+			$author = tic_geosource_create_contact($contactName, $contactEmail);
+			watchdog('tic_geosource', 'Creation automatique du contact '.$contactName);
+		}
+		else {
+			watchdog('tic_geosource', 'Aucun contact trouvé pour la fiche '.$uuid);
+		}
+	}
+	
+	$empriseGeo = $record['metadata']['geoBox'];
+	
+	$bbox = explode('|', $empriseGeo);
+	$region = tic_geosource_bbox_to_region($bbox[0], $bbox[1], $bbox[2], $bbox[3]);
+	
+	//$sourceInfos =
+	$keywords = $record['metadata']['keywords'];
+	$themes = array();
+	foreach($record['summary']['inspireThemes'] as $th) {
+		$themes[] = $th['@name'];
+	}
+	
+	// $thesaurus = '';
+	// split and Process download
+	//$thumb = $record['metadata']['image'];
+	//$file = $record['metadata']['link'];
+	// y or n
+	$isHarvested = $record['metadata']['isHarvested'];
+	// string true or false
+	$isPublishedToAll = $record['metadata']['geonet:info']['isPublishedToAll'];
+	
+	$node = tic_geosource_get_node_by_uuid($uuid);
+	if (!$node) {
+		$node = new stdClass();
+		
+		$node->type = 'carte';
+		node_object_prepare($node);
+		
+		$node->is_new = true;
+		$node->status = 1; //publié par defaut
+		$node->comment = 0; //commentaires désactivés
+		$node->promote = 0;
+		$node->language = 'fr';
+		$node->field_uuid['und'][0]['value'] = $uuid;
+		$node->field_isharvested['und'][0]['value'] = 1; // Carte récupérée de Geosource
+		$node->field_statut['und'][0]['value'] = 'interne'; // Carte de geosource publiees en interne par defaut
+	}
+	
+	if ($isPublishedToAll == "true") {
+		$node->field_statut['und'][0]['value'] = 'externe';
+	}
+	else {
+		$node->field_statut['und'][0]['value'] = 'interne';
+	}
+	
+	// Ajouter un champ created by drupal ?
+	if ($isHarvested) {
+		$node->field_isharvested['und'][0]['value'] = 1;
+	}
+	else {
+		$node->field_isharvested['und'][0]['value'] = 0;
+	}
+	
+	$node->field_echelle['und'][0]['value'] = $scale;
+	$node->title = $title;
+	$node->field_description['und'][0]['value'] = $abstract;
+	
+	$node->field_date_de_creation['und'][0]['value'] = $creationDate;
+	$node->field_date_de_mise_jour['und'][0]['value'] = $updateDate;
+	
+	$categoryTid = tic_geosource_get_tid_from_term_name('categorie', $category);
+	if ($categoryTid) {
+		$node->field_categorie['und'][0]['tid'] = $categoryTid;
+	}
+	
+	foreach ($keywords as $k) {
+		$tid = tic_geosource_get_tid_from_term_name('mots_cles', $k);
+		if ($tid) {
+			$node->field_mots_cles['und'][]['tid'] = $tid;
+		}
+	}
+	
+	foreach ($themes as $t) {
+		$tid = tic_geosource_get_tid_from_term_name('thematique_gemet', $t);
+		if ($tid) {
+			$node->field_thematique['und'][]['tid'] = $tid;
+		}
+	}
+	
+	$node->field_emprise_geographique['und'][0]['value'] = $region;
+	if ($contact) {
+		$node->field_auteur['und'][0]['nid'] = $contact->nid;
+	}
+	
+	var_dump($node); die();
+	die();
+}
+
 function tic_geosource_check_record($uuid) {
 	$client = tic_geosource_load_csw_client();
 	$xml = $client->getRecordById($uuid);
