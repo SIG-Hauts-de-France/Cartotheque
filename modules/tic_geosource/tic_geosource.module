@@ -854,16 +854,28 @@ function tic_geosource_cron() {
 	
 	module_load_include('inc', 'tic_geosource', 'includes/tic_geosource.utils');
 	
-	$client = tic_geosource_load_csw_client();
-	$xml = $client->getRecordsModifiedSince($date);
-	$uuids = tic_geosource_get_result_uuids($xml);
+	$queueMod = true;
 	
-	// Ajouter les uuids a traiter dans le queue
-	$queue = DrupalQueue::get('tic_geosource_sync');
-	foreach ($uuids as $uuid) {
-		$queue->createItem($uuid);
+	$client = tic_geosource_load_csw_client();
+	try {
+		$xml = $client->getRecordsModifiedSince($date);
+	}
+	catch (Exception $e) {
+		watchdog('tic_geosource', 'Erreur lors de la récupération des ressources modifiées: '.$e->getMessage());
+		$queueMod = false;
 	}
 	
+	if ($queueMod) {
+		$uuids = tic_geosource_get_result_uuids($xml);
+		
+		// Ajouter les uuids a traiter dans le queue
+		$queue = DrupalQueue::get('tic_geosource_sync');
+		foreach ($uuids as $uuid) {
+			$queue->createItem($uuid);
+		}
+	}
+	
+	// Vérifier que les ressources Drupal ayant un UUID existent toujours dans Geosource
 	$uuids = array();
 	$uuids = tic_geosource_get_all_records_uuids();
 	$checkQueue = DrupalQueue::get('tic_geosource_check_exists');
