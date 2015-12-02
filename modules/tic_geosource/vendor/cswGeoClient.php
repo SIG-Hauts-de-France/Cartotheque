@@ -39,7 +39,7 @@ class cswGeoClient {
      * @param String $authentAddress address of the login/logout address
      */
     
-    function  __construct($cswAddress,$cswLogin=null,$cswPassword=null,$authentAddress=null) {
+    function  __construct($cswAddress,$cswLogin=null,$cswPassword=null,$authentAddress=null, $timeout=null) {
         $this->_cswAddress=$cswAddress;
         $this->_bAuthent=false;
         if (isset($cswLogin)) {
@@ -48,8 +48,13 @@ class cswGeoClient {
             $this->_authentAddress=$authentAddress;
             $this->_bAuthent=true;
 		}
-		
-		$this->_timeout = 60;
+
+		if (is_null($timeout)) {
+			$this->_timeout = 60;
+		}
+		else {
+			$this->_timeout = $timeout;
+		}
     }
 
     /**

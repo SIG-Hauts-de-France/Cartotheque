@@ -97,4 +97,5 @@ function tic_geosource_uninstall() {
 	variable_del('geosource_server_user');
 	variable_del('geosource_server_password');
 	variable_del('tic_geosource_bbox');
+	variable_del('geosource_server_timeout');
 }

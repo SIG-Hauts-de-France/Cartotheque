@@ -10,7 +10,7 @@ function tic_geosource_config($form, &$form_state) {
 	
 	$form['geosource server']['geosource_server_url'] = array(
 		'#type' => 'textfield',
-		'#title' => 'Adresse serveur Geosource',
+		'#title' => 'Adresse serveur CSW Geosource',
 		'#default_value' => variable_get('geosource_server_url', 'http://geosourcedemo.brgm.fr/geosource/srv/eng/csw'),
 		'#maxlength' => 255,
 		'#description' => 'Adresse du serveur Geosource a utiliser pour la synchronisation des cartes',
@@ -31,10 +31,17 @@ function tic_geosource_config($form, &$form_state) {
 	);
 	$form['geosource server']['geosource_server_auth_address'] = array(
 		'#type' => 'textfield',
-		'#title' => 'Adresse d\'authentification Geosource',
+		'#title' => 'Adresse Geosource',
 		'#default_value' => variable_get('geosource_server_auth_address', ''),
 		'#maxlength' => 255,
 		'#description' => 'Adresse de l\'authentification Geosource pour la synchronisation de cartes',
+	);
+	$form['geosource server']['geosource_server_timeout'] = array(
+		'#type' => 'textfield',
+		'#title' => 'Timeout',
+		'#default_value' => variable_get('geosource_server_timeout', 60),
+		'#maxlength' => 3,
+		'#description' => 'Délai de timeout pour la connexion Geosource',
 	);
 	$form['geosource sync'] = array(
 		'#type' => 'fieldset',

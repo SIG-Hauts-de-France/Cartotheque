@@ -396,6 +396,7 @@ function tic_geosource_load_csw_client() {
 	$username = variable_get('geosource_server_user', '');
 	$password = variable_get('geosource_server_password', '');
 	$authAddress = variable_get('geosource_server_auth_address', '');
+	$timeout = variable_get('geosource_server_timeout', 60);
 	
 	if ($cswServer == '') {
 		return false;
@@ -410,7 +411,7 @@ function tic_geosource_load_csw_client() {
 	}
 	
 	if ($authAddress != '') {
-		return new cswGeoClient($cswServer, $username, $password, $authAddress);
+		return new cswGeoClient($cswServer, $username, $password, $authAddress, $timeout);
 	}
 	else {
 		return new cswGeoClient($cswServer);
