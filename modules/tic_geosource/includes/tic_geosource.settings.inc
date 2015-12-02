@@ -72,6 +72,7 @@ function tic_geosource_sync() {
 		}
 	}
 	catch (Exception $e) {
+		watchdog('tic_geosource', 'Erreur a la synchronisation initiale: '.$e->getMessage());
 		$error = true;
 	}
 	
