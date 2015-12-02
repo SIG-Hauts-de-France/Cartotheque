@@ -90,7 +90,7 @@ function cartotheque_form_element(&$variables) {
 	$prefix = isset($element['#field_prefix']) ? '<span class="field-prefix">' . $element['#field_prefix'] . '</span> ' : '';
 	$suffix = isset($element['#field_suffix']) ? ' <span class="field-suffix">' . $element['#field_suffix'] . '</span>' : '';
 
-	if($element['#name']=="combine")
+	if(array_key_exists('#name',$element) && $element['#name']=="combine")
 		$prefix = '<span class="field-prefix input-group-addon search" id="basic-addon-search"></span>';
 
 	switch ($element['#title_display']) {

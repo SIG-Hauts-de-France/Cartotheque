@@ -74,7 +74,8 @@ header ul.topNav li.user a{
 }
 
 section.tvt{
-	margin:40px auto;
+	margin:20px auto;
+	margin-top: 0;
 	display:table;
 }
 section.tvt > div{
@@ -171,7 +172,7 @@ p.searchMore span, .searchMore span{
 	padding-left: 0px;
 }
 section.actus{
-	margin-top:40px;
+	margin-top:80px;
 }
 section.actus h2{
 	margin:0;
@@ -192,6 +193,9 @@ section.actus div.maps div.mapZoom{
 	-webkit-box-shadow: 2px 2px 4px 2px rgba(0,0,0,0.2);
 	box-shadow: 2px 2px 4px 2px rgba(0,0,0,0.2);
 	
+}
+section.actus div.maps.leftMaps div.view-content{
+margin-right: -15px; margin-left: -15px;
 }
 section.actus div.maps.leftMaps div.mapZoom{
 	left:20px;
