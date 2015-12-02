@@ -64,12 +64,15 @@ function tic_geosource_download_file($url) {
 		return false;
 	}
 	
+	$relative = false;
+	
 	// Determiner si l'url est relative
 	if(!preg_match('/^http/', $url)) {
 		$server = variable_get('geosource_server_auth_address', '');
 		$url = $server . '/' . $url;
 		$relative = true;
 	}
+	
 	if ($relative) {
 		$client = tic_geosource_load_csw_client();
 		$data = $client->jsonDownloadFile($url);
@@ -229,8 +232,19 @@ function tic_geosource_json_record_to_node($record) {
 	}
 	else { $scale = false; }
 	
-	if (isset($record['summary']['topicCats'])) {
-		$category = $record['summary']['topicCats'][0]['@label'];
+	if (isset($record['metadata']['topicCat'])) {
+		$category = $record['metadata']['topicCat'];
+	}
+	elseif (isset($record['summary']['topicCats'])) {
+		if (is_array(['summary']['topicCats'])) {
+			if (!empty($record['summary']['topicCats'])) {
+				$category = $record['summary']['topicCats'][0]['@label'];
+			}
+		}
+		else {
+			// TODO can be string ?
+			$category = false;
+		}
 	}
 	else { $category = false; }
 	
@@ -270,7 +284,7 @@ function tic_geosource_json_record_to_node($record) {
 		$sourceInfos = $record['metadata']['lineage'];
 	}
 	else { $sourceInfos = false; }
-
+	
 	// keywords contient thesaurus et non thesaurus
 	$keywords = array();
 	if (isset($record['metadata']['keywords'])) {
@@ -395,7 +409,7 @@ function tic_geosource_json_record_to_node($record) {
 	if ($region) {
 		$node->field_emprise_geographique['und'][0]['value'] = $region;
 	}
-
+	
 	if ($author) {
 		$node->field_auteur['und'][0]['nid'] = $author->nid;
 	}
