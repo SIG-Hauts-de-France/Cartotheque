@@ -260,6 +260,20 @@ class cswGeoClient {
 		return $this->_callHTTPCSW($request);
 	}
 	
+	public function jsonDownloadFile($url) {
+		$request = new HTTP_Request2($url);
+		$request->setMethod(HTTP_Request2::METHOD_GET);
+		
+		// auth needed
+		$this->_authentication($request);
+		
+		if ($this->_callHTTPCSW($request)) {
+			return $this->_response;
+		}
+		
+		return false;
+	}
+	
 	public function publish($geoid) {
 		$request = new HTTP_Request2($this->_authentAddress.'/srv/eng/md.publish');
 		$request->setMethod(HTTP_Request2::METHOD_GET);

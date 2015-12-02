@@ -57,51 +57,220 @@ function tic_geosource_process_record_json($uuid) {
 	}
 	
 	tic_geosource_json_record_to_node($record);
-	var_dump($record); die();
+}
+
+function tic_geosource_download_file($url) {
+	// Tenter d'abord avec file_get_contents
+	if ($url == '') {
+		return false;
+	}
+	$data = file_get_contents($url);
+	if ($data !== false) {
+		$thumb = file_save_data($data, file_default_scheme().'://');
+		if ($thumb) {
+			return $thumb;
+		}
+	}
+	
+	// retenter avec cswClient
+	$client = tic_geosource_load_csw_client();
+	$data = $client->jsonDownloadFile($url);
+	if ($data !== false) {
+		$file = file_save_data($data, file_default_scheme().'://');
+		
+		if ($file) {
+			return $file;
+		}
+	}
+	
+	return false;
+}
+
+function tic_geosource_json_get_thumbnail($record) {
+	$thumbs = array(); //overview; thumbnail ou autre ?
+	
+	if (!isset($record['metadata']['image'])) {
+		return false;
+	}
+	
+	$images = $record['metadata']['image'];
+	foreach ($images as $i) {
+		$dat = explode('|', $i);
+		$thumbs[$dat[0]] = $dat[1];
+	}
+	
+	if (isset($thumbs['overview'])) {
+		$im = tic_geosource_download_file($thumbs['overview']);
+		/*
+		$data = @file_get_contents($thumbs['overview']);
+		if ($data !== false) {
+			$im = file_save_data($data, file_default_scheme().'://');
+			if ($im) { return $im; }
+		}
+		 */
+		if ($im) { return $im; }
+	}
+	
+	reset($thumbs);
+	$im = tic_geosource_download_file(current($thumbs));
+	if ($im) { return $im; }
+	
+	/**
+	$data = @file_get_contents($thumbs[0]);
+	if ($data !== false) {
+		$im = file_save_data($data, file_default_scheme().'://');
+		if ($im) {
+			return $im;
+		}
+	}
+	*/
+	
+	return false;
+}
+
+function tic_geosource_json_get_files($record) {
+	$ret = array(
+		'url_carte' => array(),
+		'files' => array(),
+	);
+	
+	if (!isset($record['metadata']['link'])) {
+		return $ret;
+	}
+	
+	$raw = $record['metadata']['link'];
+	if (!is_array($raw)) {
+		return $ret;
+	}
+	
+	foreach ($raw as $r) {
+		$current = explode('|', $r);
+		
+		if ($current[3] == 'WWW:DOWNLOAD-1.0-http--download') {
+			// fichier téléchargeable
+			// filename = 1
+			// url = 2
+			
+			// TODO: process download
+			$file = tic_geosource_download_file($current[2]);
+			if ($file) {
+				$ret['files'][] = $file;
+			}
+			
+		}
+		elseif ($current[3] == 'OGC:WMS') {
+			// il s'agit de l'url carte
+			//
+			// TODO: assigner directement
+			$ret['url_carte'][] = $current[2];
+		}
+	}
+	
+	return $ret;
 }
 
 function tic_geosource_json_record_to_node($record) {
 	//TODO: isset sur les valeurs avant assign
-	$uuid = $record['metadata']['geonet:info']['uuid'];
-	$title = $record['metadata']['defaultTitle'];
-	$abstract = $record['metadata']['abstract'];
-	$createDate = $record['metadata']['geonet:info']['createDate'];
-	$updateDate = $record['metadata']['geonet:info']['changeDate'];
-	$scale = $record['summary']['denominators'][0]['@name'];
-	$category = $record['summary']['topicCats'][0]['@name'];
-	//$numCarte = 
-	//$contactName = $record['metadata']['responsibleParty'][0];
-	//$contactEmail = (voir metadata responsibleParty
-	$contact = explode('|', $record['metadata']['responsibleParty'][0]);
-	$contactName = $contact[2];
-	$contactEmail = $contact[4];
-	
-	$author = tic_geosource_load_contact_by_email($contactEmail);
-	if (!$author) {
-		if ($contactName != '') {
-			$author = tic_geosource_create_contact($contactName, $contactEmail);
-			watchdog('tic_geosource', 'Creation automatique du contact '.$contactName);
-		}
-		else {
-			watchdog('tic_geosource', 'Aucun contact trouvé pour la fiche '.$uuid);
-		}
+	if (isset($record['metadata']['geonet:info']['uuid'])) {
+		$uuid = $record['metadata']['geonet:info']['uuid'];
+	}
+	else {
+		watchdog('tic_geosource', 'Pas de UUID trouvé pour un record. Cet enregistrement sera ignoré.');
+		return;
 	}
 	
-	$empriseGeo = $record['metadata']['geoBox'];
+	if (isset($record['metadata']['defaultTitle'])) {
+		$title = $record['metadata']['defaultTitle'];
+	}
+	else { $title = false; }
 	
-	$bbox = explode('|', $empriseGeo);
-	$region = tic_geosource_bbox_to_region($bbox[0], $bbox[1], $bbox[2], $bbox[3]);
+	if (isset($record['metadata']['abstract'])) {
+		$abstract = $record['metadata']['abstract'];
+	}
+	else { $abstract = false; }
 	
-	//$sourceInfos =
-	$keywords = $record['metadata']['keywords'];
+	if (isset($record['metadata']['geonet:info']['createDate'])) {
+		$createDate = $record['metadata']['geonet:info']['createDate'];
+	}
+	else { $createDate = false; }
+	
+	if (isset($record['metadata']['geonet:info']['changeDate'])) {
+		$updateDate = $record['metadata']['geonet:info']['changeDate'];
+	}
+	else { $updateDate = false; }
+	
+	if (isset($record['summary']['denominators'][0]['@name'])) {
+		$scale = $record['summary']['denominators'][0]['@name'];
+	}
+	else { $scale = false; }
+	
+	if (isset($record['metadata']['topicCat'])) {
+		$category = $record['metadata']['topicCat'];
+	}
+	else { $category = false; }
+	
+	
+	if (isset($record['metadata']['identifier'])) {
+		$numCarte = $record['metadata']['identifier'];
+	}
+	else { $numCarte = false; }
+	
+	if (isset($record['metadata']['responsibleParty'])) {
+		$contact = explode('|', $record['metadata']['responsibleParty'][0]);
+		$contactName = $contact[2];
+		$contactEmail = $contact[4];
+		
+		$author = tic_geosource_load_contact_by_email($contactEmail);
+		if (!$author) {
+			if ($contactName != '') {
+				$author = tic_geosource_create_contact($contactName, $contactEmail);
+				watchdog('tic_geosource', 'Creation automatique du contact '.$contactName);
+			}
+			else {
+				watchdog('tic_geosource', 'Aucun contact trouvé pour la fiche '.$uuid);
+			}
+		}
+	}
+	else { $author = false; }
+	
+	
+	if (isset($record['metadata']['geobox'])) {
+		$empriseGeo = $record['metadata']['geoBox'];
+		$bbox = explode('|', $empriseGeo);
+		$region = tic_geosource_bbox_to_region($bbox[0], $bbox[1], $bbox[2], $bbox[3]);
+	}
+	else { $region = false; }
+	
+	if (isset($record['metadata']['lineage'])) {
+		$sourceInfos = $record['metadata']['lineage'];
+	}
+	else { $sourceInfos = false; }
+
+	// keywords contient thesaurus et non thesaurus
+	$keywords = array();
+	if (isset($record['metadata']['keywords'])) {
+		$keywords = $record['metadata']['keywords'];
+	}
 	$themes = array();
-	foreach($record['summary']['inspireThemes'] as $th) {
-		$themes[] = $th['@name'];
+	if (isset($record['summary']['inspireThemes'])) {
+		foreach($record['summary']['inspireThemes'] as $th) {
+			$themes[] = $th['@name'];
+		}
 	}
 	
-	// $thesaurus = '';
-	// split and Process download
-	//$thumb = $record['metadata']['image'];
+	$imageCarte = tic_geosource_json_get_thumbnail($record);
+	$files = tic_geosource_json_get_files($record);
+	
+	if (count($files['url_carte']) > 0) {
+		$urlCarte = $files['url_carte'][0];
+	}
+	else { $urlCarte = false; }
+	
+	if (count($files['files']) > 0) {
+		$fichierCarte = $files['files'][0];
+	}
+	else { $fichierCarte = false; }
+	
 	//$file = $record['metadata']['link'];
 	// y or n
 	$isHarvested = $record['metadata']['isHarvested'];
@@ -133,32 +302,60 @@ function tic_geosource_json_record_to_node($record) {
 	}
 	
 	// Ajouter un champ created by drupal ?
-	if ($isHarvested) {
+	// Si harvested == n -> carto npdcp
+	if ($isHarvested == "y") {
 		$node->field_isharvested['und'][0]['value'] = 1;
 	}
 	else {
 		$node->field_isharvested['und'][0]['value'] = 0;
 	}
 	
-	$node->field_echelle['und'][0]['value'] = $scale;
+	if ($fichierCarte) {
+		$node->field_fichier_carte['und'][0]['fid'] = $fichierCarte->fid;
+	}
+	
+	if ($imageCarte) {
+		$node->field_image_carte['und'][0]['fid'] = $imageCarte->fid;
+		$node->field_imagette['und'][0]['fid'] = $imageCarte->fid;
+	}
+	
+	if ($scale) {
+		$node->field_echelle['und'][0]['value'] = $scale;
+		$node->field_type_de_carte['und'][0]['value'] = 'Statique';
+	}
+	else {
+		$node->field_type_de_carte['und'][0]['value'] = 'Dynamique';
+	}
 	$node->title = $title;
 	$node->field_description['und'][0]['value'] = $abstract;
-	
-	$node->field_date_de_creation['und'][0]['value'] = $creationDate;
-	$node->field_date_de_mise_jour['und'][0]['value'] = $updateDate;
+
+	// TODO: call date formatter
+	$node->field_date_de_creation['und'][0]['value'] = tic_geosource_format_date($createDate);
+	$node->field_date_de_mise_jour['und'][0]['value'] = tic_geosource_format_date($updateDate);
 	
 	$categoryTid = tic_geosource_get_tid_from_term_name('categorie', $category);
 	if ($categoryTid) {
 		$node->field_categorie['und'][0]['tid'] = $categoryTid;
 	}
 	
+	$node->field_mots_cles_thesaurus['und'] = array();
+	$node->field_mots_cles['und'] = array();
+	
 	foreach ($keywords as $k) {
+		// Verifier s'il est dans le thesaurus ou dans les mots cles complémentaires
 		$tid = tic_geosource_get_tid_from_term_name('mots_cles', $k);
 		if ($tid) {
-			$node->field_mots_cles['und'][]['tid'] = $tid;
+			$node->field_mots_cles_thesaurus['und'][]['tid'] = $tid;
+		}
+		else {
+			$tid = tic_geosource_get_tid_from_term_name('mots_cles', $k);
+			if ($tid) {
+				$node->field_mots_cles['und'][]['tid'] = $tid;
+			}
 		}
 	}
 	
+	$node->field_thematique['und'] = array();
 	foreach ($themes as $t) {
 		$tid = tic_geosource_get_tid_from_term_name('thematique_gemet', $t);
 		if ($tid) {
@@ -166,13 +363,24 @@ function tic_geosource_json_record_to_node($record) {
 		}
 	}
 	
-	$node->field_emprise_geographique['und'][0]['value'] = $region;
-	if ($contact) {
-		$node->field_auteur['und'][0]['nid'] = $contact->nid;
+	if ($region) {
+		$node->field_emprise_geographique['und'][0]['value'] = $region;
+	}
+
+	if ($author) {
+		$node->field_auteur['und'][0]['nid'] = $author->nid;
 	}
 	
-	var_dump($node); die();
-	die();
+	$disabled = &drupal_static('tic_geosource_disable_geosource_push');
+	$disabled = true;
+	try {
+		node_save($node);
+	}
+	catch (Exception $e) {
+		watchdog('tic_geosource', 'Synchronisation de la carte '.$node->title.' echoue: '.$e->getMessage());
+	}
+	
+	$disabled = false;
 }
 
 function tic_geosource_check_record($uuid) {
