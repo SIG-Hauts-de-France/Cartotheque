@@ -336,7 +336,11 @@ function tic_geosource_json_record_to_node($record) {
 	}
 	
 	if ($fichierCarte) {
-		$node->field_fichier_carte['und'][0]['fid'] = $fichierCarte->fid;
+		$node->field_fichier_carte['und'][0] = array(
+			'fid' => $fichierCarte->fid,
+			'display' => 1,
+			'description' => '',
+		);
 	}
 	
 	if ($imageCarte) {
