@@ -12,6 +12,8 @@ define('TIC_GEOSOURCE_GRANT_ID_ARCHIVE', 2);
 // DEBUG
 function tic_geosource_node_view($node, $v, $e) {
 	return;
+	//var_dump($node->field_uuid);
+	//return;
 	//tic_geosource_get_all_records_uuids();
 	//die();
 	//return;
@@ -34,13 +36,13 @@ function tic_geosource_node_view($node, $v, $e) {
 	//$client->addMapCategory($geoid);
 	//die();
 	
-	$xml = $client->getRecordsModifiedSince(new DateTime('2015-07-08'));
-	$uuids = tic_geosource_get_result_uuids($xml);
+	//$xml = $client->getRecordsModifiedSince(new DateTime('2015-07-08'));
+	//$uuids = tic_geosource_get_result_uuids($xml);
 	
 	//var_dump(tic_geosource_record_to_node($records[2])); die();
-	foreach($uuids as $uuid) {
-		tic_geosource_process_record_json($uuid);
-	}
+	//foreach($uuids as $uuid) {
+		tic_geosource_process_record_json('npdc_f_vecteur_v365');
+	//}
 	die('ok');
 	//tic_geosource_process_record('78f93047-74f8-4419-ac3d-fc62e4b0477b');
 	//tic_geosource_process_record('487f8b4c-2f96-42ec-9d7d-783f5efc8cc7');

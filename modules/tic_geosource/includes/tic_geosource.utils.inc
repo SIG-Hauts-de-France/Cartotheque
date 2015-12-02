@@ -16,7 +16,7 @@ function tic_geosource_split_records($xml) {
 	foreach ($dom->getElementsByTagName('Record') as $rec) {
 		$records[] = $rec;
 	}
-
+	
 	return $records;
 }
 
@@ -60,8 +60,31 @@ function tic_geosource_process_record_json($uuid) {
 }
 
 function tic_geosource_download_file($url) {
-	// Tenter d'abord avec file_get_contents
 	if ($url == '') {
+		return false;
+	}
+	
+	// Determiner si l'url est relative
+	if(!preg_match('/^http/', $url)) {
+		$server = variable_get('geosource_server_auth_address', '');
+		$url = $server . '/' . $url;
+		$relative = true;
+	}
+	if ($relative) {
+		$client = tic_geosource_load_csw_client();
+		$data = $client->jsonDownloadFile($url);
+		if ($data !== false) {
+			$file = file_save_data($data, file_default_scheme().'://');
+			
+			if ($file) {
+				return $file;
+			}
+		}
+	}
+	
+	// Tenter avec file_get_contents
+	$headers = get_headers($url);
+	if (substr($headers[0], 9, 3) != 200) {
 		return false;
 	}
 	$data = file_get_contents($url);
@@ -69,17 +92,6 @@ function tic_geosource_download_file($url) {
 		$thumb = file_save_data($data, file_default_scheme().'://');
 		if ($thumb) {
 			return $thumb;
-		}
-	}
-	
-	// retenter avec cswClient
-	$client = tic_geosource_load_csw_client();
-	$data = $client->jsonDownloadFile($url);
-	if ($data !== false) {
-		$file = file_save_data($data, file_default_scheme().'://');
-		
-		if ($file) {
-			return $file;
 		}
 	}
 	
@@ -94,8 +106,15 @@ function tic_geosource_json_get_thumbnail($record) {
 	}
 	
 	$images = $record['metadata']['image'];
-	foreach ($images as $i) {
-		$dat = explode('|', $i);
+	
+	if(is_array($images)) {
+		foreach ($images as $i) {
+			$dat = explode('|', $i);
+			$thumbs[$dat[0]] = $dat[1];
+		}
+	}
+	else {
+		$dat = explode('|', $images);
 		$thumbs[$dat[0]] = $dat[1];
 	}
 	
@@ -140,7 +159,7 @@ function tic_geosource_json_get_files($record) {
 	
 	$raw = $record['metadata']['link'];
 	if (!is_array($raw)) {
-		return $ret;
+		$raw = array($raw);
 	}
 	
 	foreach ($raw as $r) {
@@ -158,14 +177,20 @@ function tic_geosource_json_get_files($record) {
 			}
 			
 		}
-		elseif ($current[3] == 'OGC:WMS') {
+		elseif (preg_match('/\.pdf/', $current[2])) {
+			$file = tic_geosource_download_file($current[2]);
+			if ($file) {
+				$ret['files'][] = $file;
+			}
+		}
+		else {
+			
 			// il s'agit de l'url carte
 			//
 			// TODO: assigner directement
 			$ret['url_carte'][] = $current[2];
 		}
 	}
-	
 	return $ret;
 }
 
@@ -204,8 +229,8 @@ function tic_geosource_json_record_to_node($record) {
 	}
 	else { $scale = false; }
 	
-	if (isset($record['metadata']['topicCat'])) {
-		$category = $record['metadata']['topicCat'];
+	if (isset($record['summary']['topicCats'])) {
+		$category = $record['summary']['topicCats'][0]['@label'];
 	}
 	else { $category = false; }
 	
