@@ -51,7 +51,7 @@
 				</span>
 				<?php endif; ?>
 				<?php else: ?>
-					<?php if ($fields['field_url_carte']): ?>
+					<?php if ($fields['field_url_carte']->content): ?>
 					<span class="linkWeb">
 						<a href="<?php print $fields['field_url_carte']->content; ?>" target="_blank"> </a>
 					</span>
