@@ -51,9 +51,11 @@
 				</span>
 				<?php endif; ?>
 				<?php else: ?>
+					<?php if ($fields['field_url_carte']): ?>
 					<span class="linkWeb">
 						<a href="<?php print $fields['field_url_carte']->content; ?>" target="_blank"> </a>
 					</span>
+					<?php endif; ?>
 				<?php endif; ?>
 				<span class="readMore">
 					<?php print $fields['view_node']->content; ?>
