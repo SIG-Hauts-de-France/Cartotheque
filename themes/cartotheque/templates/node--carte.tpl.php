@@ -105,15 +105,24 @@ $type_carte = strtolower($node->field_type_de_carte['und'][0]['value']);
 	<div class="col-xs-8 infoMap">
 	<dl>
 		<?php
-			$content['field_numero_de_carte']['#label_display'] = 'hidden';
-			if ($type_carte == 'statique') { 
+			if ($type_carte == 'statique' && array_key_exists('field_numero_de_carte',$content)) { 
+				$content['field_numero_de_carte']['#label_display'] = 'hidden';
 				print '<dt>'; print $content['field_numero_de_carte']['#title']; print ':</dt>';
 				print '<dd>'; print render($content['field_numero_de_carte']); print '</dd>';
 			}
-			$content['field_date_de_mise_jour']['#label_display'] = 'hidden';
 		?>
+	
+		<?php if(array_key_exists('field_date_de_mise_jour',$content)) : ?>
+		<?php $content['field_date_de_mise_jour']['#label_display'] = 'hidden'; ?>
 		<dt><?php print $content['field_date_de_mise_jour']['#title']; ?> :</dt>
 		<dd><?php print render($content['field_date_de_mise_jour']); ?></dd>
+		<?php endif; ?>
+
+		<?php if(array_key_exists('field_date_de_realisation',$content)) : ?>
+		<?php $content['field_date_de_realisation']['#label_display'] = 'hidden'; ?>
+		<dt><?php print $content['field_date_de_realisation']['#title']; ?> :</dt>
+		<dd><?php print render($content['field_date_de_realisation']); ?></dd>
+		<?php endif; ?>
 	</dl>
 	</div>
 	

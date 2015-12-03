@@ -11,6 +11,7 @@ jQuery(function() {
 jQuery(function() {
 	jQuery( "#datepicker" ).datepicker();
 	jQuery( "#accordion" ).accordion({
+		active: false,
 		collapsible: true
 	});
 /*

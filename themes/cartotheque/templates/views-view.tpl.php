@@ -28,7 +28,7 @@
  */
 
 ?>
-<div class="<?php print $classes; ?> col-sm-12">
+<div class="<?php print $classes; ?>">
   <?php print render($title_prefix); ?>
   <?php if ($title): ?>
     <?php print $title; ?>

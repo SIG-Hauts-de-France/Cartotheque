@@ -183,7 +183,7 @@ section.actus h2{
 	padding:6px;
 }
 
-section.actus div.maps div.mapZoom{
+section.actus div.maps div.mapZoom, div.map div.mapZoom {
 	position:absolute;
 	z-index:100;
 	display: none;
@@ -193,9 +193,6 @@ section.actus div.maps div.mapZoom{
 	-webkit-box-shadow: 2px 2px 4px 2px rgba(0,0,0,0.2);
 	box-shadow: 2px 2px 4px 2px rgba(0,0,0,0.2);
 	
-}
-section.actus div.maps.leftMaps div.view-content{
-margin-right: -15px; margin-left: -15px;
 }
 section.actus div.maps.leftMaps div.mapZoom{
 	left:20px;
@@ -207,9 +204,11 @@ section.actus  div.mapZoom:after {
 section.actus div.maps.rightMaps div.mapZoom{
 	right:20px;
 }
-section.actus div.maps div:hover > div.mapZoom{
+section.actus div.maps div:hover > div.mapZoom, div.map div.imgMap:hover > div.mapZoom{
 	display: block;
 }
+section.actus div.view-content img { margin-bottom: 25px; }
+section.actus div.view-content div.mapZoom img { margin-bottom: 0; }
 
 
 .rslides {

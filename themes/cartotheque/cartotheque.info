@@ -9,6 +9,7 @@ stylesheets[all][] = css/style.css
 scripts[] = js/scripts.min.js
 scripts[] = js/npm.js
 scripts[] = js/jquery-ui.js
+scripts[] = js/jquery-migrate-1.2.1.min.js
 scripts[] = js/responsiveslides.min.js
 scripts[] = js/cartotheque.js
 
