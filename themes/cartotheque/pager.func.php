@@ -88,7 +88,8 @@ function cartotheque_pager($variables) {
   if ($pager_total[$element] > 1) {
 
     // Only show "first" link if set on components' theme setting
-    if ($li_first && bootstrap_setting('pager_first_and_last')) {
+#    if ($li_first && bootstrap_setting('pager_first_and_last')) {
+    if ($li_first) {
       $items[] = array(
         'class' => array('pager-first'),
         'data' => $li_first,
@@ -154,7 +155,8 @@ function cartotheque_pager($variables) {
       );
     }
     // // Only show "last" link if set on components' theme setting
-    if ($li_last && bootstrap_setting('pager_first_and_last')) {
+#    if ($li_last && bootstrap_setting('pager_first_and_last')) {
+    if ($li_last) {
       $items[] = array(
        'class' => array('pager-last'),
        'data' => $li_last,

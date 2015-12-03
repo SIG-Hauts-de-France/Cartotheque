@@ -266,6 +266,7 @@ ul.rslides li {
 
 
 /************** END HOME ***********************/
+div.view-content { margin-bottom: 50px; }
 .filtreList .form-group label{
 	float:left;
 	width:125px;
@@ -359,6 +360,7 @@ div.imgMap, div.descMap{
 	padding-left:10px;
 	padding-right:10px;
 }
+div.descMap { padding-bottom: 30px; }
 div.imgMap{
 	width: 270px;
 }
