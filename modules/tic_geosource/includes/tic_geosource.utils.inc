@@ -80,6 +80,8 @@ function tic_geosource_download_file($url) {
 			$file = file_save_data($data, file_default_scheme().'://');
 			
 			if ($file) {
+				$file->filename = drupal_basename($url);
+				file_save($file);
 				return $file;
 			}
 		}
@@ -88,16 +90,20 @@ function tic_geosource_download_file($url) {
 	// Tenter avec file_get_contents
 	$headers = get_headers($url);
 	if (substr($headers[0], 9, 3) != 200) {
+		watchdog('tic_geosource', 'Impossible de récupérer le fichier '.$url);
 		return false;
 	}
 	$data = file_get_contents($url);
 	if ($data !== false) {
 		$thumb = file_save_data($data, file_default_scheme().'://');
 		if ($thumb) {
+			$thumb->filename = drupal_basename($url);
+			file_save($file);
 			return $thumb;
 		}
 	}
 	
+	watchdog('tic_geosource', 'Impossible de récupérer le fichier '.$url);
 	return false;
 }
 
@@ -123,29 +129,12 @@ function tic_geosource_json_get_thumbnail($record) {
 	
 	if (isset($thumbs['overview'])) {
 		$im = tic_geosource_download_file($thumbs['overview']);
-		/*
-		$data = @file_get_contents($thumbs['overview']);
-		if ($data !== false) {
-			$im = file_save_data($data, file_default_scheme().'://');
-			if ($im) { return $im; }
-		}
-		 */
 		if ($im) { return $im; }
 	}
 	
 	reset($thumbs);
 	$im = tic_geosource_download_file(current($thumbs));
 	if ($im) { return $im; }
-	
-	/**
-	$data = @file_get_contents($thumbs[0]);
-	if ($data !== false) {
-		$im = file_save_data($data, file_default_scheme().'://');
-		if ($im) {
-			return $im;
-		}
-	}
-	*/
 	
 	return false;
 }
@@ -165,6 +154,8 @@ function tic_geosource_json_get_files($record) {
 		$raw = array($raw);
 	}
 	
+	$foundFiles = array();
+	
 	foreach ($raw as $r) {
 		$current = explode('|', $r);
 		
@@ -173,7 +164,6 @@ function tic_geosource_json_get_files($record) {
 			// filename = 1
 			// url = 2
 			
-			// TODO: process download
 			$file = tic_geosource_download_file($current[2]);
 			if ($file) {
 				$ret['files'][] = $file;
@@ -187,18 +177,17 @@ function tic_geosource_json_get_files($record) {
 			}
 		}
 		else {
-			
 			// il s'agit de l'url carte
-			//
-			// TODO: assigner directement
 			$ret['url_carte'][] = $current[2];
 		}
 	}
+	
+	// TODO Tenter de télécharger un PDF de la liste plutot que tout DL
+	
 	return $ret;
 }
 
 function tic_geosource_json_record_to_node($record) {
-	//TODO: isset sur les valeurs avant assign
 	if (isset($record['metadata']['geonet:info']['uuid'])) {
 		$uuid = $record['metadata']['geonet:info']['uuid'];
 	}
@@ -272,18 +261,29 @@ function tic_geosource_json_record_to_node($record) {
 	}
 	else { $author = false; }
 	
-	
 	if (isset($record['metadata']['geobox'])) {
 		$empriseGeo = $record['metadata']['geoBox'];
 		$bbox = explode('|', $empriseGeo);
-		$region = tic_geosource_bbox_to_region($bbox[0], $bbox[1], $bbox[2], $bbox[3]);
+		$region = tic_geosource_bbox_to_region($bbox[3], $bbox[1], $bbox[2], $bbox[0]);
 	}
 	else { $region = false; }
 	
 	if (isset($record['metadata']['lineage'])) {
+		//TODO: parse source infos to get date
 		$sourceInfos = $record['metadata']['lineage'];
+		$matches = array();
+		if (preg_match('~(http|ftp)(s)?\:\/\/((([a-z0-9\-]*)(\.))+[a-z0-9]*)($|/.*$)~i', $text, $matches)) {
+			$part = explode(' ', $matches[0]);
+			$sourceUrl = $part[0];
+		}
+		else {
+			$sourceUrl = false;
+		}
 	}
-	else { $sourceInfos = false; }
+	else {
+		$sourceInfos = false;
+		$sourceUrl = false;
+	}
 	
 	// keywords contient thesaurus et non thesaurus
 	$keywords = array();
@@ -310,7 +310,6 @@ function tic_geosource_json_record_to_node($record) {
 	}
 	else { $fichierCarte = false; }
 	
-	//$file = $record['metadata']['link'];
 	// y or n
 	$isHarvested = $record['metadata']['isHarvested'];
 	// string true or false
@@ -329,7 +328,6 @@ function tic_geosource_json_record_to_node($record) {
 		$node->promote = 0;
 		$node->language = 'fr';
 		$node->field_uuid['und'][0]['value'] = $uuid;
-		$node->field_isharvested['und'][0]['value'] = 1; // Carte récupérée de Geosource
 		$node->field_statut['und'][0]['value'] = 'interne'; // Carte de geosource publiees en interne par defaut
 	}
 	
@@ -340,13 +338,14 @@ function tic_geosource_json_record_to_node($record) {
 		$node->field_statut['und'][0]['value'] = 'interne';
 	}
 	
-	// Ajouter un champ created by drupal ?
 	// Si harvested == n -> carto npdcp
 	if ($isHarvested == "y") {
 		$node->field_isharvested['und'][0]['value'] = 1;
+		$node->field_cartotheque['und'][0]['value'] = 'Autre';
 	}
 	else {
 		$node->field_isharvested['und'][0]['value'] = 0;
+		$node->field_cartotheque['und'][0]['value'] = 'NPdCP';
 	}
 	
 	if ($fichierCarte) {
@@ -362,6 +361,7 @@ function tic_geosource_json_record_to_node($record) {
 		$node->field_imagette['und'][0]['fid'] = $imageCarte->fid;
 	}
 	
+	// TODO: il existe surement un meilleur moyen pour déterminer si la carte est statique ou dynamique
 	if ($scale) {
 		$node->field_echelle['und'][0]['value'] = $scale;
 		$node->field_type_de_carte['und'][0]['value'] = 'Statique';
@@ -371,8 +371,7 @@ function tic_geosource_json_record_to_node($record) {
 	}
 	$node->title = $title;
 	$node->field_description['und'][0]['value'] = $abstract;
-
-	// TODO: call date formatter
+	
 	$node->field_date_de_creation['und'][0]['value'] = tic_geosource_format_date($createDate);
 	$node->field_date_de_mise_jour['und'][0]['value'] = tic_geosource_format_date($updateDate);
 	
@@ -386,7 +385,7 @@ function tic_geosource_json_record_to_node($record) {
 	
 	foreach ($keywords as $k) {
 		// Verifier s'il est dans le thesaurus ou dans les mots cles complémentaires
-		$tid = tic_geosource_get_tid_from_term_name('mots_cles', $k);
+		$tid = tic_geosource_get_tid_from_term_name('mots_cles_thesaurus_gemet', $k);
 		if ($tid) {
 			$node->field_mots_cles_thesaurus['und'][]['tid'] = $tid;
 		}
@@ -412,6 +411,18 @@ function tic_geosource_json_record_to_node($record) {
 	
 	if ($author) {
 		$node->field_auteur['und'][0]['nid'] = $author->nid;
+	}
+	
+	if ($urlCarte) {
+		$node->field_url_carte['und'][0]['value'] = $urlCarte;
+	}
+	
+	if ($sourceInfos) {
+		$node->field_source_des_donnees['und'][0]['value'] = $sourceInfos;
+	}
+	
+	if ($sourceUrl) {
+		$node->field_url_source_des_donnees['und'][0]['value'] = $sourceUrl;
 	}
 	
 	$disabled = &drupal_static('tic_geosource_disable_geosource_push');
@@ -616,7 +627,6 @@ function tic_geosource_get_keywords_and_themes($record) {
 	
 	$ret['themes'] = array();
 	$ret['keywords'] = array();
-	// TODO: récupérer les mots cles thesaurus Gemet
 	$ret['keywords_thesaurus'] = array();
 	
 	$nodes = $record->getElementsByTagName('descriptiveKeywords');
@@ -667,7 +677,6 @@ function tic_geosource_get_record_bbox_equivalent($record) {
  * @param DOMDocument Geosource Record
  * @return array Tableau associatif url, description et date de source de données
  */
-// TODO extraction des données via regex
 function tic_geosource_get_source_info($record) {
 	$infos = array(
 		'url' => '',
@@ -767,7 +776,6 @@ function tic_geosource_record_to_node($record) {
 		$node->field_statut['und'][0]['value'] = 'interne'; // Carte de geosource publiees en interne par defaut
 	}
 	
-	// TODO: image et fichier ?
 	if ($scale !== false) {
 		$node->field_echelle['und'][0]['value'] = $scale;
 	}
@@ -828,7 +836,6 @@ function tic_geosource_record_to_node($record) {
 		$node->field_url_carte['und'][0]['value'] = $url_carte['URL'];
 	}
 	
-	// TODO choisir si la carte est statique ou interactive en fonction des champs récupérés
 	if ($scale === '') {
 		$node->field_type_de_carte['und'][0]['value'] = 'statique';
 	}

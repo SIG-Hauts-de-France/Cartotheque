@@ -12,43 +12,13 @@ define('TIC_GEOSOURCE_GRANT_ID_ARCHIVE', 2);
 // DEBUG
 function tic_geosource_node_view($node, $v, $e) {
 	return;
-	//var_dump($node->field_uuid);
-	//return;
-	//tic_geosource_get_all_records_uuids();
-	//die();
-	//return;
-	//var_dump($node); die();
-	
+	/*
 	module_load_include('inc', 'tic_geosource', 'includes/tic_geosource.utils');
-	//tic_geosource_process_record_json('be14cdaf-631c-4bf7-8708-48b4352162f7');
-	//die();
-	//tic_geosource_check_record('78f93047-74f8-4419-ac3d-fc62e4b0477v');
-	//die();
-	
-	//tic_geosource_load_thesaurus();
-	
 	$client = tic_geosource_load_csw_client();
-	//$t = $client->getGeoThemeThesaurus();
-	//var_dump($t); die();
-	//die();
-	
-	//$geoid = $client->getGeoidFromUuid('2b3bbdd1-c1b1-475a-a0c9-6478e1f949f5');
-	//$client->addMapCategory($geoid);
-	//die();
-	
-	//$xml = $client->getRecordsModifiedSince(new DateTime('2015-07-08'));
-	//$uuids = tic_geosource_get_result_uuids($xml);
-	
-	//var_dump(tic_geosource_record_to_node($records[2])); die();
-	//foreach($uuids as $uuid) {
-		tic_geosource_process_record_json('npdc_f_vecteur_v365');
-	//}
+	tic_geosource_process_record_json('npdc_f_vecteur_v365');
 	die('ok');
-	//tic_geosource_process_record('78f93047-74f8-4419-ac3d-fc62e4b0477b');
-	//tic_geosource_process_record('487f8b4c-2f96-42ec-9d7d-783f5efc8cc7');
-	//die();
-	
 	return;
+	 */
 }
 
 /**
@@ -155,6 +125,7 @@ function tic_geosource_form_alter(&$form, &$form_state, $form_id) {
 		$form['field_uuid']['#access'] = FALSE;
 		$form['field_imagette']['#access'] = FALSE;
 		$form['field_isharvested']['#access'] = false;
+		$form['field_cartotheque']['#access'] = false;
 		
 		//Si editition, pas possible de changer type de carte
 		if ($form['nid']['#value']) {
@@ -312,9 +283,9 @@ function tic_geosource_node_delete($node) {
 		return;
 	}
 	
-	// On ne supprime pas les cartes récupérées de Geosource
-	if (isset($node->field_isharvested)) {
-		if ($node->field_isharvested == '1') {
+	// On ne supprime pas les cartes moissonées Geosource
+	if (isset($node->field_isharvested['und'][0]['value'])) {
+		if ($node->field_isharvested['und'][0]['value'] == '1') {
 			return;
 		}
 	}
@@ -359,6 +330,7 @@ function tic_geosource_node_presave($node) {
 	// Cette fiche n'est pas récupérée de Geosource
 	$node->field_isharvested['und'][0]['value'] = 0;
 	// TODO: cartothèque pour le fiches entrées directement ?
+	$node->field_cartotheque['und'][0]['value'] = 'NPdCP';
 	
 	tic_geosource_generate_map_thumbnail($node);
 	
