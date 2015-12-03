@@ -66,6 +66,9 @@ function tic_geosource_download_file($url) {
 	
 	$relative = false;
 	
+	$filename = drupal_basename($url);
+	$type = file_get_mimetype($filename);
+	
 	// Determiner si l'url est relative
 	if(!preg_match('/^http/', $url)) {
 		$server = variable_get('geosource_server_auth_address', '');
@@ -77,10 +80,11 @@ function tic_geosource_download_file($url) {
 		$client = tic_geosource_load_csw_client();
 		$data = $client->jsonDownloadFile($url);
 		if ($data !== false) {
-			$file = file_save_data($data, file_default_scheme().'://');
+			$file = file_save_data($data, file_default_scheme().'://'.$filename);
 			
 			if ($file) {
-				$file->filename = drupal_basename($url);
+				$file->filename = $filename;
+				$file->filemime = $type;
 				file_save($file);
 				return $file;
 			}
@@ -95,9 +99,10 @@ function tic_geosource_download_file($url) {
 	}
 	$data = file_get_contents($url);
 	if ($data !== false) {
-		$thumb = file_save_data($data, file_default_scheme().'://');
+		$thumb = file_save_data($data, file_default_scheme().'://'.$filename);
 		if ($thumb) {
-			$thumb->filename = drupal_basename($url);
+			$thumb->filename = $filename;
+			$thumb->filemime = $type;
 			file_save($thumb);
 			return $thumb;
 		}
@@ -328,7 +333,7 @@ function tic_geosource_json_record_to_node($record) {
 	
 	if (count($files['url_carte']) > 0) {
 		$urlCarte = $files['url_carte'][0];
-		foreach ($files['url_carte']) as $url) {
+		foreach ($files['url_carte'] as $url) {
 			$node->field_url_source_des_donnees['und'][]['value'] = $url;
 		}
 	}
@@ -802,7 +807,7 @@ function tic_geosource_record_to_node($record) {
 	$node->field_description['und'][0]['value'] = $abstract;
 	$node->field_numero_de_carte['und'][0]['value'] = $numCarte;
 	$node->field_url_source_des_donnees['und'][0]['value'] = $sourceInfos['url'];
-	$node->field_date_source_des_donnees['und'][0]['value'] = $sourceInfos['date'];
+	#$node->field_date_source_des_donnees['und'][0]['value'] = $sourceInfos['date'];
 	$node->field_source_des_donnees['und'][0]['value'] = $sourceInfos['text'];
 	$node->field_emprise_geographique['und'][0]['value'] = $empriseGeo;
 	$node->field_date_de_creation['und'][0]['value'] = $creationDate;
