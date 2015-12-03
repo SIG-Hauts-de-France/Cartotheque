@@ -622,3 +622,66 @@ div.keyWordMap span.keyWord{
 .collectionsMap th{
 border-bottom:0;
 }
+
+
+
+/********************* FORMULAIRE DE SAISIE *************************/
+form.node-form fieldset {
+	border: 1px solid #ccc;
+	padding: 2.5em 0 0;
+	margin: 1em 0;
+	position: relative;
+}
+form.node-form div.field-type-image { border: 1px solid #ccc; padding: 0 13px 13px 15px; margin: 1em 0; position: relative; }
+form.node-form fieldset .fieldset-wrapper { padding: 0px 13px 13px 15px; }
+form.node-form .filter-wrapper { border-top: 0px none; padding: 10px 2px; margin: 0; }
+form.node-form legend { font-weight: bold; font-size: 100%; border: 0; margin: 0; width: auto; }
+form.node-form fieldset .fieldset-legend { margin-top: 0.5em; padding-left: 15px; position: absolute; }
+form.node-form label { display: block; }
+
+input.form-text:focus, input.form-file:focus, textarea.form-textarea:focus, select.form-select:focus {
+    color: #000;
+    border-color: #ACE;
+}
+input.form-file, textarea.form-textarea, select.form-select {
+    padding: 2px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #999 #CCC #CCC;
+    -moz-border-top-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    border-image: none;
+    background: #FFF none repeat scroll 0% 0%;
+    color: #333;
+    display:inline;
+    margin-right: 5px;
+}
+ul.tips, div.description, .form-item div.description {
+    margin: 5px 0px;
+    line-height: 1.231em;
+    font-size: 0.923em;
+    color: #666;
+}
+input.form-submit, a.button {
+    cursor: pointer;
+    padding: 4px 17px;
+    margin-bottom: 1em;
+    margin-right: 1em;
+    color: #5A5A5A;
+    text-align: center;
+    font-weight: normal;
+    font-size: 1.077em;
+    font-family: "Lucida Grande",Verdana,sans-serif;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #E4E4E4 #D2D2D2 #B4B4B4;
+    -moz-border-top-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    border-image: none;
+    background: transparent url("images/buttons.png") repeat-x scroll 0px 0px;
+    border-radius: 20px;
+}
