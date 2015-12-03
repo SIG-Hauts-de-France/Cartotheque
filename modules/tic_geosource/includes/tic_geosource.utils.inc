@@ -173,12 +173,18 @@ function tic_geosource_json_get_files($record) {
 			if ($file) {
 				$ret['files'][] = $file;
 			}
+			else {
+				$ret['url_carte'][] = $current[2];
+			}
 			
 		}
 		elseif (preg_match('/\.pdf/', $current[2])) {
 			$file = tic_geosource_download_file($current[2]);
 			if ($file) {
 				$ret['files'][] = $file;
+			}
+			else {
+				$ret['files'][] = $current[2];
 			}
 		}
 		else {
@@ -334,7 +340,7 @@ function tic_geosource_json_record_to_node($record) {
 	if (count($files['url_carte']) > 0) {
 		$urlCarte = $files['url_carte'][0];
 		foreach ($files['url_carte'] as $url) {
-			$node->field_url_source_des_donnees['und'][]['value'] = $url;
+			$node->field_url_ressources_associes['und'][]['value'] = $url;
 		}
 	}
 	else { $urlCarte = false; }
