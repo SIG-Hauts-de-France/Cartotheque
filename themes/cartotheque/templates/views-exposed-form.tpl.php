@@ -38,8 +38,9 @@
 	foreach ($widgets as $id => $widget) {
 		if($id=="filter-combine") $combine[] = $widget;
 		elseif($id=="sort-sort_bef_combine") $filter = $widget;
-		elseif($id=="filter-secondary") $secondary[] = $widget;
+		elseif($id=="filter-field_type_de_carte_value" || $id=="filter-field_cartotheque_value") $secondary[] = $widget;
 		else $other[] = $widget;
+		//echo "<pre>".$id."</pre>";
 	}
 
 ?>
@@ -68,7 +69,7 @@
 <h3>Recherche avancée</h3>
 <div>
 <?php foreach($other as $id => $widget): ?>
-      <div id="<?php print $widget->id; ?>-wrapper" class="views-exposed-widget views-widget-<?php print $id; ?>">
+      <div id="<?php print $widget->id; ?>-wrapper" class="views-exposed-widget views-widget-<?php print $id; ?>" style="clear:left;">
         <?php if (!empty($widget->label)): ?>
           <label for="<?php print $widget->id; ?>">
             <?php print $widget->label; ?>
@@ -90,11 +91,13 @@
       </div>
 <?php endforeach; ?>
 </div>
+<h3>Critères</h3>
+<div>
 <?php foreach($secondary as $id => $widget): ?>
-      <div id="<?php print $widget->id; ?>-wrapper" class="views-exposed-widget views-widget-<?php print $id; ?>">
+      <div id="<?php print $widget->id; ?>-wrapper" class="views-exposed-widget views-widget-<?php print $id; ?>" style="clear:left;">
         <?php if (!empty($widget->label)): ?>
           <label for="<?php print $widget->id; ?>">
-            <?php print $widget->label; ?>
+            - <?php print $widget->label; ?>
           </label>
         <?php endif; ?>
         <?php if (!empty($widget->operator)): ?>
@@ -112,6 +115,7 @@
         <?php endif; ?>
       </div>
 <?php endforeach; ?>
+</div>
 </div>
 
     <?php if (!empty($sort_by)): ?>
