@@ -26,13 +26,15 @@ function tic_geosource_node_view($node, $v, $e) {
  *
  */
 function tic_geosource_cron_queue_info() {
+	$time = variable_get('geosource_server_timeout', 60);
+	
 	$queues['tic_geosource_sync'] = array(
 		'worker callback' => 'tic_geosource_queue_worker',
-		'time' => 120,
+		'time' => $time*4,
 	);
 	$queues['tic_geosource_check_exists'] = array(
 		'worker callback' => 'tic_geosource_check_worker',
-		'time' => 120,
+		'time' => $time*4,
 	);
 	
 	return $queues;

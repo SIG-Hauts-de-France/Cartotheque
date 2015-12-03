@@ -98,7 +98,7 @@ function tic_geosource_download_file($url) {
 		$thumb = file_save_data($data, file_default_scheme().'://');
 		if ($thumb) {
 			$thumb->filename = drupal_basename($url);
-			file_save($file);
+			file_save($thumb);
 			return $thumb;
 		}
 	}
@@ -225,7 +225,7 @@ function tic_geosource_json_record_to_node($record) {
 		$category = $record['metadata']['topicCat'];
 	}
 	elseif (isset($record['summary']['topicCats'])) {
-		if (is_array(['summary']['topicCats'])) {
+		if (is_array($record['summary']['topicCats'])) {
 			if (!empty($record['summary']['topicCats'])) {
 				$category = $record['summary']['topicCats'][0]['@label'];
 			}
@@ -236,7 +236,6 @@ function tic_geosource_json_record_to_node($record) {
 		}
 	}
 	else { $category = false; }
-	
 	
 	if (isset($record['metadata']['identifier'])) {
 		$numCarte = $record['metadata']['identifier'];
@@ -272,7 +271,7 @@ function tic_geosource_json_record_to_node($record) {
 		//TODO: parse source infos to get date
 		$sourceInfos = $record['metadata']['lineage'];
 		$matches = array();
-		if (preg_match('~(http|ftp)(s)?\:\/\/((([a-z0-9\-]*)(\.))+[a-z0-9]*)($|/.*$)~i', $text, $matches)) {
+		if (preg_match('~(http|ftp)(s)?\:\/\/((([a-z0-9\-]*)(\.))+[a-z0-9]*)($|/.*$)~i', $sourceInfos, $matches)) {
 			$part = explode(' ', $matches[0]);
 			$sourceUrl = $part[0];
 		}
@@ -300,10 +299,6 @@ function tic_geosource_json_record_to_node($record) {
 	$imageCarte = tic_geosource_json_get_thumbnail($record);
 	$files = tic_geosource_json_get_files($record);
 	
-	if (count($files['url_carte']) > 0) {
-		$urlCarte = $files['url_carte'][0];
-	}
-	else { $urlCarte = false; }
 	
 	if (count($files['files']) > 0) {
 		$fichierCarte = $files['files'][0];
@@ -330,6 +325,15 @@ function tic_geosource_json_record_to_node($record) {
 		$node->field_uuid['und'][0]['value'] = $uuid;
 		$node->field_statut['und'][0]['value'] = 'interne'; // Carte de geosource publiees en interne par defaut
 	}
+	
+	if (count($files['url_carte']) > 0) {
+		$urlCarte = $files['url_carte'][0];
+		foreach ($files['url_carte']) as $url) {
+			$node->field_url_source_des_donnees['und'][]['value'] = $url;
+		}
+	}
+	else { $urlCarte = false; }
+	
 	
 	if ($isPublishedToAll == "true") {
 		$node->field_statut['und'][0]['value'] = 'externe';
@@ -427,14 +431,22 @@ function tic_geosource_json_record_to_node($record) {
 	
 	$disabled = &drupal_static('tic_geosource_disable_geosource_push');
 	$disabled = true;
+	
+	$saved = false;
+	
 	try {
 		node_save($node);
+		$saved = true;
 	}
 	catch (Exception $e) {
 		watchdog('tic_geosource', 'Synchronisation de la carte '.$node->title.' echoue: '.$e->getMessage());
 	}
 	
 	$disabled = false;
+	
+	if ($saved) {
+		watchdog('tic_geosource', 'Carte '.$node->title .' synchronisée depuis Geosource');
+	}
 }
 
 function tic_geosource_check_record($uuid) {
