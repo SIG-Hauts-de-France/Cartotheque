@@ -151,6 +151,7 @@ function tic_geosource_form_alter(&$form, &$form_state, $form_id) {
 		else {
 			// Nouvelle carte; ajouter js adaptation formulaire
 			$form['#attached']['js'][] = drupal_get_path('module', 'tic_geosource') . '/js/adapt_form.js';
+			$form['field_numero_de_carte']['und'][0]['value']['#default_value'] = tic_geosource_get_next_map_identifier();
 		}
 		
 		return $form;
@@ -326,6 +327,10 @@ function tic_geosource_node_presave($node) {
 	
 	if ($node->type != 'carte') {
 		return;
+	}
+	
+	if (isset($_SESSION['tic_geosource_mymap_id'])) {
+		unset($_SESSION['tic_geosource_mymap_id']);
 	}
 	
 	// Cette fiche n'est pas récupérée de Geosource
@@ -917,17 +922,25 @@ function tic_geosource_add_map_category($uuid) {
 /**
  * Get next map identifier
  *
- * TODO: node en paramètre pour créer la valeur a la sauvegarde ?
+ * TODO: ameliorer la generation des ids: générer un id par session et le release lors de l'ecriture en db (dans node_presave)
  * @return int identifier
  */
 function tic_geosource_get_next_map_identifier() {
-	$id = (int)db_query('select MAX(field_numero_de_carte_value) from field_data_field_numero_de_carte;')->fetchCol();
-	
-	if ($id < 20000) {
-		$id = 20000;
+	if (isset($_SESSION['tic_geosource_mymap_id'])) {
+		return $_SESSION['tic_geosource_mymap_id'];
 	}
 	
-	return $id;
+	$identifier = variable_get('tic_geosource_highest_id', 20000);
+	
+	//$id = (int)db_query('select MAX(field_numero_de_carte_value) from field_data_field_numero_de_carte;')->fetchCol();
+	
+	$identifier++;
+	
+	variable_set('tic_geosource_highest_id', $identifier);
+	
+	$_SESSION['tic_geosource_mymap_id'] = $identifier;
+	
+	return $identifier;
 }
 
 /**
