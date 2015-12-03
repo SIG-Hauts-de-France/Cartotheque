@@ -268,6 +268,24 @@ $uuid?
             </gmd:CI_OnlineResource>
           </gmd:onLine>
 [/$files]
+[$ressources_associees]
+          <gmd:onLine>
+            <gmd:CI_OnlineResource>
+              <gmd:linkage>
+                <gmd:URL>{$value}</gmd:URL>
+              </gmd:linkage>
+              <gmd:protocol>
+                <gco:CharacterString>WWW:LINK-1.0-http--link</gco:CharacterString>
+              </gmd:protocol>
+              <gmd:name>
+                <gmx:MimeFileType xmlns:gmx="http://www.isotc211.org/2005/gmx" type="" />
+              </gmd:name>
+              <gmd:description>
+                <gco:CharacterString>{$value}</gco:CharacterString>
+              </gmd:description>
+            </gmd:CI_OnlineResource>
+          </gmd:onLine>
+[/$ressources_associees]
         </gmd:MD_DigitalTransferOptions>
       </gmd:transferOptions>
     </gmd:MD_Distribution>
@@ -308,7 +326,7 @@ $uuid?
       <gmd:lineage>
         <gmd:LI_Lineage>
           <gmd:statement>
-            <gco:CharacterString>{$source_description} {$source_url} {$source_date}</gco:CharacterString>
+            <gco:CharacterString>{$source_description} {$source_url}</gco:CharacterString>
           </gmd:statement>
         </gmd:LI_Lineage>
       </gmd:lineage>

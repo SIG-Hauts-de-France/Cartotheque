@@ -607,10 +607,12 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
 	}
 	
 	//date source des données
+	/*
 	$sourceDate = '';
 	if (isset($node->field_date_source_des_donnees['und'][0]['value'])) {
 		$sourceDate = $node->field_date_source_des_donnees['und'][0]['value'];
 	}
+	 */
 	
 	//Date de mise a jour
 	if (isset($node->field_date_de_mise_jour['und'][0]['value'])) {
@@ -642,6 +644,15 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
 		$mapNumber = $node->field_numero_de_carte['und'][0]['value'];
 	}
 	
+	// tableau d'urls
+	$ressourcesAssociees = array();
+	//TODO: ressources associées
+	if (isset($node->field_ressources_associes['und'])) {
+		foreach($node->field_ressources_associes['und'] as $res) {
+			$ressourcesAssociees[] = $res['value'];
+		}
+	}
+	
 	return array(
 		'language_code' => 'fre',
 		'author_name' => tic_geosource_format_text($relatedContact->title),
@@ -654,7 +665,7 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
 		'map_number' => $mapNumber,
 		'map_scale' => $scale,
 		'source_url' => $sourceUrl,
-		'source_date' => $sourceDate,
+		//'source_date' => $sourceDate,
 		'source_description' => $sourceDesc,
 		'bbox' => $bbox,
 		'keywords' => $keywords,
@@ -665,6 +676,7 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
 		'uuid' => $uuid,
 		'thumbnails' => $thumbnails,
 		'url_carte' => $mapUrl,
+		'ressources_associees' => $ressourcesAssociees,
 	);
 }
 
