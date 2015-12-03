@@ -178,6 +178,9 @@ function tic_geosource_form_validate(&$form, &$form_state) {
 	if ($form['nid']['#value']) {
 		$form_state['values']['field_type_de_carte']['und'][0]['value'] = $form['#node']->field_type_de_carte['und'][0]['value'];
 	}
+	else {
+		$form['#attached']['js'][] = drupal_get_path('module', 'tic_geosource') . '/js/adapt_form.js';
+	}
 	
 	$type = $form_state['values']['field_type_de_carte']['und'][0]['value'];
 	if (strtolower($type) == 'statique') {
