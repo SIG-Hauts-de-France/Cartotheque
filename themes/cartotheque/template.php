@@ -134,6 +134,8 @@ function cartotheque_preprocess_views_view(&$vars) {
 }
 
 function cartotheque_preprocess_node(&$vars) {
+	global $base_url;
+	
 	$vars['download_count'] = '';
 	$vars['stats_total_count'] = '';
 	
@@ -154,6 +156,41 @@ function cartotheque_preprocess_node(&$vars) {
 		$vars['collections'] .= '</table>';
 		// Conservation du nombre de collections pour faciliter l'affichage
 		$vars['collections_count'] = --$num;
+		
+		// Lien vers la recherche sur categorie
+		if (isset($vars['field_categorie'][0]['taxonomy_term'])) {
+			$term = $vars['field_categorie'][0]['taxonomy_term'];
+			$vars['categoryLink'] = '<a href="'.$base_url . theme_get_setting('cartotheque_map_list_url').'&field_categorie_tid[]='.$term->tid.'">'.$term->name.'</a>';
+		}
+		else {
+			$vars['categoryLink'] = '';
+		}
+		
+		// Liens vers la recherche thematiques
+		//var_dump($vars['field_thematique']); die();
+		$vars['thematiquesLinks'] = '';
+		if (isset($vars['field_thematique'])) {
+			foreach ($vars['field_thematique'] as $thematique) {
+				//var_dump($thematique); die();
+				$term = $thematique['taxonomy_term'];
+				$vars['thematiquesLinks'] .= '<a href="'.$base_url. theme_get_setting('cartotheque_map_list_url').'&field_thematique_tid[]='.$term->tid.'">'.$term->name.'</a> ';
+			}
+		}
+		
+		$vars['keywordsLinks'] = '';
+		if (isset($vars['field_mots_cles'])) {
+			foreach ($vars['field_mots_cles'] as $keyword) {
+				$term = $keyword['taxonomy_term'];
+				$vars['keywordsLinks'] .= '<a href="'. $base_url. theme_get_setting('cartotheque_map_list_url').'&field_mots_cles_tid[]='.$term->tid.'">'.$term->name.'</a> ';
+			}
+		}
+		
+		if (isset($vars['field_mots_cles_thesaurus'])) {
+			foreach ($vars['field_mots_cles_thesaurus'] as $keyword) {
+				$term = $keyword['taxonomy_term'];
+				$vars['keywordsLinks'] .= '<a href="'. $base_url. theme_get_setting('cartotheque_map_list_url').'&field_mots_cles_thesaurus_tid[]='.$term->tid.'">'.$term->name.'</a> ';
+			}
+		}
 		
 		// Statistiques d'accès
 		if (function_exists('statistics_get')) {

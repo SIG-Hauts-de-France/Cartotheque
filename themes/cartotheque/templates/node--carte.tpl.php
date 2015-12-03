@@ -161,12 +161,12 @@ $type_carte = strtolower($node->field_type_de_carte['und'][0]['value']);
 		if(array_key_exists('field_categorie',$content)) {
 			$content['field_categorie']['#label_display'] = 'hidden';
 			$infosGenerales .= '<dt>'.$content['field_categorie']['#title'].':</dt>';
-			$infosGenerales .= '<dd>'.render($content['field_categorie']).'</dd>';
+			$infosGenerales .= '<dd>'. $categoryLink .'</dd>';
 		}
 		if(array_key_exists('field_thematique',$content)) {
 			$content['field_thematique']['#label_display'] = 'hidden';
 			$infosGenerales .= '<dt>'.$content['field_thematique']['#title'].':</dt>';
-			$infosGenerales .= '<dd>'.render($content['field_thematique']).'</dd>';
+			$infosGenerales .= '<dd>'. $thematiquesLinks .'</dd>';
 		}
 		$infosGenerales .= '</dl>';
 	
@@ -214,7 +214,7 @@ $type_carte = strtolower($node->field_type_de_carte['und'][0]['value']);
 		</div>
 		<div class="keyWordMap">Mots clés : <span class="keyWord"><?php
 			$content['field_mots_cles']['#label_display'] = 'hidden';
-			print render($content['field_mots_cles']);
+			print $keywordsLinks;
 			?></span>
 		</div>
 	</div>
