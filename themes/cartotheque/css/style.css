@@ -448,6 +448,7 @@ div.linkMap span.readMore a{
 div.nbAction{
 	font-size:12px;
 	color:#444;
+	float: left;
 }
 div.nbAction span{
 	background-image:url(../images/i_actionmap.png);
@@ -462,6 +463,16 @@ div.nbAction span.nbImg{
 }
 div.nbAction span.nbPdf{
 	background-position: -56px 0;
+}
+
+div.mapDate{
+	font-size: 12px;
+	color:#444;
+	font-style: italic;
+}
+
+div.mapDate span{
+	vertical-align:-25%;
 }
 
 aside fieldset legend{

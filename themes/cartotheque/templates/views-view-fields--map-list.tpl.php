@@ -71,4 +71,9 @@
 		<span class="nbPdf"> </span>
 		<?php endif; ?>
 	</div>
+	<div class="mapDate">
+		<?php if ($fields['field_date_de_creation']->content): ?>
+		<?php print $fields['field_date_de_creation']->content; ?>
+		<?php endif; ?>
+	</div>
 </div>
