@@ -502,6 +502,11 @@ class cswGeoClient {
 				'	<csw:ElementSetName>brief</csw:ElementSetName> '.
 				'	  <csw:Constraint version="1.1.0"> '.
 				'		 <ogc:Filter> '.
+				'		   <ogc:And> '.
+				'		   <ogc:PropertyIsLike wildCard="%" singleChar="_" escapeChar="\"> '.
+				'			<ogc:PropertyName>AnyText</ogc:PropertyName> '.
+				'				<ogc:Literal>ISO 19139:2003</ogc:Literal> '.
+				'			</ogc:PropertyIsLike> '.
 				'		   <ogc:PropertyIsBetween> '.
 				'			 <ogc:PropertyName>dc:modified</ogc:PropertyName> '.
 				'			 <ogc:LowerBoundary> '.
@@ -511,6 +516,7 @@ class cswGeoClient {
 				'			   <ogc:Literal>'.$now->format('Y-m-d').'</ogc:Literal> '.
 				'			 </ogc:UpperBoundary> '.
 				'		   </ogc:PropertyIsBetween> '.
+				'		   </ogc:And> '.
 				'		 </ogc:Filter> '.
 				'	   </csw:Constraint> '.
 				'	 </csw:Query> '.
