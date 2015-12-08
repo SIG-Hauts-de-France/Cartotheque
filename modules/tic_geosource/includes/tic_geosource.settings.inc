@@ -112,13 +112,14 @@ function tic_geosource_configtest() {
 		$records = $client->getCapabilities();
 		
 		$dom = new DOMDocument('1.0');
-		$dom->loadXML((string)$records);
-		
-		$capabilities = '<br />';
-		
-		$caps = $dom->getElementsByTagName('OperationsMetadata');
-		foreach($caps->item(0)->getElementsByTagName('Operation') as $cap) {
-			$capabilities .= '- ' . $cap->getAttribute('name') . '<br />';
+		if ($dom->loadXML((string)$records)) {
+			
+			$capabilities = '<br />';
+			
+			$caps = $dom->getElementsByTagName('OperationsMetadata');
+			foreach($caps->item(0)->getElementsByTagName('Operation') as $cap) {
+				$capabilities .= '- ' . $cap->getAttribute('name') . '<br />';
+			}
 		}
 	} catch (Exception $e) {
 		$error = true;
