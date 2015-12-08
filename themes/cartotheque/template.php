@@ -10,8 +10,8 @@ function cartotheque_preprocess_html(&$variables) {
 	drupal_add_css('https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,300,600,300italic,700', array('type' => 'external'));
 
 	// Chosen pour les input select
-	drupal_add_js(drupal_get_path('theme', 'cartotheque') . '/js/chosen.jquery.min.js', 'file');
-	drupal_add_css(drupal_get_path('theme', 'cartotheque') . '/css/chosen.min.css', array( 'group' => CSS_THEME, 'type' => 'file'));
+	drupal_add_js(drupal_get_path('theme', 'cartotheque') . '/js/chosen/chosen.jquery.min.js', 'file');
+	drupal_add_css(drupal_get_path('theme', 'cartotheque') . '/js/chosen/chosen.min.css', array( 'group' => CSS_THEME, 'type' => 'file'));
 } 
  
 /**
