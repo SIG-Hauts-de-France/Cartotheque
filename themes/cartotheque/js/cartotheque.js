@@ -53,3 +53,15 @@ jQuery(document).ready(function() {
 	});
 	
 });
+
+/**
+ * Barre de recherche fixe
+ */
+jQuery(document).ready(function() {
+	var searchBar = jQuery('.region-search');
+	
+	if (screen.width() > 768) {
+		searchBar.sticky({topSpacing:0});
+	}
+});
+
