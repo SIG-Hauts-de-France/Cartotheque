@@ -710,3 +710,10 @@ input.form-submit, a.button {
     background: transparent url("images/buttons.png") repeat-x scroll 0px 0px;
     border-radius: 20px;
 }
+
+#ui-id-2{
+    height: initial !important;
+}
+#ui-id-4{
+    height: initial !important;
+}
