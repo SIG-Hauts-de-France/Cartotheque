@@ -38,10 +38,12 @@ jQuery(document).ready(function() {
 	jQuery('#edit-field-mots-cles-thesaurus-tid').chosen();
 	
 	jQuery('#block-views-latest-maps-block').find('.col-md-6').click(function(e) {
+		e.preventDefault();
 		jQuery(this).find('.mapZoom').css('display', 'block');
 	});
 	
 	jQuery('#block-views-most-downloaded-block').find('.col-md-6').click(function(e) {
+		e.preventDefault();
 		jQuery(this).find('.mapZoom').css('display', 'block');
 	});
 	
