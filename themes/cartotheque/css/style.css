@@ -201,6 +201,8 @@ div.mapZoom > .closeZoom{
 	background: transparent url('../images/close.png');
 	width: 25px;
 	height: 25px;
+	cursor: pointer;
+	cursor: hand;
 }
 
 section.actus div.maps.leftMaps div.mapZoom{
