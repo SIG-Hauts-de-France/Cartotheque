@@ -221,6 +221,7 @@ class cswGeoClient {
 		
 		//Auth needed
 		$this->_authentication($request);
+		if (!$this->_authentication($request)) { throw new Exception($this->_response); }
 		
 		if ($this->_callHTTPCSW($request)) {
 			$record = json_decode($this->_response, true);

@@ -50,7 +50,13 @@ function tic_geosource_process_record($uuid) {
 
 function tic_geosource_process_record_json($uuid) {
 	$client = tic_geosource_load_csw_client();
-	$record = $client->jsonGetRecordByUuid($uuid);
+	try {
+		$record = $client->jsonGetRecordByUuid($uuid);
+	}
+	catch (Exception $e) {
+		watchdog('tic_geosource', 'Erreur lors de la recupération de la ressource '.$uuid.' : '.$e->getMessage());
+		return;
+	}
 	if (!is_array($record)) {
 		watchdog('tic_geosource', 'Erreur lors de la synchronisation de la ressource '.$uuid);
 		return;
@@ -322,6 +328,8 @@ function tic_geosource_json_record_to_node($record) {
 	$isPublishedToAll = $record['metadata']['geonet:info']['isPublishedToAll'];
 	
 	$node = tic_geosource_get_node_by_uuid($uuid);
+	var_dump($node); die();
+
 	if (!$node) {
 		$node = new stdClass();
 		

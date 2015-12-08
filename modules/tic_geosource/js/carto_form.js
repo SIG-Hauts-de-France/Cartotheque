@@ -7,6 +7,7 @@ jQuery(document).ready(function() {
 	var thematiqueSelect = jQuery('#edit-field-thematique-und');
 	var addContactLink = jQuery('#addContactLink');
 	var addContactWindow = jQuery('#createContact');
+	var collectionsSelect = jQuery('#edit-field-collections-und');
 	//var numeroDeCarte = jQuery('#edit-field-numero-de-carte');
 	//var sourceData = jQuery('#edit-field-source-des-donnees');
 	//var urlSourceData = jQuery('#edit-field-url-source-des-donnees');
@@ -16,6 +17,7 @@ jQuery(document).ready(function() {
 	
 	// Attacher chosen sur le select categories
 	thematiqueSelect.chosen();
+	collectionsSelect.chosen();
 	
 	addContactLink.click(function(e) {
 		e.preventDefault();

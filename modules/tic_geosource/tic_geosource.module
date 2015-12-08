@@ -12,13 +12,15 @@ define('TIC_GEOSOURCE_GRANT_ID_ARCHIVE', 2);
 // DEBUG
 function tic_geosource_node_view($node, $v, $e) {
 	return;
-	/*
+	
 	module_load_include('inc', 'tic_geosource', 'includes/tic_geosource.utils');
 	$client = tic_geosource_load_csw_client();
-	tic_geosource_process_record_json('npdc_f_vecteur_v365');
+	//tic_geosource_process_record_json('2b3bbdd1-c1b1-475a-a0c9-6478e1f949f5');
+	$node = tic_geosource_get_node_by_uuid('439684cc-66c0-471c-b7c4-852daba46049');
+	var_dump($node);
 	die('ok');
 	return;
-	 */
+	 
 }
 
 /**
@@ -112,10 +114,12 @@ function tic_geosource_form_alter(&$form, &$form_state, $form_id) {
 			drupal_get_path('module', 'tic_geosource') . '/js/chosen/chosen.jquery.min.js',
 		);
 		
+		
 		drupal_add_css(
 			drupal_get_path('module', 'tic_geosource') . '/js/chosen/chosen.min.css',
 			array('group' => CSS_THEME, 'type' => 'file')
 		);
+		
 		
 		// Cette fonction nécessite que le cache soit désactivé; ajax fichiers ne fonctionne pas avec
 		//$form["field_auteur"]['#suffix'] = '<a href="#" id="addContactLink">Ajouter un contact</a>';
