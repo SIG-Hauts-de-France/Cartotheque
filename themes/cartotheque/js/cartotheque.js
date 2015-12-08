@@ -59,9 +59,10 @@ jQuery(document).ready(function() {
  */
 jQuery(document).ready(function() {
 	var searchBar = jQuery('.region-search');
+	var screen = jQuery(window);
 	
 	if (screen.width() > 768) {
-		searchBar.sticky({topSpacing:0});
+		searchBar.sticky({topSpacing:55});
 	}
 });
 
