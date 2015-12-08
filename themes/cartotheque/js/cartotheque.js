@@ -39,13 +39,11 @@ jQuery(document).ready(function() {
 	
 	jQuery('#block-views-newest-maps-block').find('.col-md-6').click(function(e) {
 		jQuery('.mapZoom').css('display', 'none');
-		e.preventDefault();
 		jQuery(this).find('.mapZoom').css('display', 'block');
 	});
 	
 	jQuery('#block-views-most-downloaded-block').find('.col-md-6').click(function(e) {
 		jQuery('.mapZoom').css('display', 'none');
-		e.preventDefault();
 		jQuery(this).find('.mapZoom').css('display', 'block');
 	});
 	
