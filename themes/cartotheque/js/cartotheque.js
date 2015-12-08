@@ -32,8 +32,22 @@ jQuery(function() {
 */
 });
 
-// Attacher Chosen aux select mots cles recherche
 jQuery(document).ready(function() {
+	// Attacher Chosen aux select mots cles recherche
 	jQuery('#edit-field-mots-cles-tid').chosen();
 	jQuery('#edit-field-mots-cles-thesaurus-tid').chosen();
+	
+	jQuery('#block-views-latest-maps-block').find('.col-md-6').click(function(e) {
+		jQuery(this).find('.mapZoom').css('display', 'block');
+	});
+	
+	jQuery('#block-views-most-downloaded-block').find('.col-md-6').click(function(e) {
+		jQuery(this).find('.mapZoom').css('display', 'block');
+	});
+	
+	jQuery('.closeZoom').click(function(e) {
+		jQuery('.mapZoom').css('display', 'none');
+		e.stopPropagation();
+	});
+	
 });
