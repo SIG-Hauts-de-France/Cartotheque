@@ -11,7 +11,7 @@ jQuery(function() {
 jQuery(function() {
 	jQuery( "#datepicker" ).datepicker();
 	jQuery( "#accordion" ).accordion({
-		active: false,
+		active: 0,
 		collapsible: true
 	});
 /*
@@ -30,4 +30,10 @@ jQuery(function() {
 		  }
 		});
 */
+});
+
+// Attacher Chosen aux select mots cles recherche
+jQuery(document).ready(function() {
+	jQuery('#edit-field-mots-cles-tid').chosen();
+	jQuery('#edit-field-mots-cles-thesaurus-tid').chosen();
 });
