@@ -121,6 +121,11 @@ function tic_geosource_configtest() {
 				$capabilities .= '- ' . $cap->getAttribute('name') . '<br />';
 			}
 		}
+		else {
+			$error = true;
+			$statusStr = 'ERREUR';
+			$errorStr = 'Impossible de parser le XML: '.check_markup($records);
+		}
 	} catch (Exception $e) {
 		$error = true;
 		$statusStr = 'ERREUR';
