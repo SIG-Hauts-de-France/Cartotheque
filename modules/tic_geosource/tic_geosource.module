@@ -150,6 +150,7 @@ function tic_geosource_form_alter(&$form, &$form_state, $form_id) {
 				$form['field_url_source_des_donnees']['#access'] = false;
 				$form['field_date_source_des_donnees']['#access'] = false;
 				$form['field_fichier_carte']['#access'] = false;
+				$form['field_collections']['#access'] = false;
 			}
 		}
 		else {

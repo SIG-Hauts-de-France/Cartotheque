@@ -17,7 +17,7 @@ jQuery(document).ready(function() {
 	
 	// Attacher chosen sur le select categories
 	thematiqueSelect.chosen();
-	collectionsSelect.chosen();
+	collectionsSelect.chosen({width: '200px'});
 	
 	addContactLink.click(function(e) {
 		e.preventDefault();
