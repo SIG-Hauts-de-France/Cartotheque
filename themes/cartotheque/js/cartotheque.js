@@ -23,7 +23,7 @@ function isAdvancedSearch() {
 	
 	for (i = 0; i < sURLVariables.length; i++) {
 		sParameterName = sURLVariables[i].split('=');
-		
+		sParameterName[0].replace(/[\[\]]+/g,'');
 		if (advancedSearchParams.indexOf(sParameterName[0]) != -1) {
 			if (sParameterName[1] != 'All') {
 				return true;

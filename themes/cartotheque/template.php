@@ -20,6 +20,7 @@ function cartotheque_preprocess_html(&$variables) {
  */
 
 function cartotheque_preprocess_page(&$variables) {
+	cartotheque_retrieve_search_params();
   
 /*
   if($variables['page']['sidebar_first'] && $variables['page']['sidebar_second']){
@@ -253,5 +254,75 @@ function cartotheque_menu_link(array $variables) {
 	return '<li' . drupal_attributes($element['#attributes']) . '>' . $output . $sub_menu . "</li>\n";
 }
 
+/**
+ * Recupération et conservation des paramètres de recherche
+ *
+ */
+function cartotheque_retrieve_search_params() {
+	$params = drupal_get_query_parameters();
+	
+	$searchParams = array(
+		'combine',
+		'field_emprise_geographique_value',
+		'field_mots_cles_tid',
+		'field_thematique_tid',
+		'field_collections_tid',
+		'combine_1',
+		'field_type_de_carte_value',
+		'sort_by',
+		'sort_order',
+		'field_cartotheque_value',
+		'field_date_de_creation_value',
+		'sort_bef_combine',
+		'items_per_page',
+	);
+	
+	if (isset($_SESSION['tic_search_params'])) {
+		$savedParams = unserialize($_SESSION['tic_search_params']);
+	}
+	else { $savedParams = array(); }
+	
+	// Reset des params sauvés si nouvelle recherche
+	if (current_path() == 'map-list') {
+		$savedParams = array();
+	}
+	
+	foreach($params as $p => $v) {
+		if (in_array($p, $searchParams)) {
+			$savedParams[$p] = $v;
+		}
+	}
+	
+	$_SESSION['tic_search_params'] = serialize($savedParams);
+}
 
+/**
+ * Generation de l'url de recherche avec les paramètres
+ */
+function cartotheque_generate_search_url() {
+	//cartotheque_retrieve_search_params();
+	
+	$url = theme_get_setting('cartotheque_map_list_url');
+	
+	if (isset($_SESSION['tic_search_params'])) {
+		$savedParams = unserialize($_SESSION['tic_search_params']);
+	}
+	else { $savedParams = array(); }
+	
+	// Recherche par defaut sur NPDcP
+	if (!isset($savedParams['field_cartotheque_value'])) {
+		$savedParams['field_cartotheque_value'] = Array('NPdCP');
+	}
+	
+	foreach($savedParams as $p => $v) {
+		if (is_array($v)) {
+			foreach($v as $val) {
+				$url .= '&'.$p.'[]'.'='.$val;
+			}
+		}
+		else { $url .= '&'.$p.'='.$v; }
+	}
+	
+	return $url;
+}
 

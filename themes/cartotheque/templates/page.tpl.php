@@ -157,7 +157,7 @@
 		<section class="row searchMap">
 			<div class="col-sm-6">
 				<?php print render($page['search']); ?>
-				<p class="searchMore"><span></span><a href="<?php print theme_get_setting('cartotheque_map_list_url'); ?>">Recherche avancée</a></p>
+				<p class="searchMore"><span></span><a href="<?php print cartotheque_generate_search_url(); ?>">Recherche avancée</a></p>
 			</div>
 			<div class="col-sm-6"><?php print render($page['tags']); ?></div>
 		</section>
@@ -176,7 +176,7 @@
 		<?php if ($page['highlighted']): ?><div id="highlighted"><?php print render($page['highlighted']); ?></div><?php endif; ?>
 		<section>
 		<?php if(isset($node) && $node->type == "carte" ): ?>
-			<div class="backList"><a href="<?php print theme_get_setting('cartotheque_map_list_url'); ?>"><span></span>Retour à la recherche</a></div>
+			<div class="backList"><a href="<?php print cartotheque_generate_search_url(); ?>"><span></span>Retour à la recherche</a></div>
 			<div class="row map">
 			<?php if ($tabs): ?><div class="tabs"><?php print render($tabs); ?></div><?php endif; ?>
 			<?php print render($page['help']); ?>
@@ -196,7 +196,7 @@
 			<?php print $feed_icons; ?>
 			</div>
 			<?php if($page['search']): ?>
-			<div class="col-sm-4"><?php print render($page['search']); ?></div>
+			<div class="col-sm-4"><?php print render($page['tags']); print render($page['search']); ?></div>
 			<?php endif; ?>
 		<?php endif; ?>
 		</section>
