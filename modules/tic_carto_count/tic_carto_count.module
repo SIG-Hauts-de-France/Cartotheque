@@ -330,7 +330,9 @@ function tic_carto_count_get_node_download_count($nid) {
 	;
 	
 	if(is_array($count)) {
-		return $count[0];
+		if (!empty($count)) {
+			return $count[0];
+		}
 	}
 	
 	return "0";
