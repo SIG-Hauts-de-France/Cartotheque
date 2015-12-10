@@ -94,7 +94,17 @@ header ul.topNav li.user a{
 }
 
 .fixed-header h1{
-	display: none;
+	/* display: none; */
+	margin: 20px;
+	font-size: 18px;
+}
+
+.fixed-header h1 br{
+	margin-bottom: 10px;
+}
+
+.fixed-header h1 span{
+	font-size: 25px;
 }
 
 .fixed-header .region-header{
