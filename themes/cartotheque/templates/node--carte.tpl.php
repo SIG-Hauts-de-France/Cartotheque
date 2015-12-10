@@ -111,17 +111,19 @@ $type_carte = strtolower($node->field_type_de_carte['und'][0]['value']);
 				print '<dd>'; print render($content['field_numero_de_carte']); print '</dd>';
 			}
 		?>
-	
+		
+		<?php if($type_carte == 'dynamique'): ?>
 		<?php if(array_key_exists('field_date_de_mise_jour',$content)) : ?>
 		<?php $content['field_date_de_mise_jour']['#label_display'] = 'hidden'; ?>
 		<dt><?php print $content['field_date_de_mise_jour']['#title']; ?> :</dt>
 		<dd><?php print render($content['field_date_de_mise_jour']); ?></dd>
 		<?php endif; ?>
-
-		<?php if(array_key_exists('field_date_de_realisation',$content)) : ?>
-		<?php $content['field_date_de_realisation']['#label_display'] = 'hidden'; ?>
-		<dt><?php print $content['field_date_de_realisation']['#title']; ?> :</dt>
-		<dd><?php print render($content['field_date_de_realisation']); ?></dd>
+		<?php endif; ?>
+		
+		<?php if(array_key_exists('field_date_de_creation',$content)) : ?>
+		<?php $content['field_date_de_creation']['#label_display'] = 'hidden'; ?>
+		<dt><?php print $content['field_date_de_creation']['#title']; ?> :</dt>
+		<dd><?php print render($content['field_date_de_creation']); ?></dd>
 		<?php endif; ?>
 	</dl>
 	</div>
