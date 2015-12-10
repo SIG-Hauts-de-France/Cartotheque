@@ -97,7 +97,7 @@ jQuery(document).ready(function() {
 	var screen = jQuery(window);
 	var header = jQuery('header');
 	
-	if (jQuery(document).height > 850) {
+	if (jQuery(document).height() > 850) {
 		var top = jQuery('header').offset().top;
 		jQuery(window).scroll(function (event) {
 			if (jQuery(this).scrollTop() >= top / 4)
