@@ -27,8 +27,10 @@
 
 <div class="map">
 	<h2><?php print $fields['title']->content ?>
+	<?php if (strtolower($fields['field_type_de_carte']->content) == 'statique'): ?>
 	<?php if (strlen($fields['field_collections']->content) > 50): ?>
 	<span class="tree"></span>
+	<?php endif; ?>
 	<?php endif; ?>
 	<span class="type"><?php print $fields['field_type_de_carte']->content ?></span>
 	</h2>
@@ -67,7 +69,11 @@
 		<?php print $fields['totalcount']->content; ?>
 		<span class="nbImg"> </span>
 		<?php if (strtolower($fields['field_type_de_carte']->content) == 'statique'): ?>
+		<?php if(array_key_exists('count', $fields)): ?>
 		<?php print $fields['count']->content; ?>
+		<?php else: ?>
+		0
+		<?php endif; ?>
 		<span class="nbPdf"> </span>
 		<?php endif; ?>
 	</div>

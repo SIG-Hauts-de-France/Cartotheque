@@ -220,6 +220,7 @@ $type_carte = strtolower($node->field_type_de_carte['und'][0]['value']);
 			?></span>
 		</div>
 	</div>
+	<?php if ($type_carte == 'statique'): ?>
 	<?php if ($collections_count > 0): ?>
 	<div class="collectionsMap">
 		<h4>Collection(s) à laquelle(s) appartient la carte</h4>
@@ -228,6 +229,7 @@ $type_carte = strtolower($node->field_type_de_carte['und'][0]['value']);
 			print render($collections);
 		?>
 	</div>
+	<?php endif; ?>
 	<?php endif; ?>
 </div>
 
