@@ -18,6 +18,11 @@ footer{
 footer ul.menu {
 	float: right;
 }
+
+header *{
+	transition: all 0.2s ease-in 0.2s;
+}
+
 header img{
 	float:left; 
 	margin:40px;
@@ -71,6 +76,29 @@ header ul.topNav li.logout a{
 }
 header ul.topNav li.user a{
 	background-position: 0 -44px;
+}
+
+.fixed-header {
+	position: fixed;
+	z-index: 100;
+	width: 100%;
+}
+
+.fixed-header img{
+	width: 130px;
+	margin-top: 20px;
+}
+
+.fixed-header ul.topNav{
+	margin-top: 20px;
+}
+
+.fixed-header h1{
+	display: none;
+}
+
+.fixed-header .region-header{
+	display: none;
 }
 
 section.tvt{

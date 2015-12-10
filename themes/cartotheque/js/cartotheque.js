@@ -93,17 +93,28 @@ jQuery(document).ready(function() {
  * Barre de recherche fixe
  */
 jQuery(document).ready(function() {
+	var searchBar = jQuery('.region-search');
+	var screen = jQuery(window);
+	var header = jQuery('header');
+	
+	if (jQuery(document).height > 850) {
+		var top = jQuery('header').offset().top;
+		jQuery(window).scroll(function (event) {
+			if (jQuery(this).scrollTop() >= top / 4)
+				header.addClass('fixed-header');
+			else
+				header.removeClass('fixed-header');
+		});
+	}
 	
 	// Limiter l'effet a la page de résultat des cartes
 	if(jQuery(document).find('.map').length < 1) {
 		return;
 	}
 	
-	var searchBar = jQuery('.region-search');
-	var screen = jQuery(window);
-	
 	if (screen.width() > 768) {
 		searchBar.sticky({topSpacing:55});
+		
 	}
 });
 
