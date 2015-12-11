@@ -603,25 +603,31 @@ class cswGeoClient {
                            "</csw:Transaction>");
         //authentication is needed !!
         if (!$this->_authentication($insertMetadataRequest)) throw new Exception("authentication mandatory");
-        if ($this->_callHTTPCSW($insertMetadataRequest)) {
-                $docXml= new DOMDocument();
-                if ($docXml->loadXML($this->_response)) {
-                    $xp = new DOMXPath($docXml);
-                    $xpathString="//csw:BriefRecord";
-                    $nodes = $xp->query($xpathString);
-					if ($nodes->length > 0) {
-						$uuids = array();
-						foreach($nodes as $node) {
-							$uuids[] = trim(preg_replace('/\s+/', '', $node->textContent));
-						}
-						return $uuids;
+		if ($this->_callHTTPCSW($insertMetadataRequest)) {
+			if (! preg_match('/BriefRecord/', $this->_response)) {
+				throw new Exception($this->_response);
+				return false;
+			}
+			
+			$docXml= new DOMDocument();
+			if ($docXml->loadXML($this->_response)) {
+				$xp = new DOMXPath($docXml);
+				$xp->registerNamespace('csw', 'http://www.isotc211.org/2005/csw');
+				$xpathString="//csw:BriefRecord";
+				$nodes = $xp->query($xpathString);
+				if ($nodes->length > 0) {
+					$uuids = array();
+					foreach($nodes as $node) {
+						$uuids[] = trim(preg_replace('/\s+/', '', $node->textContent));
 					}
-                    else
-                        return false;
-                }
-                else {
-                    throw new Exception($this->_response);
-                }
+					return $uuids;
+				}
+				else
+					return false;
+			}
+			else {
+				throw new Exception($this->_response);
+			}
         }
         else
             throw new Exception($this->_response);
@@ -718,6 +724,10 @@ class cswGeoClient {
         
         if ($this->_callHTTPCSW($updateMetadataRequest)) {
                 $docXml= new DOMDocument();
+				if (! preg_match('/totalUpdated/', $this->_response)) {
+					throw new Exception($this->_response);
+					return false;
+				}
                
                 if ($docXml->loadXML($this->_response)) {
                     $xp = new DOMXPath($docXml);

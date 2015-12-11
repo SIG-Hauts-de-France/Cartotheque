@@ -14,9 +14,14 @@ function tic_geosource_node_view($node, $v, $e) {
 	return;
 	
 	module_load_include('inc', 'tic_geosource', 'includes/tic_geosource.utils');
-	$client = tic_geosource_load_csw_client();
-	//tic_geosource_process_record_json('2b3bbdd1-c1b1-475a-a0c9-6478e1f949f5');
-	$node = tic_geosource_get_node_by_uuid('439684cc-66c0-471c-b7c4-852daba46049');
+	//$client = tic_geosource_load_csw_client();
+	//tic_geosource_process_record_json('5326d6da-1f55-43fb-baf8-d7016ddf1479');
+	for ($a = 0; $a < 100; $a++) {
+		$node = tic_geosource_get_node_by_uuid(' 5326d6da-1f55-43fb-baf8-d7016ddf1479 ');
+		if (!$node) {
+			die('it is');
+		}
+	}
 	var_dump($node);
 	die('ok');
 	return;
@@ -32,10 +37,12 @@ function tic_geosource_cron_queue_info() {
 	
 	$queues['tic_geosource_sync'] = array(
 		'worker callback' => 'tic_geosource_queue_worker',
+		'skip on cron' => false,
 		'time' => $time*4,
 	);
 	$queues['tic_geosource_check_exists'] = array(
 		'worker callback' => 'tic_geosource_check_worker',
+		'skip on cron' => false,
 		'time' => $time*4,
 	);
 	
@@ -105,6 +112,8 @@ function tic_geosource_menu() {
  */
 function tic_geosource_form_alter(&$form, &$form_state, $form_id) {
 	if ($form_id == 'carte_node_form') {
+		$requiredStar = ' <span class="form-required" title="Ce champ est requis.">*</span>';
+		
 		//$form_state['no_cache'] = TRUE;
 		
 		drupal_add_library('system', 'ui.dialog');
@@ -124,8 +133,14 @@ function tic_geosource_form_alter(&$form, &$form_state, $form_id) {
 		// Cette fonction nécessite que le cache soit désactivé; ajax fichiers ne fonctionne pas avec
 		//$form["field_auteur"]['#suffix'] = '<a href="#" id="addContactLink">Ajouter un contact</a>';
 		
+		$validators = $form['#validate'];
+		$form['#validate'] = array();
 		$form['#validate'][] = 'tic_geosource_form_validate';
+		foreach($validators as $validator) {
+			$form['#validate'][] = $validator;
+		}
 		
+		$form['field_url_carte']['und'][0]['#title'] .= $requiredStar;
 		
 		// champs non editables
 		$form['field_uuid']['#access'] = FALSE;
@@ -201,6 +216,11 @@ function tic_geosource_form_validate(&$form, &$form_state) {
 		}
 		
 		// - pas de date de mise a jour
+		$form['field_date_de_mise_jour']['und']['#required'] = false;
+		
+		// Pas d'URL de carte
+		$form['field_url_carte']['und']['#required'] = false;
+		$form['field_url_carte']['und'][0]['#required'] = false;
 		
 		// - source des données (text + date + url)
 		//texte
@@ -237,9 +257,19 @@ function tic_geosource_form_validate(&$form, &$form_state) {
 		}
 		
 		// - pas de numero de carte
+		$form['field_numero_de_carte']['und']['#required'] = false;
+		
 		// - pas d'echelle
+		$form['field_echelle']['und']['#required'] = false;
+		
 		// - pas de source des données (texte  +date + url)
+		$form['field_source_des_donnees']['und']['#required'] = false;
+		
 		// - pas de collection de cartes
+		$form['field_collections']['und']['#required'] = false;
+		
+		// Pas d'url source des données
+		$form['field_url_source_des_donnees']['und']['#required'] = false;
 	}
 	else {
 		form_set_error('field_type_de_carte', 'Type de carte incorrect');
@@ -724,6 +754,7 @@ function tic_geosource_insert_record($node) {
 	catch (Exception $e) {
 		watchdog('tic_geosource', 'Erreur de sauvegarde de la ressource dans Geosource: '. $e->getMessage(), NULL, WATCHDOG_ERROR);
 		drupal_set_message('La ressource n\'a pas été sauvée dans Geosource', 'error');
+		return false;
 	}
 	
 	if (is_array($uuid)) {
@@ -770,6 +801,7 @@ function tic_geosource_update_record($node) {
 	catch (Exception $e) {
 		watchdog('tic_geosource', 'Erreur de mise a jour de la ressource sur Geosource: ' . $e->getMessage(), NULL, WATCHDOG_ERROR);
 		drupal_set_message('La ressource n\'a pas été mise à jour dans Geosource', 'error');
+		return false;
 	}
 	
 	tic_geosource_add_map_category($node->field_uuid['und'][0]['value']);
@@ -830,6 +862,12 @@ function tic_geosource_queue_worker($uuid) {
 	module_load_include('inc', 'tic_geosource', 'includes/tic_geosource.utils');
 	
 	tic_geosource_process_record_json($uuid);
+	$queuedUuids = variable_get('tic_geosource_sync_queue_uuids', array());
+	if (($key = array_search($uuid, $queuedUuids)) !== false) {
+		unset($queuedUuids[$key]);
+	}
+	
+	variable_set('tic_geosource_sync_queue_uuids', $queuedUuids);
 }
 
 /**
@@ -864,7 +902,23 @@ function tic_geosource_cron() {
 	}
 	
 	if ($queueMod) {
-		$uuids = tic_geosource_get_result_uuids($xml);
+		$allUuids = tic_geosource_get_result_uuids($xml);
+		$uuids = array();
+		
+		// Ne pas mettre deux fois le meme UUID dans la file pour éviter les doublons
+		$queuedIds = variable_get('tic_geosource_sync_queue_uuids', array());
+		
+		foreach($allUuids as $id) {
+			if (!in_array($id, $queuedIds)) {
+				$queuedIds[] = $id;
+				$uuids[] = $id;
+			}
+			else {
+				watchdog('tic_geosource', $id.' deja prévu pour synchronisation, ne sera pas ajouté a la queue');
+			}
+		}
+		
+		variable_set('tic_geosource_sync_queue_uuids', $queuedIds);
 		
 		// Ajouter les uuids a traiter dans le queue
 		$queue = DrupalQueue::get('tic_geosource_sync');
@@ -953,11 +1007,12 @@ function tic_geosource_get_next_map_identifier() {
  *
  */
 function tic_geosource_node_access($node, $op, $account) {
+	
 	if (!is_object($node)) {
-		return;
+		return true;
 	}
 	
-	if (!$node->type == 'carte') { return; }
+	if (!$node->type == 'carte') { return true; }
 	
 	// Les cartes récupérées de Geosource ne sont pas éditables
 	if ($op == 'update') {
@@ -999,6 +1054,13 @@ function tic_geosource_node_grants($account, $op) {
 	$grants[TIC_GEOSOURCE_REALM] = array(
 		TIC_GEOSOURCE_GRANT_ID_EXTERNE,
 	);
+	
+	// Ne pas bloquer l'accès aux nodes sur un cron run
+	$cronRunning = &drupal_static('tic_geosource_cron_run', false);
+	if ($cronRunning) {
+		$grants[TIC_GEOSOURCE_REALM][] = TIC_GEOSOURCE_GRANT_ID_INTERNE;
+		$grants[TIC_GEOSOURCE_REALM][] = TIC_GEOSOURCE_GRANT_ID_ARCHIVE;
+	}
 	
 	// Si l'utilisateur fait partie du groupe utilisateur interne
 	$internRole = user_role_load_by_name('Utilisateur interne');

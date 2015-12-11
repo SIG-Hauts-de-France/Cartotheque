@@ -62,6 +62,9 @@ function tic_geosource_process_record_json($uuid) {
 		return;
 	}
 	
+	$cronRunning = &drupal_static('tic_geosource_cron_run', false);
+	$cronRunning = true;
+	
 	tic_geosource_json_record_to_node($record);
 }
 
@@ -213,6 +216,18 @@ function tic_geosource_json_record_to_node($record) {
 		return;
 	}
 	
+	// Bloquer le travail sur l'uuid pendant 5mn
+	$now = time();
+	$locks = variable_get('tic_geosource_uuid_locks', array());
+	if (array_key_exists($uuid, $locks)) {
+		if ($now - $locks[$uuid] < 300) {
+			watchdog('tic_geosource', 'Worker renvoyé pour uuid '.$uuid.' deja bloqué; débloqué dans '.($now - $locks[$uuid]).'s');
+			return;
+		}
+	}
+	$locks[$uuid] = $now;
+	variable_set('tic_geosource_uuid_locks', $locks);
+	
 	if (isset($record['metadata']['defaultTitle'])) {
 		$title = $record['metadata']['defaultTitle'];
 	}
@@ -238,6 +253,7 @@ function tic_geosource_json_record_to_node($record) {
 	}
 	else { $scale = false; }
 	
+	$category = false;
 	if (isset($record['metadata']['topicCat'])) {
 		$category = $record['metadata']['topicCat'];
 	}
@@ -247,12 +263,7 @@ function tic_geosource_json_record_to_node($record) {
 				$category = $record['summary']['topicCats'][0]['@label'];
 			}
 		}
-		else {
-			// TODO can be string ?
-			$category = false;
-		}
 	}
-	else { $category = false; }
 	
 	if (isset($record['metadata']['identifier'])) {
 		$numCarte = $record['metadata']['identifier'];
@@ -328,9 +339,11 @@ function tic_geosource_json_record_to_node($record) {
 	$isPublishedToAll = $record['metadata']['geonet:info']['isPublishedToAll'];
 	
 	$node = tic_geosource_get_node_by_uuid($uuid);
-	var_dump($node); die();
-
-	if (!$node) {
+	
+	$newNode = false;
+	if ($node === false) {
+		watchdog('tic_geosource', 'Pas de node existant pour "'.$uuid.'", creation du node dans Drupal');
+		$newNode = true;
 		$node = new stdClass();
 		
 		$node->type = 'carte';
@@ -398,9 +411,11 @@ function tic_geosource_json_record_to_node($record) {
 	$node->field_date_de_creation['und'][0]['value'] = tic_geosource_format_date($createDate);
 	$node->field_date_de_mise_jour['und'][0]['value'] = tic_geosource_format_date($updateDate);
 	
-	$categoryTid = tic_geosource_get_tid_from_term_name('categorie', $category);
-	if ($categoryTid) {
-		$node->field_categorie['und'][0]['tid'] = $categoryTid;
+	if ($category) {
+		$categoryTid = tic_geosource_get_tid_from_term_name('categorie', $category);
+		if ($categoryTid) {
+			$node->field_categorie['und'][0]['tid'] = $categoryTid;
+		}
 	}
 	
 	$node->field_mots_cles_thesaurus['und'] = array();
@@ -458,7 +473,7 @@ function tic_geosource_json_record_to_node($record) {
 		$saved = true;
 	}
 	catch (Exception $e) {
-		watchdog('tic_geosource', 'Synchronisation de la carte '.$node->title.' echoue: '.$e->getMessage());
+		watchdog('tic_geosource', 'Synchronisation de la carte '.$node->title.' echoué: '.$e->getMessage());
 	}
 	
 	$disabled = false;
@@ -892,6 +907,7 @@ function tic_geosource_record_to_node($record) {
  * @return stdClass Drupal node or false
  */
 function tic_geosource_get_node_by_uuid($uuid) {
+	$uuid = trim($uuid);
 	
 	$query = new EntityFieldQuery();
 	
@@ -906,7 +922,7 @@ function tic_geosource_get_node_by_uuid($uuid) {
 	
 	if (array_key_exists('node', $result)) {
 		$obj = array_pop($result['node']);
-		return node_load($obj->nid, $obj->vid);
+		return node_load($obj->nid, NULL, true);
 	}
 	
 	return false;
