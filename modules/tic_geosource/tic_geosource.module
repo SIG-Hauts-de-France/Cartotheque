@@ -141,6 +141,7 @@ function tic_geosource_form_alter(&$form, &$form_state, $form_id) {
 		}
 		
 		$form['field_url_carte']['und'][0]['#title'] .= $requiredStar;
+		$form['field_url_source_des_donnees']['und'][0]['#title'] .= $requiredStar;
 		
 		// champs non editables
 		$form['field_uuid']['#access'] = FALSE;
