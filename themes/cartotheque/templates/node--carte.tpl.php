@@ -231,6 +231,13 @@ $type_carte = strtolower($node->field_type_de_carte['und'][0]['value']);
 	</div>
 	<?php endif; ?>
 	<?php endif; ?>
+	<div class="ressourcesMap">
+		<h4>Ressources associées</h4>
+		<?php
+			$content['field_ressources_associes']['#label_display'] = 'hidden';
+			print render($content['field_ressources_associes']);
+		?>
+	</div>
 </div>
 
 <div class="visible-xs col-xs-12 infosGenerales">
