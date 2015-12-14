@@ -758,11 +758,15 @@ input.form-submit, a.button {
     height: initial !important;
 }
 
+#ui-id-4 select{
+	width: auto;
+}
+
 #sticky-wrapper *{
 	z-index: 99;
 }
 
-#sticky-wrapper.content{
+#sticky-wrapper .content{
 	background-color: white;
 }
 
