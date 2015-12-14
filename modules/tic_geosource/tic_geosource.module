@@ -142,6 +142,7 @@ function tic_geosource_form_alter(&$form, &$form_state, $form_id) {
 		
 		$form['field_url_carte']['und'][0]['#title'] .= $requiredStar;
 		$form['field_url_source_des_donnees']['und'][0]['#title'] .= $requiredStar;
+		$form['field_fichier_carte']['und'][0]['#title'] .= $requiredStar;
 		
 		// champs non editables
 		$form['field_uuid']['#access'] = FALSE;
@@ -158,6 +159,7 @@ function tic_geosource_form_alter(&$form, &$form_state, $form_id) {
 			if (strtolower($form['#node']->field_type_de_carte['und'][0]['value']) == 'statique') {
 				$form['field_date_de_mise_jour']['#access'] = false;
 				$form['field_url_carte']['#access'] = false;
+				$form['field_numero_de_carte']['und'][0]['#disabled'] = true;
 			}
 			else {
 				$form['field_numero_de_carte']['#access'] = false;
@@ -206,6 +208,7 @@ function tic_geosource_form_validate(&$form, &$form_state) {
 	
 	$type = $form_state['values']['field_type_de_carte']['und'][0]['value'];
 	if (strtolower($type) == 'statique') {
+		
 		//statique seulement: numero de carte obligatoire
 		if (!isset($form_state['values']['field_numero_de_carte']['und'][0]['value'])) {
 			form_set_error('field_numero_de_carte', 'Le numéro de carte est obligatoire');
@@ -240,9 +243,15 @@ function tic_geosource_form_validate(&$form, &$form_state) {
 		if (!isset($form_state['values']['field_image_carte']['und'][0]['fid'])) {
 			form_set_error('field_image_carte', 'Le champ image carte est obligatoire');
 		}
+		elseif ($form_state['values']['field_image_carte']['und'][0]['fid'] == 0) {
+			form_set_error('field_image_carte', 'Le champ image carte est obligatoire');
+		}
 		
 		// fichier carte
 		if (!isset($form_state['values']['field_fichier_carte']['und'][0]['fid'])) {
+			form_set_error('field_fichier_carte', 'Le champ fichier carte est obligatoire');
+		}
+		elseif ($form_state['values']['field_fichier_carte']['und'][0]['fid'] == 0) {
 			form_set_error('field_fichier_carte', 'Le champ fichier carte est obligatoire');
 		}
 	}
