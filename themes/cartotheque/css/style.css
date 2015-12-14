@@ -757,3 +757,19 @@ input.form-submit, a.button {
 #ui-id-4{
     height: initial !important;
 }
+
+#sticky-wrapper *{
+	z-index: 99;
+}
+
+#sticky-wrapper.content{
+	background-color: white;
+}
+
+#accordion input{
+	width: 250px;
+}
+
+#accordion select{
+	width: 250px;
+}
