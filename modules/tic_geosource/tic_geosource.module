@@ -39,6 +39,11 @@ function tic_geosource_cron_queue_info() {
 		'skip on cron' => false,
 		'time' => $time*4,
 	);
+	$queues['tic_geosource_push_pending'] = array(
+		'worker callback' => 'tic_geosource_push_worker',
+		'skip on cron' => false,
+		'time' => $time*4,
+	);
 	
 	return $queues;
 }
@@ -908,7 +913,7 @@ function tic_geosource_cron() {
 	*/
 	
 	try {
-		$AllUuids = $client->jsonGetRecordsModifiedSince($date);
+		$allUuids = $client->jsonGetRecordsModifiedSince($date);
 	}
 	catch (Exception $e) {
 		watchdog('tic_geosource', 'Erreur lors de la récupération des ressources modifiées: '.$e->getMessage());
@@ -949,6 +954,14 @@ function tic_geosource_cron() {
 		$checkQueue->createItem($uuid);
 	}
 	
+	// Push des fiches existant dans Drupal mais pas dans Geosource
+	$nids = tic_geosource_get_unpushed_maps();
+	$pushQueue = DrupalQueue::get('tic_geosource_push_pending');
+	
+	foreach($nids as $nid) {
+		$pushQueue->createItem($nid);
+	}
+	
 	variable_set('tic_geosource_cron_last_run', $now);
 }
 
@@ -968,13 +981,61 @@ function tic_geosource_get_all_records_uuids() {
 }
 
 /**
+ * Récupère les carte n'ayant pas encore de UUID
+ *
+ */
+function tic_geosource_get_unpushed_maps() {
+	$ret = db_query("select nid from node where nid not in (select entity_id from field_data_field_uuid) and type = 'carte';");
+	
+	$nids = array();
+	
+	foreach($ret as $r) {
+		$nids[] = $r->nid;
+	}
+	
+	return $nids;
+}
+
+/**
  * Worker de vérification de l'existence d'un node dans Geosource
  *
  */
 function tic_geosource_check_worker($uuid) {
 	module_load_include('inc', 'tic_geosource', 'includes/tic_geosource.utils');
 	
+	$cronRunning = &drupal_static('tic_geosource_cron_run', false);
+	$cronRunning = true;
 	tic_geosource_check_record($uuid);
+}
+
+/**
+ * Cron worker
+ *
+ */
+function tic_geosource_push_worker($nid) {
+	module_load_include('inc', 'tic_geosource', 'includes/tic_geosource.utils');
+	$cronRunning = &drupal_static('tic_geosource_cron_run', false);
+	$cronRunning = true;
+
+	$node = node_load($nid);
+	if (!$node) {
+		watchdog('tic_geosource', 'Erreur lors du chargement du node '.$nid.' pour envoi vers Geosource');
+		return false;
+	}
+	
+	if ($node->status == 0) {
+		return;
+	}
+	
+	$uuid = tic_geosource_insert_record($node);
+	if ($uuid) {
+		$node->field_uuid['und'][0]['value'] = $uuid;
+		node_save($node);
+		watchdog('tic_geosource', 'Carte '.$nid.' synchronisée vers Geosource');
+	}
+	else {
+		watchdog('tic_geosource', 'Erreur lors de la synchronisation du node '.$nid.' vers Geosource');
+	}
 }
 
 /**
