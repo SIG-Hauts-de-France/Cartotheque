@@ -762,6 +762,10 @@ input.form-submit, a.button {
 	width: auto;
 }
 
+#ui-id-4 input{
+	width: auto;
+}
+
 #sticky-wrapper *{
 	z-index: 99;
 }
