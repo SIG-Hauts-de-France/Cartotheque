@@ -14,8 +14,9 @@ function tic_geosource_node_view($node, $v, $e) {
 	return;
 	
 	module_load_include('inc', 'tic_geosource', 'includes/tic_geosource.utils');
-	//$client = tic_geosource_load_csw_client();
-	tic_geosource_process_record_json('6d6dc16d-93d8-4ea7-ae75-6933a08e4b6e');
+	$client = tic_geosource_load_csw_client();
+	$client->jsonGetRecordsModifiedSince('');
+	//tic_geosource_process_record_json('6d6dc16d-93d8-4ea7-ae75-6933a08e4b6e');
 	die('ok');
 	return;
 	 
@@ -896,6 +897,7 @@ function tic_geosource_cron() {
 	$queueMod = true;
 	
 	$client = tic_geosource_load_csw_client();
+	/*
 	try {
 		$xml = $client->getRecordsModifiedSince($date);
 	}
@@ -903,9 +905,18 @@ function tic_geosource_cron() {
 		watchdog('tic_geosource', 'Erreur lors de la récupération des ressources modifiées: '.$e->getMessage());
 		$queueMod = false;
 	}
+	*/
+	
+	try {
+		$AllUuids = $client->jsonGetRecordsModifiedSince($date);
+	}
+	catch (Exception $e) {
+		watchdog('tic_geosource', 'Erreur lors de la récupération des ressources modifiées: '.$e->getMessage());
+		$queueMod = false;
+	}
 	
 	if ($queueMod) {
-		$allUuids = tic_geosource_get_result_uuids($xml);
+		//$allUuids = tic_geosource_get_result_uuids($xml);
 		$uuids = array();
 		
 		// Ne pas mettre deux fois le meme UUID dans la file pour éviter les doublons

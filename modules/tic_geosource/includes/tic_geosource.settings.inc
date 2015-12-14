@@ -69,8 +69,9 @@ function tic_geosource_sync() {
 	try {
 		$client = tic_geosource_load_csw_client();
 		//TODO: ajouter une méthode getAll dans cswGeoClient.php
-		$xml = $client->getRecordsModifiedSince(new DateTime('01-01-2000'));
-		$allUuids = tic_geosource_get_result_uuids($xml);
+		//$xml = $client->getRecordsModifiedSince(new DateTime('01-01-2000'));
+		//$allUuids = tic_geosource_get_result_uuids($xml);
+		$allUuids = $client->jsonGetRecordsModifiedSince('');
 		
 		$queuedIds = variable_get('tic_geosource_sync_queue_uuids', array());
 		$uuids = array();

@@ -232,6 +232,41 @@ class cswGeoClient {
 	}
 	
 	/**
+	 * Récupérer les enregistrements modifiés via Json
+	 *
+	 */
+	public function jsonGetRecordsModifiedSince($date) {
+		$request = new HTTP_Request2($this->_authentAddress.'/srv/eng/q');
+		$request->setMethod(HTTP_Request2::METHOD_GET);
+		$request->setConfig('timeout', $this->_timeout);
+		$url = $request->getUrl();
+		
+		// TODO: implement since
+		$url->setQueryVariables(array(
+			'_content_type' => 'json',
+			'fast' => 'index',
+			'from' => 1,
+			'to' => 10000,
+			'type' => 'map',
+		));
+		
+		if (! $this->_authentication($request) ) { throw new Exception($this->_response); }
+		
+		if ($this->_callHTTPCSW($request)) {
+			// parser la reponse et renvoyer un tableau d'uuids
+			$res = json_decode($this->_response, true);
+			
+			$uuids = array();
+			foreach($res['metadata'] as $record) {
+				$uuids[] = $record['geonet:info']['uuid'];
+			}
+			return $uuids;
+		}
+		
+		return false;
+	}
+	
+	/**
 	 * Assigner une catégorie sur une ressource Geosource
 	 *
 	 * @param int Geosource resource identifier
