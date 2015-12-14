@@ -222,7 +222,7 @@ function tic_geosource_json_record_to_node($record) {
 	if (array_key_exists($uuid, $locks)) {
 		if ($now - $locks[$uuid] < 300) {
 			watchdog('tic_geosource', 'Worker renvoyé pour uuid '.$uuid.' deja bloqué; débloqué dans '.($now - $locks[$uuid]).'s');
-			return;
+			//return;
 		}
 	}
 	$locks[$uuid] = $now;
@@ -270,12 +270,29 @@ function tic_geosource_json_record_to_node($record) {
 	}
 	else { $numCarte = false; }
 	
+	$author = false;
 	if (isset($record['metadata']['responsibleParty'])) {
-		$contact = explode('|', $record['metadata']['responsibleParty'][0]);
-		$contactName = $contact[2];
-		$contactEmail = $contact[4];
+		$contactName = false;
+		$contactEmail = false;
 		
-		$author = tic_geosource_load_contact_by_email($contactEmail);
+		foreach($record['metadata']['responsibleParty'] as $party) {
+			$contact = explode('|', $record['metadata']['responsibleParty'][0]);
+			
+			if ($contact[1] == 'metadata') {
+				if (isset($contact[2])) {
+					$contactName = $contact[2];
+				}
+				
+				if (isset($contact[4])) {
+					$contactEmail = $contact[4];
+				}
+			}
+		}
+		
+		if ($contactEmail) {
+			$author = tic_geosource_load_contact_by_email($contactEmail);
+		}
+		
 		if (!$author) {
 			if ($contactName != '') {
 				$author = tic_geosource_create_contact($contactName, $contactEmail);
@@ -286,7 +303,6 @@ function tic_geosource_json_record_to_node($record) {
 			}
 		}
 	}
-	else { $author = false; }
 	
 	if (isset($record['metadata']['geobox'])) {
 		$empriseGeo = $record['metadata']['geoBox'];

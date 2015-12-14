@@ -15,14 +15,7 @@ function tic_geosource_node_view($node, $v, $e) {
 	
 	module_load_include('inc', 'tic_geosource', 'includes/tic_geosource.utils');
 	//$client = tic_geosource_load_csw_client();
-	//tic_geosource_process_record_json('5326d6da-1f55-43fb-baf8-d7016ddf1479');
-	for ($a = 0; $a < 100; $a++) {
-		$node = tic_geosource_get_node_by_uuid(' 5326d6da-1f55-43fb-baf8-d7016ddf1479 ');
-		if (!$node) {
-			die('it is');
-		}
-	}
-	var_dump($node);
+	tic_geosource_process_record_json('6d6dc16d-93d8-4ea7-ae75-6933a08e4b6e');
 	die('ok');
 	return;
 	 

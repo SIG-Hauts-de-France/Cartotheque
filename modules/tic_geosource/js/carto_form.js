@@ -8,6 +8,8 @@ jQuery(document).ready(function() {
 	var addContactLink = jQuery('#addContactLink');
 	var addContactWindow = jQuery('#createContact');
 	var collectionsSelect = jQuery('#edit-field-collections-und');
+	var keywordsSelect = jQuery('#edit-field-mots-cles-und');
+	var thesaurusSelect = jQuery('#edit-field-mots-cles-thesaurus-und');
 	//var numeroDeCarte = jQuery('#edit-field-numero-de-carte');
 	//var sourceData = jQuery('#edit-field-source-des-donnees');
 	//var urlSourceData = jQuery('#edit-field-url-source-des-donnees');
@@ -17,6 +19,8 @@ jQuery(document).ready(function() {
 	
 	// Attacher chosen sur le select categories
 	thematiqueSelect.chosen();
+	keywordsSelect.chosen();
+	thesaurusSelect.chosen();
 	collectionsSelect.chosen({width: '200px'});
 	
 	addContactLink.click(function(e) {
