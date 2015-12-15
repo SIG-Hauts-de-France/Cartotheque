@@ -266,7 +266,7 @@ function tic_geosource_json_record_to_node($record) {
 		foreach($record['metadata']['responsibleParty'] as $party) {
 			$contact = explode('|', $record['metadata']['responsibleParty'][0]);
 			
-			if ($contact[1] == 'metadata') {
+			if ($contact[1] == 'resource') {
 				if (isset($contact[2])) {
 					$contactName = $contact[2];
 				}
