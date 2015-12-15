@@ -254,8 +254,23 @@ class cswGeoClient {
 			// parser la reponse et renvoyer un tableau d'uuids
 			$res = json_decode($this->_response, true);
 			
+			if (!is_array($res)) {
+				throw new Exception($this->_response);
+			}
+			
+			if ($res['summary']['@count'] == 0) {
+				return array();
+			}
+			
+			if (isset($res['metadata']) && is_array($res['metadata'])) {
+				$metadata = $res['metadata'];
+			}
+			else {
+				throw new Exception($this->_response);
+			}
+			
 			$uuids = array();
-			foreach($res['metadata'] as $record) {
+			foreach($metadata as $record) {
 				$uuids[] = $record['geonet:info']['uuid'];
 			}
 			return $uuids;
