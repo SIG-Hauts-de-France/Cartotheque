@@ -1064,7 +1064,7 @@ function tic_geosource_get_next_map_identifier() {
  * @param int drupal node id
  */
 function tic_geosource_check_unique_map_identifier($id, $nid = false) {
-	if ($nid === false) {
+	if ($nid !== false) {
 		$id = db_query('select field_numero_de_carte_value from field_data_field_numero_de_carte where entity_id != '.$nid.' and field_numero_de_carte_value = '.$id.';');
 	}
 	else {
