@@ -196,7 +196,7 @@
 			<?php print $feed_icons; ?>
 			</div>
 			<?php if($page['search']): ?>
-			<div class="col-sm-4 sticky-right-bar"><?php print render($page['search']); print render($page['tags']); ?></div>
+			<div class="col-sm-4"><div class="sticky-right-bar"><?php print render($page['search']); print render($page['tags']); ?></div></div>
 			<?php endif; ?>
 		<?php endif; ?>
 		</section>

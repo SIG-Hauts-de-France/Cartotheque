@@ -113,7 +113,10 @@ jQuery(document).ready(function() {
 	}
 	
 	if (screen.width() > 768) {
-		searchBar.sticky({topSpacing:140});
+		searchBar.sticky({
+			topSpacing: 140,
+			widthFromWrapper: false,
+		});
 		
 	}
 });
