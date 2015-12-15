@@ -163,7 +163,7 @@ $type_carte = strtolower($node->field_type_de_carte['und'][0]['value']);
 		if(array_key_exists('field_categorie',$content)) {
 			$content['field_categorie']['#label_display'] = 'hidden';
 			$infosGenerales .= '<dt>'.$content['field_categorie']['#title'].':</dt>';
-			$infosGenerales .= '<dd>'. $categoryLink .'</dd>';
+			$infosGenerales .= '<dd>'. $categoryName .'</dd>';
 		}
 		if(array_key_exists('field_thematique',$content)) {
 			$content['field_thematique']['#label_display'] = 'hidden';

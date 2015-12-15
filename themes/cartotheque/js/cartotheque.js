@@ -93,7 +93,7 @@ jQuery(document).ready(function() {
  * Barre de recherche fixe
  */
 jQuery(document).ready(function() {
-	var searchBar = jQuery('.region-search');
+	var searchBar = jQuery('.sticky-right-bar');
 	var screen = jQuery(window);
 	var header = jQuery('header');
 	

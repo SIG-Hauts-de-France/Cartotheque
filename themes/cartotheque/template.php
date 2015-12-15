@@ -167,6 +167,8 @@ function cartotheque_preprocess_node(&$vars) {
 		if (isset($vars['field_categorie'][0]['taxonomy_term'])) {
 			$term = $vars['field_categorie'][0]['taxonomy_term'];
 			$vars['categoryLink'] = '<a href="'.$base_url . theme_get_setting('cartotheque_map_list_url').'&field_categorie_tid[]='.$term->tid.'">'.$term->name.'</a>';
+			
+			$vars['categoryName'] = $term->name;
 		}
 		else {
 			$vars['categoryLink'] = '';
