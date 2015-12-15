@@ -100,10 +100,12 @@ jQuery(document).ready(function() {
 	if (jQuery(document).height() > 850) {
 		var top = jQuery('header').offset().top;
 		jQuery(window).scroll(function (event) {
-			if (jQuery(this).scrollTop() >= top / 4)
+			if (jQuery(this).scrollTop() >= 50) {
 				header.addClass('fixed-header');
-			else
+			}
+			else {
 				header.removeClass('fixed-header');
+			}
 		});
 	}
 	
