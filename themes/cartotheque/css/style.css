@@ -781,3 +781,11 @@ input.form-submit, a.button {
 #accordion select{
 	width: 250px;
 }
+
+#edit-field-type-de-carte-value-wrapper input{
+	width: auto;
+}
+
+#edit-field-cartotheque-value-wrapper input{
+	width: auto;
+}

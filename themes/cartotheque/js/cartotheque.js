@@ -68,9 +68,9 @@ jQuery(function() {
 
 jQuery(document).ready(function() {
 	// Attacher Chosen aux select mots cles recherche
-	jQuery('#edit-field-mots-cles-tid').chosen({width: "200px"});
-	jQuery('#edit-field-mots-cles-thesaurus-tid').chosen({width: "200px"});
-	jQuery('#edit-field-thematique-tid').chosen({width: "200px"});
+	jQuery('#edit-field-mots-cles-tid').chosen({width: "250px"});
+	jQuery('#edit-field-mots-cles-thesaurus-tid').chosen({width: "250px"});
+	jQuery('#edit-field-thematique-tid').chosen({width: "250px"});
 	
 	jQuery('#block-views-newest-maps-block').find('.col-md-6').click(function(e) {
 		jQuery('.mapZoom').css('display', 'none');
