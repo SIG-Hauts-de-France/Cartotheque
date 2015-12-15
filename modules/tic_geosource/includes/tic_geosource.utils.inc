@@ -216,18 +216,6 @@ function tic_geosource_json_record_to_node($record) {
 		return;
 	}
 	
-	// Bloquer le travail sur l'uuid pendant 5mn
-	$now = time();
-	$locks = variable_get('tic_geosource_uuid_locks', array());
-	if (array_key_exists($uuid, $locks)) {
-		if ($now - $locks[$uuid] < 300) {
-			watchdog('tic_geosource', 'Worker renvoyé pour uuid '.$uuid.' deja bloqué; débloqué dans '.($now - $locks[$uuid]).'s');
-			//return;
-		}
-	}
-	$locks[$uuid] = $now;
-	variable_set('tic_geosource_uuid_locks', $locks);
-	
 	if (isset($record['metadata']['defaultTitle'])) {
 		$title = $record['metadata']['defaultTitle'];
 	}

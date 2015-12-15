@@ -212,6 +212,20 @@ function tic_geosource_form_validate(&$form, &$form_state) {
 		if (!isset($form_state['values']['field_numero_de_carte']['und'][0]['value'])) {
 			form_set_error('field_numero_de_carte', 'Le numéro de carte est obligatoire');
 		}
+		else {
+			// si nid existant
+			if ($form['nid']['#value']) {
+				$validNumCarte = tic_geosource_check_unique_map_identifier($form_state['values']['field_numero_de_carte']['und'][0]['value'], $form['nid']['#value']);
+			}
+			else {
+				// sinon nouveau node
+				$validNumCarte = tic_geosource_check_unique_map_identifier($form_state['values']['field_numero_de_carte']['und'][0]['value'], $form['nid']['#value']);
+			}
+			
+			if (!$validNumCarte) {
+				form_set_error('field_numero_de_carte', 'Ce numéro de carte est déjà utilisé');
+			}
+		}
 		
 		// - echelle obligatoire
 		if (!isset($form_state['values']['field_echelle']['und'][0]['value'])) {
@@ -767,7 +781,7 @@ function tic_geosource_insert_record($node) {
 	}
 	
 	if (is_array($uuid)) {
-		tic_geosource_add_map_category($uuid[0]);
+		//tic_geosource_add_map_category($uuid[0]);
 		$client->publish($uuid[0]);
 		return $uuid[0];
 	}
@@ -813,7 +827,7 @@ function tic_geosource_update_record($node) {
 		return false;
 	}
 	
-	tic_geosource_add_map_category($node->field_uuid['und'][0]['value']);
+	//tic_geosource_add_map_category($node->field_uuid['und'][0]['value']);
 	
 	// publier ou dépublier en fonction de l'état de la fiche drupal
 	if ($node->status == 0) {
@@ -871,12 +885,6 @@ function tic_geosource_queue_worker($uuid) {
 	module_load_include('inc', 'tic_geosource', 'includes/tic_geosource.utils');
 	
 	tic_geosource_process_record_json($uuid);
-	$queuedUuids = variable_get('tic_geosource_sync_queue_uuids', array());
-	if (($key = array_search($uuid, $queuedUuids)) !== false) {
-		unset($queuedUuids[$key]);
-	}
-	
-	variable_set('tic_geosource_sync_queue_uuids', $queuedUuids);
 }
 
 /**
@@ -885,7 +893,7 @@ function tic_geosource_queue_worker($uuid) {
  */
 function tic_geosource_cron() {
 	$last = variable_get('tic_geosource_cron_last_run', 0);
-	$delay = variable_get('geosource_sync_delay');
+	$delay = variable_get('geosource_sync_delay', 3600);
 	$now = time();
 	
 	$elapse = $now - $last;
@@ -899,51 +907,24 @@ function tic_geosource_cron() {
 	
 	module_load_include('inc', 'tic_geosource', 'includes/tic_geosource.utils');
 	
-	$queueMod = true;
-	
 	$client = tic_geosource_load_csw_client();
-	/*
-	try {
-		$xml = $client->getRecordsModifiedSince($date);
-	}
-	catch (Exception $e) {
-		watchdog('tic_geosource', 'Erreur lors de la récupération des ressources modifiées: '.$e->getMessage());
-		$queueMod = false;
-	}
-	*/
 	
 	try {
-		$allUuids = $client->jsonGetRecordsModifiedSince($date);
-	}
-	catch (Exception $e) {
-		watchdog('tic_geosource', 'Erreur lors de la récupération des ressources modifiées: '.$e->getMessage());
-		$queueMod = false;
-	}
-	
-	if ($queueMod) {
-		//$allUuids = tic_geosource_get_result_uuids($xml);
-		$uuids = array();
-		
-		// Ne pas mettre deux fois le meme UUID dans la file pour éviter les doublons
-		$queuedIds = variable_get('tic_geosource_sync_queue_uuids', array());
-		
-		foreach($allUuids as $id) {
-			if (!in_array($id, $queuedIds)) {
-				$queuedIds[] = $id;
-				$uuids[] = $id;
-			}
-			else {
-				watchdog('tic_geosource', $id.' deja prévu pour synchronisation, ne sera pas ajouté a la queue');
-			}
-		}
-		
-		variable_set('tic_geosource_sync_queue_uuids', $queuedIds);
-		
-		// Ajouter les uuids a traiter dans le queue
+		// Récupérer les cartes
+		$uuids = $client->jsonGetRecordsModifiedSince($date, 'map');
 		$queue = DrupalQueue::get('tic_geosource_sync');
 		foreach ($uuids as $uuid) {
 			$queue->createItem($uuid);
 		}
+		
+		// Récupérer les services
+		$uuids = $client->jsonGetRecordsModifiedSince($date, 'service');
+		foreach ($uuids as $uuid) {
+			$queue->createItem($uuid);
+		}
+	}
+	catch (Exception $e) {
+		watchdog('tic_geosource', 'Erreur lors de la récupération des ressources modifiées: '.$e->getMessage());
 	}
 	
 	// Vérifier que les ressources Drupal ayant un UUID existent toujours dans Geosource
@@ -1075,6 +1056,26 @@ function tic_geosource_get_next_map_identifier() {
 	$_SESSION['tic_geosource_mymap_id'] = $identifier;
 	
 	return $identifier;
+}
+
+/**
+ * Vérifier que l'identifiant de la carte n'est pas utilisé par un autre carte
+ *
+ * @param int drupal node id
+ */
+function tic_geosource_check_unique_map_identifier($id, $nid = false) {
+	if ($nid === false) {
+		$id = db_query('select field_numero_de_carte_value from field_data_field_numero_de_carte where entity_id != '.$nid.' and field_numero_de_carte_value = '.$id.';');
+	}
+	else {
+		$id = db_query('select field_numero_de_carte_value from field_data_field_numero_de_carte where field_numero_de_carte_value = '.$id.';');
+	}
+	
+	if ($id->rowCount() > 0) {
+		return false;
+	}
+	
+	return true;
 }
 
 /**

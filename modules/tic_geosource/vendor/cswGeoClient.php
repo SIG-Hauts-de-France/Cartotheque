@@ -235,19 +235,17 @@ class cswGeoClient {
 	 * Récupérer les enregistrements modifiés via Json
 	 *
 	 */
-	public function jsonGetRecordsModifiedSince($date) {
+	public function jsonGetRecordsModifiedSince($date, $type = 'map') {
 		$request = new HTTP_Request2($this->_authentAddress.'/srv/eng/q');
 		$request->setMethod(HTTP_Request2::METHOD_GET);
 		$request->setConfig('timeout', $this->_timeout);
 		$url = $request->getUrl();
-		
-		// TODO: implement since
 		$url->setQueryVariables(array(
 			'_content_type' => 'json',
 			'fast' => 'index',
 			'from' => 1,
 			'to' => 10000,
-			'type' => 'map',
+			'type' => $type,
 		));
 		
 		if (! $this->_authentication($request) ) { throw new Exception($this->_response); }
@@ -262,8 +260,6 @@ class cswGeoClient {
 			}
 			return $uuids;
 		}
-		
-		return false;
 	}
 	
 	/**
