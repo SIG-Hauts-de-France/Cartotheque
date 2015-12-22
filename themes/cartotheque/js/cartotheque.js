@@ -98,15 +98,27 @@ jQuery(document).ready(function() {
 	var header = jQuery('.fixable-header');
 	
 	var top = jQuery('header').offset().top;
-	jQuery(window).scroll(function (event) {
-		if (jQuery(this).scrollTop() >= 50) {
-			header.addClass('fixed-header');
-		}
-		else {
-			header.removeClass('fixed-header');
-		}
-	});
 	
+	if (jQuery.browser.mobile) {
+		jQuery('body').bind('touchmove', function (event) {
+			if (jQuery(this).scrollTop() >= 50) {
+				header.addClass('fixed-header');
+			}
+			else {
+				header.removeClass('fixed-header');
+			}
+		});
+	}
+	else {
+		jQuery(window).scroll(function (event) {
+			if (jQuery(this).scrollTop() >= 50) {
+				header.addClass('fixed-header');
+			}
+			else {
+				header.removeClass('fixed-header');
+			}
+		});
+	}
 	// Limiter l'effet a la page de résultat des cartes
 	if(jQuery(document).find('.map').length < 1) {
 		return;
@@ -116,6 +128,7 @@ jQuery(document).ready(function() {
 		searchBar.sticky({
 			topSpacing: 140,
 			widthFromWrapper: false,
+			touchScroll: jQuery.browser.mobile
 		});
 		
 	}

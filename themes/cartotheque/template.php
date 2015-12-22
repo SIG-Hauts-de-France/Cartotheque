@@ -12,6 +12,7 @@ function cartotheque_preprocess_html(&$variables) {
 	// Chosen pour les input select
 	drupal_add_js(drupal_get_path('theme', 'cartotheque') . '/js/chosen/chosen.jquery.min.js', 'file');
 	drupal_add_js(drupal_get_path('theme', 'cartotheque') . '/js/jquery.sticky.js', 'file');
+	drupal_add_js(drupal_get_path('theme', 'cartotheque') . '/js/handheld_detect.js', 'file');
 	drupal_add_css(drupal_get_path('theme', 'cartotheque') . '/js/chosen/chosen.min.css', array( 'group' => CSS_THEME, 'type' => 'file'));
 } 
  

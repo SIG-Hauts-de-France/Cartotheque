@@ -33,7 +33,8 @@
       center: false,
       getWidthFrom: '',
       widthFromWrapper: true, // works only when .getWidthFrom is empty
-      responsiveWidth: false
+      responsiveWidth: false,
+	  touchScroll: false // Which event to use for scrolling detect; useful for handheld devices
     },
     $window = $(window),
     $document = $(document),
@@ -236,7 +237,12 @@
 
   // should be more efficient than using $window.scroll(scroller) and $window.resize(resizer):
   if (window.addEventListener) {
-    window.addEventListener('scroll', scroller, false);
+	if (defaults.touchScroll) {
+		window.addEventListener('touchmove', scroller, false);
+	}
+	else {
+		window.addEventListener('scroll', scroller, false);
+	}
     window.addEventListener('resize', resizer, false);
   } else if (window.attachEvent) {
     window.attachEvent('onscroll', scroller);

@@ -25,9 +25,6 @@
  */
 ?>
 
-<div class="map">
-	<h2><?php print $fields['title']->content ?>
-	<?php if (strtolower($fields['field_type_de_carte']->content) == 'statique'): ?>
 	<?php if (strlen($fields['field_collections']->content) > 50): ?>
 	<span class="tree"></span>
 	<?php endif; ?>

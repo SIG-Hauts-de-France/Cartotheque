@@ -144,7 +144,7 @@ $type_carte = strtolower($node->field_type_de_carte['und'][0]['value']);
 		if(array_key_exists('field_auteur',$content)) {
 			$content['field_auteur']['#label_display'] = 'hidden';
 			$infosGenerales .= "<dt>".$content['field_auteur']['#title'].":</dt>";
-			$infosGenerales .= "<dd>".render($content['field_auteur'])."</dd>";
+			$infosGenerales .= "<dd>".render($content['field_auteur']['#items'][0]['node']->title)."</dd>";
 		}
 		if(array_key_exists('field_emprise_geographique',$content)) {
 			$content['field_emprise_geographique']['#label_display'] = 'hidden';
