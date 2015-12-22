@@ -458,7 +458,7 @@ div.infoMap dt, .infosGenerales dt{
 	font-weight:400;
 }
  .infosGenerales dl.themaMap dt{
-	 border-left: solid 1px #94a6b0;
+	 /*border-left: solid 1px #94a6b0;*/
 	 width:100px;
 	 margin-left:50px;
  }
