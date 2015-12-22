@@ -43,6 +43,18 @@ function tic_geosource_config($form, &$form_state) {
 		'#maxlength' => 3,
 		'#description' => 'Délai de timeout pour la connexion Geosource',
 	);
+	$form['geosource server']['geosource_public_group_id'] = array(
+		'#type' => 'textfield',
+		'#title' => 'Id groupe publique',
+		'#default_value' => variable_get('geosource_public_group_id', ''),
+		'#description' => 'Identifiant du groupe publique dans Geosource',
+	);
+	$form['geosource server']['geosource_private_group_id'] = array(
+		'#type' => 'textfield',
+		'#title' => 'Id groupe privé',
+		'#default_value' => variable_get('geosource_private_group_id', ''),
+		'#description' => 'Identifiant du groupe privé dans Geosource',
+	);
 	$form['geosource sync'] = array(
 		'#type' => 'fieldset',
 		'#title' => 'Options de synchronisation Geosource',

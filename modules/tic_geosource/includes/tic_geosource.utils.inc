@@ -340,7 +340,26 @@ function tic_geosource_json_record_to_node($record) {
 	// y or n
 	$isHarvested = $record['metadata']['isHarvested'];
 	// string true or false
-	$isPublishedToAll = $record['metadata']['geonet:info']['isPublishedToAll'];
+	//$isPublishedToAll = $record['metadata']['geonet:info']['isPublishedToAll'];
+	
+	// Comparer le groupOwner aux groupes connus et assigner un état en fonction
+	
+	if (!is_null($record['metadata']['groupOwner'])) {
+		$groupId = $record['metadata']['groupOwner'];
+		
+		$privateGroup = variable_get('geosource_private_group_id', NULL);
+		$publicGroup = variable_get('geosource_public_group_id', NULL);
+		
+		switch ($groupId) {
+			case $publicGroup:
+				$node->field_statut['und'][0]['value'] = 'interne';
+				break;
+			default:
+				$node->field_statut['und'][0]['value'] = 'externe';
+				break;
+		}
+	}
+	else { $node->field_statut['und'][0]['value'] = 'externe'; }
 	
 	$node = tic_geosource_get_node_by_uuid($uuid);
 	
@@ -370,13 +389,14 @@ function tic_geosource_json_record_to_node($record) {
 	}
 	else { $urlCarte = false; }
 	
-	
-	if ($isPublishedToAll == "true") {
+	/*
+	if ($isPublishedToAll) {
 		$node->field_statut['und'][0]['value'] = 'externe';
 	}
 	else {
 		$node->field_statut['und'][0]['value'] = 'interne';
 	}
+	*/
 	
 	// Si harvested == n -> carto npdcp
 	if ($isHarvested == "y") {

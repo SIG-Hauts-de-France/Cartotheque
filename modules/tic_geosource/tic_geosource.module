@@ -412,10 +412,12 @@ function tic_geosource_node_presave($node) {
 		$uuid = tic_geosource_insert_record($node);
 		if ($uuid) {
 			$node->field_uuid['und'][0]['value'] = $uuid;
+			tic_geosource_add_map_group($node);
 		}
 	}
 	else {
 		tic_geosource_update_record($node);
+		tic_geosource_add_map_group($node);
 	}
 	
 }
@@ -909,6 +911,11 @@ function tic_geosource_cron() {
 	
 	$client = tic_geosource_load_csw_client();
 	
+	if (!is_object($client)) {
+		watchdog('tic_geosource', 'Impossible de charger le client CSW');
+		return;
+	}
+	
 	try {
 		// Récupérer les cartes
 		$uuids = $client->jsonGetRecordsModifiedSince($date, 'map');
@@ -1029,6 +1036,34 @@ function tic_geosource_add_map_category($uuid) {
 	$geoid = $client->getGeoidFromUuid($uuid);
 	if ($geoid) {
 		return $client->addMapCategory($geoid, array('map'));
+	}
+	
+	return false;
+}
+
+/**
+ * Assigner la carte a un groupe
+ *
+ * @param stClass drupal node
+ */
+function tic_geosource_add_map_group($node) {
+	switch ($node->field_statut) {
+		case 'interne':
+			$groupId = variable_get('geosource_public_group_id', NULL);
+			break;
+		case 'externe':
+			$groupId = variable_get('geosource_private_group_id', NULL);
+			break;
+		default:
+			$groupId = NULL;
+	}
+	
+	if (is_null($groupId)) { return false; }
+	
+	$client = tic_geosource_load_csw_client();
+	$geoId = $client->getGeoidFromUuid($node->field_uuid['und'][0]['value']);
+	if ($geoId) {
+		return $client->addMapGroup($geoId, $groupId);
 	}
 	
 	return false;

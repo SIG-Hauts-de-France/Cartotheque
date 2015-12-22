@@ -312,6 +312,29 @@ class cswGeoClient {
 		return $this->_callHTTPCSW($request);
 	}
 	
+	/**
+	 * Assigner un groupe a une categorie
+	 *
+	 *
+	 */
+	public function addMapGroup($geoid, $groupId) {
+		$request = new HTTP_Request2($this->_authentAddress.'/srv/eng/md.category.update');
+		$request->setMethod(HTTP_Request2::METHOD_GET);
+		$url = $request->getUrl();
+		
+		$urlVars = array(
+			'id' => $geoid,
+			'groupid' => $groupId,
+		);
+		
+		$url->setQueryVariables($urlVars);
+		
+		// auth needed
+		$this->_authentication($request);
+		
+		return $this->_callHTTPCSW($request);
+	}
+	
 	public function jsonDownloadFile($url) {
 		$request = new HTTP_Request2($url);
 		$request->setMethod(HTTP_Request2::METHOD_GET);
