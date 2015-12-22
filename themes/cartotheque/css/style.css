@@ -253,6 +253,16 @@ div.mapZoom > .closeZoom{
 	cursor: hand;
 }
 
+div.maps.leftMaps .img-responsive:hover{
+	cursor: hand;
+	cursor: pointer;
+}
+
+div.maps.leftMaps .img-responsive:hover{
+	cursor: hand;
+	cursor: pointer;
+}
+
 section.actus div.maps.leftMaps div.mapZoom{
 	left:20px;
 }
