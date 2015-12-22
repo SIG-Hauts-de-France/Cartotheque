@@ -75,7 +75,6 @@
 ?>
 
   <div id="page-wrapper"><div id="page">
-
     <header class="container-fluid">
 	<section class="container clearfix">
 	 <ul class="topNav hidden-xs">
@@ -107,10 +106,49 @@
             <br/><span><?php print $site_slogan; ?></span>
           <?php endif; ?>
         </h1> <!-- /#name-and-slogan -->
-      <?php endif; ?>
+	  <?php endif; ?>
       <?php print render($page['header']); ?>
 
-    </section></header> <!-- /.section, /#header -->
+	</section>
+
+	<div class="fixable-header">
+	 <ul class="topNav hidden-xs">
+		<li class="home"><span><a href="<?php print $front_page; ?>" rel="home"></a></span><?php print t('Home'); ?></li>
+		<?php
+			if ($user->uid > 0) {
+				print '<li class="user"><span>' . l('', 'user') . '</span>' . t('My account') . "</li>\n";
+				//print ' &nbsp;|&nbsp; ';
+				//print l(t('logout'), 'logout');
+				print '<li class="logout"><span>' . l('', 'user/logout') . '</span>' . t('Logout') . "</li>\n";
+			} else {
+				//print l(t('login'), 'user');
+				print '<li class="login"><span>' . l('', 'user') . '</span>' . t('Log in') . "</li>\n";
+			}
+		?>
+	</ul>
+      <?php if ($logo): ?>
+        <a href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>" rel="home" id="logo">
+          <img src="<?php print $logo; ?>" alt="<?php print t('Home'); ?>" />
+        </a>
+      <?php endif; ?>
+
+      <?php if ($site_name || $site_slogan): ?>
+        <h1>
+          <?php if ($site_name): ?>
+		<?php print $site_name; ?>
+          <?php endif; ?>
+          <?php if ($site_slogan): ?>
+            <br/><span><?php print $site_slogan; ?></span>
+          <?php endif; ?>
+        </h1> <!-- /#name-and-slogan -->
+	  <?php endif; ?>
+	</div>
+
+
+
+</header> <!-- /.section, /#header -->
+
+
 
 
     <div id="main-wrapper" class="container"><div id="main" class="row clearfix">

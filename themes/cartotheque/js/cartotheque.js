@@ -95,19 +95,17 @@ jQuery(document).ready(function() {
 jQuery(document).ready(function() {
 	var searchBar = jQuery('.sticky-right-bar');
 	var screen = jQuery(window);
-	var header = jQuery('header');
+	var header = jQuery('.fixable-header');
 	
-	if (jQuery(document).height() > 850) {
-		var top = jQuery('header').offset().top;
-		jQuery(window).scroll(function (event) {
-			if (jQuery(this).scrollTop() >= 50) {
-				header.addClass('fixed-header');
-			}
-			else {
-				header.removeClass('fixed-header');
-			}
-		});
-	}
+	var top = jQuery('header').offset().top;
+	jQuery(window).scroll(function (event) {
+		if (jQuery(this).scrollTop() >= 50) {
+			header.addClass('fixed-header');
+		}
+		else {
+			header.removeClass('fixed-header');
+		}
+	});
 	
 	// Limiter l'effet a la page de résultat des cartes
 	if(jQuery(document).find('.map').length < 1) {

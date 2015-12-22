@@ -78,10 +78,19 @@ header ul.topNav li.user a{
 	background-position: 0 -44px;
 }
 
+.fixable-header{
+	display: none;
+}
+
 .fixed-header {
 	position: fixed;
 	z-index: 100;
 	width: 100%;
+	background: #FAFBFB;
+	display: block;
+	top: 0;
+	left: 0;
+	border-bottom: 1px solid #95A6B0;
 }
 
 .fixed-header img{
