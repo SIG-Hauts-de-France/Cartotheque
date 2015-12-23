@@ -86,6 +86,10 @@ header ul.topNav li.user a{
 	margin-top: 64px;
 }
 
+.admin-menu .fixed-header{
+	margin-top: 30px;
+}
+
 .fixed-header {
 	position: fixed;
 	z-index: 100;
@@ -815,4 +819,8 @@ input.form-submit, a.button {
 
 #user-login label{
 	display: block;
+}
+
+.chosen-drop{
+	z-index: 100;
 }
