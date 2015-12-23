@@ -214,9 +214,20 @@ $type_carte = strtolower($node->field_type_de_carte['und'][0]['value']);
 				}
 			?>
 		</div>
-		<div class="keyWordMap">Mots clés : <span class="keyWord"><?php
+		<div class="keyWordMap">Mots clés Inspire : <span class="keyWord"><?php
 			$content['field_mots_cles']['#label_display'] = 'hidden';
-			print $keywordsLinks;
+			if ($inspireKeywordsLinks != '') {
+				print $inspireKeywordsLinks;
+			}
+			else { print ' <span class="no-keywords">-</span> '; }
+			?></span>
+		</div>
+		<div class="keyWordMap">Mots clés: <span class="keyWord"><?php
+			$content['field_mots_cles']['#label_display'] = 'hidden';
+			if ($keywordsLinks != '') {
+				print $keywordsLinks;
+			}
+			else { print ' <span class="no-keywords">-</span> '; }
 			?></span>
 		</div>
 	</div>

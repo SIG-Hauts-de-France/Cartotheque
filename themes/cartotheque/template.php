@@ -194,10 +194,11 @@ function cartotheque_preprocess_node(&$vars) {
 			}
 		}
 		
+		$vars['inspireKeywordsLinks'] = '';
 		if (isset($vars['field_mots_cles_thesaurus'])) {
 			foreach ($vars['field_mots_cles_thesaurus'] as $keyword) {
 				$term = $keyword['taxonomy_term'];
-				$vars['keywordsLinks'] .= '<a href="'. $base_url. theme_get_setting('cartotheque_map_list_url').'&field_mots_cles_thesaurus_tid[]='.$term->tid.'">'.$term->name.'</a> ';
+				$vars['InspirekeywordsLinks'] .= '<a href="'. $base_url. theme_get_setting('cartotheque_map_list_url').'&field_mots_cles_thesaurus_tid[]='.$term->tid.'">'.$term->name.'</a> ';
 			}
 		}
 		
