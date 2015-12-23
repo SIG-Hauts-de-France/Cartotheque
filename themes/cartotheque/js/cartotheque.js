@@ -109,16 +109,14 @@ jQuery(document).ready(function() {
 			}
 		});
 	}
-	else {
-		jQuery(window).scroll(function (event) {
-			if (jQuery(this).scrollTop() >= 50) {
-				header.addClass('fixed-header');
-			}
-			else {
-				header.removeClass('fixed-header');
-			}
-		});
-	}
+	jQuery(window).scroll(function (event) {
+		if (jQuery(this).scrollTop() >= 50) {
+			header.addClass('fixed-header');
+		}
+		else {
+			header.removeClass('fixed-header');
+		}
+	});
 	// Limiter l'effet a la page de résultat des cartes
 	if(jQuery(document).find('.map').length < 1) {
 		return;
