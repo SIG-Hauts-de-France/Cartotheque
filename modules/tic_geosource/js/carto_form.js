@@ -19,7 +19,7 @@ jQuery(document).ready(function() {
 	
 	// Attacher chosen sur le select categories
 	thematiqueSelect.chosen();
-	keywordsSelect.chosen();
+	//keywordsSelect.chosen();
 	thesaurusSelect.chosen();
 	collectionsSelect.chosen({width: '200px'});
 	
