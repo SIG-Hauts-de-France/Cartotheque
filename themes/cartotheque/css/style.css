@@ -467,7 +467,7 @@ div.infoMap dt, .infosGenerales dt{
 }
  .infosGenerales dl.themaMap dt{
 	 /*border-left: solid 1px #94a6b0;*/
-	 width:100px;
+	 width:110px;
 	 margin-left:50px;
  }
 div.descMap p{
@@ -793,10 +793,6 @@ input.form-submit, a.button {
 	width: auto;
 }
 
-#sticky-wrapper *{
-	z-index: 99;
-}
-
 #sticky-wrapper .content{
 	background-color: white;
 }
@@ -819,8 +815,4 @@ input.form-submit, a.button {
 
 #user-login label{
 	display: block;
-}
-
-.chosen-drop{
-	z-index: 100;
 }
