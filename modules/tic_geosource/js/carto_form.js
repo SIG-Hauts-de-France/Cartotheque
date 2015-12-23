@@ -2,26 +2,23 @@
 
 jQuery(document).ready(function() {
 	
-	//var mapType = jQuery('#edit-field-type-de-carte-und');
-	//var echelleInputDiv = jQuery('.form-item-field-echelle-und');
 	var thematiqueSelect = jQuery('#edit-field-thematique-und');
 	var addContactLink = jQuery('#addContactLink');
 	var addContactWindow = jQuery('#createContact');
 	var collectionsSelect = jQuery('#edit-field-collections-und');
 	var keywordsSelect = jQuery('#edit-field-mots-cles-und');
 	var thesaurusSelect = jQuery('#edit-field-mots-cles-thesaurus-und');
-	//var numeroDeCarte = jQuery('#edit-field-numero-de-carte');
-	//var sourceData = jQuery('#edit-field-source-des-donnees');
-	//var urlSourceData = jQuery('#edit-field-url-source-des-donnees');
-	//var dateSourceData = jQuery('#edit-field-date-source-des-donnees');
-	//var dateMiseAJour = jQuery('#edit-field-date-de-mise-jour');
-	//var urlCarte = jQuery('#edit-field-url-carte');
+	
+	var chosenOpts = {
+		'width': '250px',
+		'placeholder_text_multiple': 'Choisir..'
+	};
 	
 	// Attacher chosen sur le select categories
-	thematiqueSelect.chosen();
+	thematiqueSelect.chosen(chosenOpts);
 	//keywordsSelect.chosen();
-	thesaurusSelect.chosen();
-	collectionsSelect.chosen({width: '200px'});
+	thesaurusSelect.chosen(chosenOpts);
+	collectionsSelect.chosen(chosenOpts);
 	
 	addContactLink.click(function(e) {
 		e.preventDefault();
