@@ -67,10 +67,15 @@ jQuery(function() {
 });
 
 jQuery(document).ready(function() {
+	var chosenOpts = {
+		'width': '250px',
+		'placeholder_text_multiple': 'Choisir..'
+	};
+	
 	// Attacher Chosen aux select mots cles recherche
-	jQuery('#edit-field-mots-cles-tid').chosen({width: "250px"});
-	jQuery('#edit-field-mots-cles-thesaurus-tid').chosen({width: "250px"});
-	jQuery('#edit-field-thematique-tid').chosen({width: "250px"});
+	jQuery('#edit-field-mots-cles-tid').chosen(chosenOpts);
+	jQuery('#edit-field-mots-cles-thesaurus-tid').chosen(chosenOpts);
+	jQuery('#edit-field-thematique-tid').chosen(chosenOpts);
 	
 	jQuery('#block-views-newest-maps-block').find('.col-md-6').click(function(e) {
 		jQuery('.mapZoom').css('display', 'none');
