@@ -138,7 +138,7 @@ function tic_carto_count_file_download_access_alter(&$grants, $file, $entity_typ
 	}
 	
 	if(isset($entity->field_fichier_carte['und'][0]['filename'])) {
-		$trackedFiles[] = $entity->field_image_carte['und'][0]['filename'];
+		$trackedFiles[] = $entity->field_fichier_carte['und'][0]['filename'];
 	}
 	
 	if(!in_array($file['filename'], $trackedFiles)) { return; }
