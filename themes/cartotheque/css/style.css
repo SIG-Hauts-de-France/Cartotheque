@@ -266,7 +266,7 @@ div.maps.leftMaps .img-responsive:hover{
 	cursor: pointer;
 }
 
-div.maps.leftMaps .img-responsive:hover{
+div.maps.rightMaps .img-responsive:hover{
 	cursor: hand;
 	cursor: pointer;
 }
@@ -378,13 +378,17 @@ div.orderList span a, div.form-type-bef-link a{
 	color: transparent;
 }
 div.orderList span.orderZa, div.form-item-edit-sort-bef-combine-created-desc{
-	background-position: -22px 0;
+	background-position: -45px 0;
 }
 div.orderList span.order01, div.form-item-edit-sort-bef-combine-title-asc{
-	background-position: -44px 0;
+	background-position: 0px 0;
 }
 div.orderList span.order10, div.form-item-edit-sort-bef-combine-title-desc{
-	background-position: -66px 0;
+	background-position: -23px 0;
+}
+
+div.form-item-edit-sort-bef-combine-created-asc{
+	background-position: -68px 0;
 }
 
 div.map{
@@ -586,8 +590,6 @@ aside input, aside select{
 ul.pager { margin-top: 25px; }
 ul.pagination li { margin: 0; }
 
-
-
 @media (max-width: 800px){
 	div.imgMap, div.descMap{
 	display:block;
@@ -598,6 +600,14 @@ ul.pagination li { margin: 0; }
 	div.linkMap{
 		position:relative;
 	}
+
+	.ui-accordion .ui-accordion-content{
+		padding: 5px;
+	}
+
+	#accordion{
+		font-size: 0.8em;
+	}
 }
 @media (max-width: 992px){
 	header h1{
@@ -606,6 +616,35 @@ ul.pagination li { margin: 0; }
 	}
 	header h1 span{
 		font-size:22px;
+	}
+
+	#accordion{
+		padding: 5px;
+		font-size: 0.7em;
+	}
+
+	#accordion .ui-accordion-content{
+		padding: 10px 10px;
+	}
+
+	#mainContent{
+		width: 98%;
+		margin-left: 1%;
+	}
+
+	#main-wrapper{
+		width: 100%;
+		padding-right: 0;
+		padding-left: 0;
+	}
+
+	.form-control{
+		height: 24px;
+	}
+
+	.views-exposed-form .views-exposed-widget .form-submit{
+		margin-top: 0;
+		font-size: 0.8em;
 	}
 }
 @media (max-width: 360px){

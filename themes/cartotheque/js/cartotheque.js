@@ -126,10 +126,22 @@ jQuery(document).ready(function() {
 	if(jQuery(document).find('.map').length < 1) {
 		return;
 	}
+
+	var spaceTop = 140;
+
+	if (jQuery('#mainContent').width() < 980) {
+
+		spaceTop = 115;
+
+		if (jQuery('#admin-menu').length > 0) {
+			spaceTop += jQuery('#admin-menu').height();
+		}
+
+	}
 	
 	if (screen.width() > 768) {
 		searchBar.sticky({
-			topSpacing: 140,
+			topSpacing: spaceTop,
 			widthFromWrapper: false,
 			touchScroll: jQuery.browser.mobile
 		});
