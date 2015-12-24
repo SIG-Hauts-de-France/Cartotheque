@@ -153,6 +153,11 @@ function tic_carto_count_file_download_access_alter(&$grants, $file, $entity_typ
     return;
   }
 
+  // count the download if tag is found
+  if (! isset($_GET['countdl'])) {
+	return;
+  }
+
   //check flood control
   $flood_limit = variable_get('tic_carto_count_flood_limit', 0);
   if ($flood_limit > 0) {
