@@ -855,3 +855,7 @@ input.form-submit, a.button {
 #user-login label{
 	display: block;
 }
+
+#ui-datepicker-div{
+	z-index: 999 !important;
+}
