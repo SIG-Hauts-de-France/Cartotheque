@@ -201,15 +201,15 @@ $type_carte = strtolower($node->field_type_de_carte['und'][0]['value']);
 				
 					$htmlimage = render($content['field_image_carte']);
 					if( preg_match('/<img .* src=\"(.*)\"/U', $htmlimage, $matches) ) {
-						print '<span class="imgMap"><a href="'.$matches[1].'&countdl=yes"><span class="linkIcone"></span>img</a></span>&nbsp;';
+						print '<span class="imgMap"><a href="'.$matches[1].'&countdl=yes" download><span class="linkIcone"></span>img</a></span>&nbsp;';
 					}
 					elseif( preg_match('/<a(.*) href=\"(.*)\"(.*)>/U', $htmlimage, $matches) ) {
-						print '<span class="imgMap"><a '.$matches[1].' href="'.$matches[2].'&countdl=yes" '.$matches[3].'><span class="linkIcone"></span>img</a></span>&nbsp;';
+						print '<span class="imgMap"><a '.$matches[1].' href="'.$matches[2].'&countdl=yes" '.$matches[3].' download><span class="linkIcone"></span>img</a></span>&nbsp;';
 					}
 
 					$htmlfile = render($content['field_fichier_carte']);
 					if( preg_match('/<a(.*) href=\"(.*)\" (.*)>/U', $htmlfile, $matches) ) {
-						print '<span class="pdfMap"><a '.$matches[1].' href="'.$matches[2].'&countdl=yes" '.$matches[3].'><span class="linkIcone"></span>pdf</a></span>&nbsp;';
+						print '<span class="pdfMap"><a '.$matches[1].' href="'.$matches[2].'&countdl=yes" '.$matches[3].' download><span class="linkIcone"></span>pdf</a></span>&nbsp;';
 					}
 				}
 			?>

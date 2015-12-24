@@ -43,12 +43,12 @@
 				<?php if (strtolower($fields['field_type_de_carte']->content) == 'statique'): ?>
 				<?php if ($fields['field_image_carte']->content): ?>
 				<span class="linkImg">
-					<a href="<?php print $fields['field_image_carte']->content; ?>&countdl=yes"> </a>
+					<a href="<?php print $fields['field_image_carte']->content; ?>&countdl=yes" download> </a>
 				</span>
 				<?php endif; ?>
 				<?php if ($fields['field_fichier_carte']->content): ?>
 				<span class="linkPdf">
-					<a href="<?php print $fields['field_fichier_carte']->content; ?>&countdl=yes"> </a>
+					<a href="<?php print $fields['field_fichier_carte']->content; ?>&countdl=yes" download> </a>
 				</span>
 				<?php endif; ?>
 				<?php else: ?>

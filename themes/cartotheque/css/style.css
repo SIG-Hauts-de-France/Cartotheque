@@ -859,3 +859,11 @@ input.form-submit, a.button {
 #ui-datepicker-div{
 	z-index: 999 !important;
 }
+
+#edit-field-date-de-creation-value-min-wrapper label{
+	font-size: 0.8em;
+}
+
+#edit-field-date-de-creation-value-max-wrapper label{
+	font-size: 0.8em;
+}
