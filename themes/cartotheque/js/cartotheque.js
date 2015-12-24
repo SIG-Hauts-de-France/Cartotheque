@@ -8,31 +8,41 @@ jQuery(function() {
 
 // Télécharger ou visualiser
 jQuery(document).ready(function() {
+	dialogOpts = {
+		'autoOpen': false,
+		'buttons': { "Close": function() { jQuery(this).dialog('close'); } },
+		'close': function(event, ui) { jQuery(this).hide(); }
+	};
+
+	jQuery('#imgLink').dialog(dialogOpts);
+	jQuery('#pdfLink').dialog(dialogOpts);
+
 	// Fiche carte
 	jQuery('.linkTheMap').find('a').click(function(e) {
 		if (jQuery(this).parent('span').attr('class') == 'imgMap') {
-			jQuery('#imgLink').dialog();
+			jQuery('#imgLink').dialog('open');
 			return false;
 		}
 		else if (jQuery(this).parent('span').attr('class') == 'pdfMap') {
-			jQuery('#pdfLink').dialog();
+			jQuery('#pdfLink').dialog('open');
 			return false;
 		}
 	});
-	
+
 	//Liste des résultats
+
+	//jQuery('.image-dialog').dialog(dialogOpts);
+	//jQuery('.file-dialog').dialog(dialogOpts);
 	jQuery('.linkMap').find('a').click(function (e) {
 		if (jQuery(this).parent('span').attr('class') == 'linkImg') {
 			console.log(jQuery(this).parent('.descMap').find('.image-dialog'));
-			jQuery(this).parent('.descMap').find('.image-dialog').dialog();
+			jQuery(this).closest('.descMap').find('.image-dialog').show();
 			return false;
 		}
 		else if (jQuery(this).parent('span').attr('class') == 'linkPdf') {
-			jQuery(this).parent('.descMap').find('.file-dialog').dialog();
+			jQuery(this).closest('.descMap').find('.file-dialog').show();
 			return false;
 		}
-		
-		return false;
 	});
 });
 
