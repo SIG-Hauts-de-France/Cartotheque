@@ -191,6 +191,8 @@ $type_carte = strtolower($node->field_type_de_carte['und'][0]['value']);
 <div class="col-xs-12 col-sm-7">
 	<div class="descMapFiche">
 		<?php print render($content['field_description']); ?>
+		
+		<?php $imgLink = ''; $pdfLink = ''; ?>
 		<div class="linkTheMap">
 			<?php if($type_carte == 'dynamique' && $node->field_url_carte['und'][0]['value']): ?>
 				<span class="urlMap"><a href="<?php print $node->field_url_carte['und'][0]['value']; ?>" target="_blank"><span class="linkIcone"></span>url</a></span>
@@ -202,18 +204,33 @@ $type_carte = strtolower($node->field_type_de_carte['und'][0]['value']);
 					$htmlimage = render($content['field_image_carte']);
 					if( preg_match('/<img .* src=\"(.*)\"/U', $htmlimage, $matches) ) {
 						print '<span class="imgMap"><a href="'.$matches[1].'&countdl=yes" download><span class="linkIcone"></span>img</a></span>&nbsp;';
+						$imgLink = $matches[1].'&countdl=yes';
 					}
 					elseif( preg_match('/<a(.*) href=\"(.*)\"(.*)>/U', $htmlimage, $matches) ) {
 						print '<span class="imgMap"><a '.$matches[1].' href="'.$matches[2].'&countdl=yes" '.$matches[3].' download><span class="linkIcone"></span>img</a></span>&nbsp;';
+						$imgLink = $matches[2].'&countdl=yes';
 					}
-
+					
 					$htmlfile = render($content['field_fichier_carte']);
 					if( preg_match('/<a(.*) href=\"(.*)\" (.*)>/U', $htmlfile, $matches) ) {
 						print '<span class="pdfMap"><a '.$matches[1].' href="'.$matches[2].'&countdl=yes" '.$matches[3].' download><span class="linkIcone"></span>pdf</a></span>&nbsp;';
+						$pdfLink = $matches[2].'&countdl=yes';
 					}
+					
+					
 				}
 			?>
 		</div>
+		<?php
+		
+		if ($imgLink != '') {
+			print '<div id="imgLink" title="Image carte" style="display: none;"><span class="linkDl"><a href="'.$imgLink.'" download>Télécharger</a></span><span class="linkShow"><a href="'.$imgLink.'">Visualiser</a></span></div>';
+		}
+
+		if ($pdfLink != '') {
+			print '<div id="pdfLink" title="Fichier carte" style="display: none;"><span class="linkDl"><a href="'.$pdfLink.'" download>Télécharger</a></span><span class="linkShow"><a href="'.$pdfLink.'">Visualiser</a></span></div>';
+		}
+		?>
 		<div class="keyWordMap">Mots clés Inspire : <span class="keyWord"><?php
 			$content['field_mots_cles']['#label_display'] = 'hidden';
 			if ($inspireKeywordsLinks != '') {

@@ -867,3 +867,13 @@ input.form-submit, a.button {
 #edit-field-date-de-creation-value-max-wrapper label{
 	font-size: 0.8em;
 }
+
+#imgLink span{
+	display: block;
+	font-size: 1.8em;
+}
+
+#pdfLink span{
+	display: block;
+	font-size: 1.8em;
+}

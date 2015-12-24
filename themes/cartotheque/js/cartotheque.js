@@ -6,6 +6,37 @@ jQuery(function() {
 	});
 });
 
+// Télécharger ou visualiser
+jQuery(document).ready(function() {
+	// Fiche carte
+	jQuery('.linkTheMap').find('a').click(function(e) {
+		if (jQuery(this).parent('span').attr('class') == 'imgMap') {
+			jQuery('#imgLink').dialog();
+			return false;
+		}
+		else if (jQuery(this).parent('span').attr('class') == 'pdfMap') {
+			jQuery('#pdfLink').dialog();
+			return false;
+		}
+	});
+	
+	//Liste des résultats
+	jQuery('.linkMap').find('a').click(function (e) {
+		if (jQuery(this).parent('span').attr('class') == 'linkImg') {
+			console.log(jQuery(this).parent('.descMap').find('.image-dialog'));
+			jQuery(this).parent('.descMap').find('.image-dialog').dialog();
+			return false;
+		}
+		else if (jQuery(this).parent('span').attr('class') == 'linkPdf') {
+			jQuery(this).parent('.descMap').find('.file-dialog').dialog();
+			return false;
+		}
+		
+		return false;
+	});
+});
+
+
 function isAdvancedSearch() {
 	var sPageURL = decodeURIComponent(window.location.search.substring(1)),
 	sURLVariables = sPageURL.split('&'),
@@ -148,4 +179,5 @@ jQuery(document).ready(function() {
 		
 	}
 });
+
 
