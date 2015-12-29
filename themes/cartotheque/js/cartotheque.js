@@ -35,12 +35,15 @@ jQuery(document).ready(function() {
 	//jQuery('.file-dialog').dialog(dialogOpts);
 	jQuery('.linkMap').find('a').click(function (e) {
 		if (jQuery(this).parent('span').attr('class') == 'linkImg') {
-			console.log(jQuery(this).parent('.descMap').find('.image-dialog'));
-			jQuery(this).closest('.descMap').find('.image-dialog').show();
+			var content = jQuery(this).closest('.descMap').find('.image-dialog').html();
+			jQuery('#dialog-window').html(content);
+			jQuery('#dialog-window').dialog();
 			return false;
 		}
 		else if (jQuery(this).parent('span').attr('class') == 'linkPdf') {
-			jQuery(this).closest('.descMap').find('.file-dialog').show();
+			var content = jQuery(this).closest('.descMap').find('.file-dialog').html();
+			jQuery('#dialog-window').html(content);
+			jQuery('#dialog-window').dialog();
 			return false;
 		}
 	});

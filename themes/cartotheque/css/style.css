@@ -877,3 +877,13 @@ input.form-submit, a.button {
 	display: block;
 	font-size: 1.8em;
 }
+
+#dialog-window .linkShow{
+	display: block;
+	font-size: 1.8em;
+}
+
+#dialog-window .linkDl{
+	display: block;
+	font-size: 1.8em;
+}

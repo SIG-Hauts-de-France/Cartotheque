@@ -66,7 +66,7 @@
 			<?php
 			if ($fields['field_fichier_carte']->content) {
 				print '<div class="file-dialog" style="display: none;" title="Fichier carte">';
-				print '<span class="linkShow"><a href="'.$fields['field_fichier_carte']->content.'">Visualiser</a></span>';
+				print '<span class="linkShow"><a href="'.$fields['field_fichier_carte']->content.'" target="_blank">Visualiser</a></span>';
 				print '<span class="linkDl"><a href="'.$fields['field_fichier_carte']->content.'" download>Télécharger</a></span>';
 				print '</div>';
 			}
@@ -99,3 +99,4 @@
 		<?php endif; ?>
 	</div>
 </div>
+<div id="dialog-window" style="display: none;" title="Visualiser ou télécharger"></div>
