@@ -24,6 +24,7 @@
  * @ingroup views_templates
  */
 ?>
+
 <div class="map">
 	<h2><?php print $fields['title']->content ?>
 	<?php if (strtolower($fields['field_type_de_carte']->content) == 'statique'): ?>

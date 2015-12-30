@@ -87,7 +87,11 @@ jQuery(function() {
 	if (isAdvancedSearch()) {
 		accordionActive = 0;
 	}
-	
+
+	if (openAccordion) {
+		accordionActive = 0;
+	}
+
 	jQuery( "#accordion" ).accordion({
 		active: accordionActive,
 		collapsible: true

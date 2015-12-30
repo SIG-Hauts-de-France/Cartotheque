@@ -14,8 +14,15 @@ function cartotheque_preprocess_html(&$variables) {
 	drupal_add_js(drupal_get_path('theme', 'cartotheque') . '/js/jquery.sticky.js', 'file');
 	drupal_add_js(drupal_get_path('theme', 'cartotheque') . '/js/handheld_detect.js', 'file');
 	drupal_add_css(drupal_get_path('theme', 'cartotheque') . '/js/chosen/chosen.min.css', array( 'group' => CSS_THEME, 'type' => 'file'));
-} 
- 
+
+	if ($_SESSION['tic_user_has_searched']) {
+		drupal_add_js('var openAccordion = true;', 'inline');
+	}
+	else {
+		drupal_add_js('var openAccordion = false;', 'inline');
+	}
+}
+
 /**
  * Override or insert variables into the page template.
  */
@@ -263,6 +270,10 @@ function cartotheque_menu_link(array $variables) {
  *
  */
 function cartotheque_retrieve_search_params() {
+	if (!isset($_SESSION['tic_user_has_searched'])) {
+		$_SESSION['tic_user_has_searched'] = false;
+	}
+
 	$params = drupal_get_query_parameters();
 	
 	$searchParams = array(
@@ -291,12 +302,20 @@ function cartotheque_retrieve_search_params() {
 		$savedParams = array();
 	}
 	
+	$hasSearched = false;
 	foreach($params as $p => $v) {
 		if (in_array($p, $searchParams)) {
+			if ($p != 'field_cartotheque_value') {
+				$hasSearched = true;
+			}
 			$savedParams[$p] = $v;
 		}
 	}
 	
+
+	if ($_SESSION['tic_user_has_searched'] == false) {
+		$_SESSION['tic_user_has_searched'] = $hasSearched;
+	}
 	$_SESSION['tic_search_params'] = serialize($savedParams);
 }
 
@@ -329,4 +348,3 @@ function cartotheque_generate_search_url() {
 	
 	return $url;
 }
-
