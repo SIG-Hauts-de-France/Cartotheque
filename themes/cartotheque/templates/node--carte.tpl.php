@@ -89,7 +89,10 @@ $type_carte = strtolower($node->field_type_de_carte['und'][0]['value']);
 <h2<?php print $title_attributes; ?>>
 	<a href="<?php print $node_url; ?>"><?php print $title; ?></a>
 	<?php if ($collections_count > 0): ?>
+	<div class="abulle">
 	<span class="tree"></span>
+	<span class="infobulle">Cette carte fait partie d'une collection</span>
+	</div>
 	<?php endif; ?>
 	<span class="type"><?php print render($content['field_type_de_carte']); ?></span>
 </h2>
@@ -130,9 +133,15 @@ $type_carte = strtolower($node->field_type_de_carte['und'][0]['value']);
 	
 	<div class="col-xs-4" style="text-align:right;">
 		<div class="nbAction">
+			<div class="anb">
 			<?php print $stats_total_count ?><span class="nbImg"></span>
+			<span class="infobulleNb node"><?php print $stats_total_count ?> consultations</span>
+			</div>
 			<?php if ($type_carte == 'statique'): ?>
+			<div class="anb">
 			<?php print $download_count ?><span class="nbPdf"></span>
+			<span class="infobulleNb node"><?php print $download_count ?> téléchargements</span>
+			</div>
 			<?php endif; ?>
 		</div>
 	</div>

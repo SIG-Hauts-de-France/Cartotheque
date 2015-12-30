@@ -531,7 +531,7 @@ div.nbAction{
 	color:#444;
 	float: left;
 }
-div.nbAction span{
+div.nbAction span.nbImg, div.nbAction span.nbPdf{
 	background-image:url(../images/i_actionmap.png);
 	background-repeat:no-repeat;
 	display:inline-block;
@@ -539,6 +539,7 @@ div.nbAction span{
 	width:27px;
 	vertical-align:-25%;
 }
+
 div.nbAction span.nbImg{
 	background-position: -28px 0;
 }
@@ -886,4 +887,66 @@ input.form-submit, a.button {
 #dialog-window .linkDl{
 	display: block;
 	font-size: 1.8em;
+}
+
+.abulle{
+	display: inline-block;
+	float: right;
+}
+
+.abulle .infobulle{
+	transform: scale(0) rotate(-12deg);
+	position: absolute;
+	color: white;
+	background-color: #767A7C;
+	padding:15px;
+     	border-radius:3px;
+     	box-shadow:0 0 2px rgba(0,0,0,.5);
+	transition: all .25s;
+	font-size: 0.7em;
+}
+
+.abulle .infobulle a{
+	color: white;
+}
+
+.abulle:hover .infobulle, .abulle:focus .infobulle{
+	transform: scale(1) rotate(0);
+	position: absolute;
+	margin-top:-110px;
+	margin-left:-150px;
+}
+
+.anb{
+	display: inline-block;
+}
+
+.anb .node{
+	width: 100%;
+}
+
+.anb .infobulleNb{
+	transform:scale(0) rotate(-12deg);
+	position: absolute;
+	background-image: none;
+	transition: all .25s;
+	text-align: left;
+}
+
+.anb:hover > .infobulleNb{
+	transform:scale(1) rotate(0);
+	position: absolute;
+	color: white;
+	background-color: #767A7C;
+	padding: 15px;
+	border-radius: 3px;
+     	box-shadow:0 0 2px rgba(0,0,0,.5);
+}
+
+#edit-sort-bef-combine-count-asc{
+	display: none;
+}
+
+#edit-sort-bef-combine-count-desc{
+	display: none;
 }

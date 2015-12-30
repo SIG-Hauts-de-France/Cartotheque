@@ -44,11 +44,28 @@
  * @ingroup themeable
  */
 ?>
+
+<?php
+	global $base_url;
+	$mapListUrl = theme_get_setting('cartotheque_map_list_url');
+
+?>
+
 <div id="<?php print $block_html_id; ?>" class="<?php print $classes; ?> bblock"<?php print $attributes; ?>>
 
   <?php print render($title_prefix); ?>
 <?php if ($block->subject): ?>
-  <h2<?php print $title_attributes; ?>><?php print $block->subject ?></h2>
+  <h2<?php print $title_attributes; ?>>
+	<?php if ($block_html_id == 'block-views-newest-maps-block'): ?>
+		<a href="<?php print $mapListUrl . '&sort_bef_combine=created ASC'; ?>">
+	<?php elseif ($block_html_id == 'block-views-most-downloaded-block'): ?>
+		<a href="<?php print $mapListUrl . '&sort_bef_combine=count DESC&field_type_de_carte_value=Statique'; ?>">
+	<?php endif; ?>
+	<?php print $block->subject ?>
+	<?php if ($block_html_id == 'block-views-newest-maps-block' || $block_html_id == 'block-views-most-downloaded-block'): ?>
+		</a>
+	<?php endif; ?>
+  </h2>
 <?php endif;?>
   <?php print render($title_suffix); ?>
 

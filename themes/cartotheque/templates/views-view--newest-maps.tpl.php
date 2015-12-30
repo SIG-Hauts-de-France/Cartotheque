@@ -27,14 +27,13 @@
  * @ingroup views_templates
  */
 ?>
-
 <?php global $base_url; ?>
 <div class="<?php print $classes; ?>">
+  <a href="<?php print $base_url . theme_get_setting('cartotheque_map_list_url'); ?>&sort_bef_combine=created ASC">
   <?php print render($title_prefix); ?>
+  </a>
   <?php if ($title): ?>
-	  <a href="<?php print $base_url . theme_get_setting('cartotheque_map_list_url'); ?>&sort_bef_combine=created ASC">
 	<?php print $title; ?>
-	</a>
   <?php endif; ?>
   <?php print render($title_suffix); ?>
   <?php if ($header): ?>

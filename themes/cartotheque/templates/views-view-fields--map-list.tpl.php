@@ -29,7 +29,18 @@
 	<h2><?php print $fields['title']->content ?>
 	<?php if (strtolower($fields['field_type_de_carte']->content) == 'statique'): ?>
 	<?php if (strlen($fields['field_collections']->content) > 50): ?>
-	<span class="tree"></span>
+		<div class="abulle">
+		<span class="tree"></span>
+		<span class="infobulle">Cette carte fait partie des collections suivantes:<br>
+			<ul>
+			<?php
+				foreach ($row->field_field_collections as $col) {
+					print '<li><a href="'.theme_get_setting('cartotheque_map_list_url') . '&field_collections_tid=' .$col['rendered']['#options']['entity']->tid.'">'.$col['rendered']['#title'].'</a></li>';
+				}
+			?>
+			</ul>
+		</span>
+		</div>
 	<?php endif; ?>
 	<?php endif; ?>
 	<span class="type"><?php print $fields['field_type_de_carte']->content ?></span>
@@ -83,15 +94,31 @@
 		</div>
 	</div>
 	<div class="nbAction">
+		<div class="anb">
 		<?php print $fields['totalcount']->content; ?>
 		<span class="nbImg"> </span>
+		<span class="infobulleNb">
+			<?php print $fields['totalcount']->content .' vue(s) pour cette carte'; ?>
+		</span>
+		</div>
 		<?php if (strtolower($fields['field_type_de_carte']->content) == 'statique'): ?>
+		<div class="anb">
 		<?php if(array_key_exists('count', $fields)): ?>
 		<?php print $fields['count']->content; ?>
 		<?php else: ?>
 		0
 		<?php endif; ?>
 		<span class="nbPdf"> </span>
+		<span class="infobulleNb">
+			<?php
+				if (array_key_exists('count', $fields)) {
+					print $fields['count']->content . ' téléchargements pour cette carte';
+				}
+				else {
+					print 'Aucun téléchargement pour cette carte';
+				}
+			?>
+		</div>
 		<?php endif; ?>
 	</div>
 	<div class="mapDate">
