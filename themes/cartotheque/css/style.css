@@ -404,14 +404,14 @@ div.map h2{
 	font-size:18px;
 	font-weight:600;
 	background:#e4e9eb;
-	height:35px;
+	min-height:35px;
 	line-height:35px;
 	padding-left:10px;
 }
 div.map h2 span.type{
 	display: inline-block;
 	background: #eef1f2;
-	height:35px;
+	min-height:35px;
 	line-height:35px;
 	font-size:14px;
 	font-weight:400;
@@ -427,12 +427,17 @@ div.map h2 span.tree{
 	background-image: url(../images/i_tree.png);
 	background-repeat: no-repeat;
 	background-position: 50% 0;
-	height:35px;
+	min-height:35px;
 	width:40px;
 	float:right;
 	padding-right:10px;
 	padding-left:10px;
 }
+
+div.map h2 a{
+	width: 80%;
+}
+
 div.theMap{
 	display:table;
 	clear:both;
@@ -583,7 +588,8 @@ aside input, aside select{
 }
 
 .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default{
-	background:#767a7c;
+	/*background:#767a7c;*/
+	background:#bababa;
 	font-weight:300;
 	color:#fff;
 }
@@ -957,4 +963,12 @@ input.form-submit, a.button {
 
 .form-text{
 	width: 100% !important;
+}
+
+.chosen-choices{
+	font-family: "Open Sans",sans-serif !important;
+}
+
+.chosen-container{
+	font-size: 14px !important;
 }

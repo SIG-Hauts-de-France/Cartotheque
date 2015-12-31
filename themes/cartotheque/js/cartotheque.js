@@ -11,7 +11,9 @@ jQuery(document).ready(function() {
 	dialogOpts = {
 		'autoOpen': false,
 		'buttons': { "Close": function() { jQuery(this).dialog('close'); } },
-		'close': function(event, ui) { jQuery(this).hide(); }
+		'close': function(event, ui) { jQuery(this).hide(); },
+		show: {effect: 'fade', duration: 250},
+		hide: {effect: 'fade', duration: 250}
 	};
 
 	jQuery('#imgLink').dialog(dialogOpts);
@@ -20,10 +22,12 @@ jQuery(document).ready(function() {
 	// Fiche carte
 	jQuery('.linkTheMap').find('a').click(function(e) {
 		if (jQuery(this).parent('span').attr('class') == 'imgMap') {
+			jQuery('#pdfLink').dialog('close');
 			jQuery('#imgLink').dialog('open');
 			return false;
 		}
 		else if (jQuery(this).parent('span').attr('class') == 'pdfMap') {
+			jQuery('#imgLink').dialog('close');
 			jQuery('#pdfLink').dialog('open');
 			return false;
 		}
@@ -31,8 +35,6 @@ jQuery(document).ready(function() {
 
 	//Liste des résultats
 
-	//jQuery('.image-dialog').dialog(dialogOpts);
-	//jQuery('.file-dialog').dialog(dialogOpts);
 	jQuery('.linkMap').find('a').click(function (e) {
 		if (jQuery(this).parent('span').attr('class') == 'linkImg') {
 			var content = jQuery(this).closest('.descMap').find('.image-dialog').html();
