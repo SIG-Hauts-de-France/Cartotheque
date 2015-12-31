@@ -251,6 +251,10 @@ section.actus div.maps div.mapZoom, div.map div.mapZoom {
 	
 }
 
+div.mapZoom .img-responsive{
+	max-width: initial;
+}
+
 div.mapZoom > .closeZoom{
 	float: right;
 	font-weight: bold;
@@ -949,4 +953,8 @@ input.form-submit, a.button {
 
 #edit-sort-bef-combine-count-desc{
 	display: none;
+}
+
+.form-text{
+	width: 100% !important;
 }
