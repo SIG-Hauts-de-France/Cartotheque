@@ -10,7 +10,7 @@ jQuery(document).ready(function() {
 	var thesaurusSelect = jQuery('#edit-field-mots-cles-thesaurus-und');
 	
 	var chosenOpts = {
-		'width': '250px',
+		'width': '100%',
 		'placeholder_text_multiple': 'Choisir..'
 	};
 	
