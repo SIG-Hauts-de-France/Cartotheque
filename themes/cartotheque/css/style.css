@@ -972,3 +972,51 @@ input.form-submit, a.button {
 .chosen-container{
 	font-size: 14px !important;
 }
+
+#edit-sort-bef-combine-created-desc:hover::after{
+	content: "Trier par date de création descendant";
+	position: absolute;
+	z-index: 9999;
+	background-color: white;
+	top: -50px;
+	left: -10px;
+	width: 160px !important;
+	border: 1px solid #bababa;
+	padding-left: 2px;
+}
+
+#edit-sort-bef-combine-created-asc:hover::after{
+	content: "Trier par date de création ascendant";
+	position: absolute;
+	z-index: 9999;
+	background-color: white;
+	top: -50px;
+	left: -10px;
+	width: 160px !important;
+	border: 1px solid #bababa;
+	padding-left: 2px;
+}
+
+#edit-sort-bef-combine-title-desc:hover::after{
+	content: "Trier par titre descendant";
+	position: absolute;
+	z-index: 9999;
+	background-color: white;
+	top: -50px;
+	left: -10px;
+	width: 160px !important;
+	border: 1px solid #bababa;
+	padding-left: 2px;
+}
+
+#edit-sort-bef-combine-title-asc:hover::after{
+	content: "Trier par titre ascendant";
+	position: absolute;
+	z-index: 9999;
+	background-color: white;
+	top: -50px;
+	left: -10px;
+	width: 160px !important;
+	border: 1px solid #bababa;
+	padding-left: 2px;
+}
