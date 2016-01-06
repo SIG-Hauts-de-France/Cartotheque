@@ -102,7 +102,7 @@
           <?php if ($site_name): ?>
 		<?php print $site_name; ?>
           <?php endif; ?>
-          <?php if ($site_slogan): ?>
+          <?php if ($site_slogan && false): ?>
             <br/><span><?php print $site_slogan; ?></span>
           <?php endif; ?>
         </h1> <!-- /#name-and-slogan -->
@@ -137,7 +137,7 @@
           <?php if ($site_name): ?>
 		<?php print $site_name; ?>
           <?php endif; ?>
-          <?php if ($site_slogan): ?>
+          <?php if ($site_slogan && false): ?>
             <br/><span><?php print $site_slogan; ?></span>
           <?php endif; ?>
         </h1> <!-- /#name-and-slogan -->

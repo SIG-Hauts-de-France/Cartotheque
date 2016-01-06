@@ -81,7 +81,7 @@ function isAdvancedSearch() {
 }
 
 //Advanced search
-jQuery(function() {
+jQuery( document ).ready( function() {
 	jQuery( "#datepicker" ).datepicker();
 	
 	var accordionActive = false;
@@ -98,6 +98,17 @@ jQuery(function() {
 		active: accordionActive,
 		collapsible: true
 	});
+
+
+	// Suppression de choix dans le form exposed date
+	// Suppression de toutes les options car impossible de les selectionner par jQuery
+	jQuery("#edit-field-date-de-creation-value-op option").remove();
+
+	jQuery('#edit-field-date-de-creation-value-op').append('<option value="<">Est inférieur à</option>');
+	jQuery('#edit-field-date-de-creation-value-op').append('<option value=">">Est supérieur à</option>');
+	jQuery('#edit-field-date-de-creation-value-op').append('<option value="=">Est égal à</option>');
+	jQuery('#edit-field-date-de-creation-value-op').append('<option value="contains">Contient</option>');
+
 /*
 	jQuery( document ).tooltip({
 		 position: {
@@ -126,6 +137,7 @@ jQuery(document).ready(function() {
 	jQuery('#edit-field-mots-cles-tid').chosen(chosenOpts);
 	jQuery('#edit-field-mots-cles-thesaurus-tid').chosen(chosenOpts);
 	jQuery('#edit-field-thematique-tid').chosen(chosenOpts);
+	jQuery('#edit-field-categorie-tid').chosen(chosenOpts);
 	
 	jQuery('#block-views-newest-maps-block').find('.col-md-6').click(function(e) {
 		jQuery('.mapZoom').css('display', 'none');
@@ -142,6 +154,19 @@ jQuery(document).ready(function() {
 		e.stopPropagation();
 	});
 	
+});
+
+/**
+ * Correction CSS ipad
+ *
+ */
+jQuery( document ).ready( function() {
+	if (jQuery.browser.mobile) {
+		jQuery('header img').css('margin-left', '20px');
+		jQuery('header img').css('margin-right', '0px');
+		jQuery('header h1').first().remove();
+		jQuery('header h1').css('margin-top', '20px');
+	}
 });
 
 /**

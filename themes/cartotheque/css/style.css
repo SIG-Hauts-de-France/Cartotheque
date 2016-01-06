@@ -32,7 +32,7 @@ header h1{
 	margin-top:40px;
 	font-weight:300;
 	font-size:48px;
-	line-height:0.9em;
+	line-height:1.8em;
 }
 header h1 span{
 	font-weight:600;
@@ -40,7 +40,7 @@ header h1 span{
 }
 header ul.topNav{
 	float:right;
-	margin-top:80px;
+	margin-top:65px;
 }
 header ul.topNav li{
 	list-style: none;
@@ -102,19 +102,21 @@ header ul.topNav li.user a{
 }
 
 .fixed-header img{
-	width: 130px;
+	/*width: 130px;*/
+	height: 70px;
 	margin: 10px;
 	margin-right: 40px;
 }
 
 .fixed-header ul.topNav{
 	margin: 10px;
+	margin-top: 25px;
 }
 
 .fixed-header h1{
 	/* display: none; */
 	margin: 20px;
-	font-size: 18px;
+	font-size: 33px;
 }
 
 .fixed-header h1 br{
@@ -403,10 +405,10 @@ div.map{
 div.map h2{
 	font-size:18px;
 	font-weight:600;
-	background:#e4e9eb;
 	min-height:35px;
 	line-height:35px;
 	padding-left:10px;
+	background:#e4e9eb;
 }
 div.map h2 span.type{
 	display: inline-block;
@@ -436,6 +438,7 @@ div.map h2 span.tree{
 
 div.map h2 a{
 	width: 80%;
+	display: inline-block;
 }
 
 div.theMap{
@@ -624,7 +627,13 @@ ul.pagination li { margin: 0; }
 	header h1{
 		font-size:36px;
 		line-height: 0.7em;
+		display: none;
 	}
+
+	header img{
+		margin-left: 0;
+	}
+
 	header h1 span{
 		font-size:22px;
 	}
@@ -905,7 +914,6 @@ input.form-submit, a.button {
 }
 
 .abulle .infobulle{
-	transform: scale(0) rotate(-12deg);
 	position: absolute;
 	color: white;
 	background-color: #767A7C;
@@ -914,17 +922,18 @@ input.form-submit, a.button {
      	box-shadow:0 0 2px rgba(0,0,0,.5);
 	transition: all .25s;
 	font-size: 0.7em;
+	display: none;
 }
 
 .abulle .infobulle a{
 	color: white;
 }
 
-.abulle:hover .infobulle, .abulle:focus .infobulle{
-	transform: scale(1) rotate(0);
+.abulle:hover .infobulle{
 	position: absolute;
 	margin-top:-110px;
 	margin-left:-150px;
+	display: block;
 }
 
 .anb{
@@ -936,21 +945,21 @@ input.form-submit, a.button {
 }
 
 .anb .infobulleNb{
-	transform:scale(0) rotate(-12deg);
 	position: absolute;
 	background-image: none;
 	transition: all .25s;
 	text-align: left;
+	display: none;
 }
 
 .anb:hover > .infobulleNb{
-	transform:scale(1) rotate(0);
 	position: absolute;
 	color: white;
 	background-color: #767A7C;
 	padding: 15px;
 	border-radius: 3px;
      	box-shadow:0 0 2px rgba(0,0,0,.5);
+	display: block;
 }
 
 #edit-sort-bef-combine-count-asc{
@@ -971,6 +980,10 @@ input.form-submit, a.button {
 
 .chosen-container{
 	font-size: 14px !important;
+}
+
+.chosen-drop > *, .chosen-results{
+	z-index: 9999 !important;
 }
 
 #edit-sort-bef-combine-created-desc:hover::after{
@@ -1019,4 +1032,8 @@ input.form-submit, a.button {
 	width: 160px !important;
 	border: 1px solid #bababa;
 	padding-left: 2px;
+}
+
+#edit-combine{
+	min-height: 35px;
 }
