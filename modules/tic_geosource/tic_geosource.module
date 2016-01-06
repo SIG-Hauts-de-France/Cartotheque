@@ -178,7 +178,7 @@ function tic_geosource_form_alter(&$form, &$form_state, $form_id) {
 			$form['#attached']['js'][] = drupal_get_path('module', 'tic_geosource') . '/js/adapt_form.js';
 			$form['field_numero_de_carte']['und'][0]['value']['#default_value'] = tic_geosource_get_next_map_identifier();
 		}
-		
+
 		return $form;
 	}
 }
@@ -187,7 +187,6 @@ function tic_geosource_form_alter(&$form, &$form_state, $form_id) {
  * Implements hook_form_validate
  */
 function tic_geosource_form_validate(&$form, &$form_state) {
-	//formalisme numero de carte
 	
 	drupal_add_library('system', 'ui.dialog');
 	$form['#attached']['js'] = array(
@@ -210,6 +209,15 @@ function tic_geosource_form_validate(&$form, &$form_state) {
 	}
 	else {
 		$form['#attached']['js'][] = drupal_get_path('module', 'tic_geosource') . '/js/adapt_form.js';
+	}
+
+	if ($form_state['values']['status'] == 0) {
+		// Flush validation errors
+		drupal_get_messages();
+
+		// Force validation
+		$errors = &drupal_static('form_set_error', NULL, TRUE);
+		return $form; 
 	}
 	
 	$type = $form_state['values']['field_type_de_carte']['und'][0]['value'];
@@ -785,7 +793,7 @@ function tic_geosource_insert_record($node) {
 	}
 	catch (Exception $e) {
 		watchdog('tic_geosource', 'Erreur de sauvegarde de la ressource dans Geosource: '. $e->getMessage(), NULL, WATCHDOG_ERROR);
-		drupal_set_message('La ressource n\'a pas été sauvée dans Geosource', 'error');
+		//drupal_set_message('La ressource n\'a pas été sauvée dans Geosource', 'error');
 		return false;
 	}
 	
@@ -832,7 +840,7 @@ function tic_geosource_update_record($node) {
 	}
 	catch (Exception $e) {
 		watchdog('tic_geosource', 'Erreur de mise a jour de la ressource sur Geosource: ' . $e->getMessage(), NULL, WATCHDOG_ERROR);
-		drupal_set_message('La ressource n\'a pas été mise à jour dans Geosource', 'error');
+		//drupal_set_message('La ressource n\'a pas été mise à jour dans Geosource', 'error');
 		return false;
 	}
 	
@@ -957,6 +965,9 @@ function tic_geosource_cron() {
 		$pushQueue->createItem($nid);
 	}
 	
+	// Mettre a jour les droits d'accès pour prendre en compte les modifications du champ diffusion (interne / externe / archive)
+	node_access_rebuild(false);
+
 	variable_set('tic_geosource_cron_last_run', $now);
 }
 
@@ -1125,12 +1136,16 @@ function tic_geosource_check_unique_map_identifier($id, $nid = false) {
  *
  */
 function tic_geosource_node_access($node, $op, $account) {
-	
+	global $user;
+
 	if (!is_object($node)) {
 		return true;
 	}
 	
 	if (!$node->type == 'carte') { return true; }
+
+	// I'm the owner !
+	if ($node->uid == $user->uid) { return true; }
 	
 	// Les cartes récupérées de Geosource ne sont pas éditables
 	if ($op == 'update') {
