@@ -10,7 +10,7 @@ jQuery(function() {
 jQuery(document).ready(function() {
 	dialogOpts = {
 		'autoOpen': false,
-		'buttons': { "Close": function() { jQuery(this).dialog('close'); } },
+		'buttons': { "Fermer": function() { jQuery(this).dialog('close'); } },
 		'close': function(event, ui) { jQuery(this).hide(); },
 		show: {effect: 'fade', duration: 250},
 		hide: {effect: 'fade', duration: 250}
@@ -109,6 +109,8 @@ jQuery( document ).ready( function() {
 	jQuery('#edit-field-date-de-creation-value-op').append('<option value="=">Est égal à</option>');
 	jQuery('#edit-field-date-de-creation-value-op').append('<option value="contains">Contient</option>');
 
+	jQuery('#edit-field-date-de-creation-value-value-datepicker-popup-1').attr('placeholder', 'Choisir..');
+
 /*
 	jQuery( document ).tooltip({
 		 position: {
@@ -127,7 +129,12 @@ jQuery( document ).ready( function() {
 */
 });
 
+// Attach chosen to advanced search form
 jQuery(document).ready(function() {
+
+	//chosen with apple devices is buggy
+	if (navigator.userAgent.match(/iPad/i)) { return; }
+
 	var chosenOpts = {
 		'width': '250px',
 		'placeholder_text_multiple': 'Choisir..'
@@ -138,6 +145,12 @@ jQuery(document).ready(function() {
 	jQuery('#edit-field-mots-cles-thesaurus-tid').chosen(chosenOpts);
 	jQuery('#edit-field-thematique-tid').chosen(chosenOpts);
 	jQuery('#edit-field-categorie-tid').chosen(chosenOpts);
+
+});
+
+
+// 
+jQuery( document ).ready(function () {
 	
 	jQuery('#block-views-newest-maps-block').find('.col-md-6').click(function(e) {
 		jQuery('.mapZoom').css('display', 'none');
@@ -157,7 +170,7 @@ jQuery(document).ready(function() {
 });
 
 /**
- * Correction CSS ipad
+ * Corrections CSS mobile devices
  *
  */
 jQuery( document ).ready( function() {
@@ -178,10 +191,13 @@ jQuery(document).ready(function() {
 	var header = jQuery('.fixable-header');
 	
 	var top = jQuery('header').offset().top;
-	
+
+	var triggerTop = 106;
+
+	// touchmove event support	
 	if (jQuery.browser.mobile) {
 		jQuery('body').bind('touchmove', function (event) {
-			if (jQuery(this).scrollTop() >= 50) {
+			if (jQuery(this).scrollTop() >= triggerTop) {
 				header.addClass('fixed-header');
 			}
 			else {
@@ -189,8 +205,9 @@ jQuery(document).ready(function() {
 			}
 		});
 	}
+
 	jQuery(window).scroll(function (event) {
-		if (jQuery(this).scrollTop() >= 50) {
+		if (jQuery(this).scrollTop() >= triggerTop) {
 			header.addClass('fixed-header');
 		}
 		else {

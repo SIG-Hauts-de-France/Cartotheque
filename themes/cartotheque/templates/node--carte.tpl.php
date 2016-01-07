@@ -233,11 +233,11 @@ $type_carte = strtolower($node->field_type_de_carte['und'][0]['value']);
 		<?php
 		
 		if ($imgLink != '') {
-			print '<div id="imgLink" title="Image carte" style="display: none;"><span class="linkDl"><a href="'.$imgLink.'" download>Télécharger</a></span><span class="linkShow"><a href="'.$imgLink.'" target="_blank">Visualiser</a></span></div>';
+			print '<div id="imgLink" title="Fichier png" style="display: none;"><span class="linkDl"><a href="'.$imgLink.'" download>Télécharger</a></span><span class="linkShow"><a href="'.$imgLink.'" target="_blank">Visualiser</a></span></div>';
 		}
 
 		if ($pdfLink != '') {
-			print '<div id="pdfLink" title="Fichier carte" style="display: none;"><span class="linkDl"><a href="'.$pdfLink.'" download>Télécharger</a></span><span class="linkShow"><a href="'.$pdfLink.'" target="_blank">Visualiser</a></span></div>';
+			print '<div id="pdfLink" title="Fichier pdf" style="display: none;"><span class="linkDl"><a href="'.$pdfLink.'" download>Télécharger</a></span><span class="linkShow"><a href="'.$pdfLink.'" target="_blank">Visualiser</a></span></div>';
 		}
 		?>
 		<div class="keyWordMap">Mots clés Inspire : <span class="keyWord"><?php

@@ -26,6 +26,7 @@ header *{
 header img{
 	float:left; 
 	margin:40px;
+	margin-left: -15px;
 }
 header h1{
 	margin:0;
@@ -383,7 +384,7 @@ div.orderList span a, div.form-type-bef-link a{
 	height:16px;
 	color: transparent;
 }
-div.orderList span.orderZa, div.form-item-edit-sort-bef-combine-created-desc{
+div.orderList span.orderZa, div.form-item-edit-sort-bef-combine-field-date-de-creation-value-desc{
 	background-position: -45px 0;
 }
 div.orderList span.order01, div.form-item-edit-sort-bef-combine-title-asc{
@@ -393,7 +394,7 @@ div.orderList span.order10, div.form-item-edit-sort-bef-combine-title-desc{
 	background-position: -23px 0;
 }
 
-div.form-item-edit-sort-bef-combine-created-asc{
+div.form-item-edit-sort-bef-combine-field-date-de-creation-value-asc{
 	background-position: -68px 0;
 }
 
@@ -624,6 +625,23 @@ ul.pagination li { margin: 0; }
 	}
 }
 @media (max-width: 992px){
+
+	header{
+		width: 100%;
+	}
+
+	.container-fluid{
+		padding-right: 0 !important;
+		padding-left: 0 !important;
+		margin-right: 0 !important;
+		margin-left: 0 !important;
+	}
+
+	header .container{
+		width: 100%;
+		margin-right: 0;
+	}
+
 	header h1{
 		font-size:36px;
 		line-height: 0.7em;
@@ -631,7 +649,7 @@ ul.pagination li { margin: 0; }
 	}
 
 	header img{
-		margin-left: 0;
+		margin-left: -15px;
 	}
 
 	header h1 span{
@@ -665,6 +683,16 @@ ul.pagination li { margin: 0; }
 	.views-exposed-form .views-exposed-widget .form-submit{
 		margin-top: 0;
 		font-size: 0.8em;
+	}
+
+	.region-home-last-maps .col-md-6, .region-home-more-downloaded-maps .col-md-6{
+		width: 83% !important;
+		height: 88px !important;
+	}
+
+	.region-home-last-maps .col-md-6 img, .region-home-more-downloaded-maps .col-md-6 img{
+		margin-left: auto;
+		margin-right: auto;
 	}
 }
 @media (max-width: 360px){
@@ -890,22 +918,22 @@ input.form-submit, a.button {
 
 #imgLink span{
 	display: block;
-	font-size: 1.8em;
+	font-size: 16px;
 }
 
 #pdfLink span{
 	display: block;
-	font-size: 1.8em;
+	font-size: 16px;
 }
 
 #dialog-window .linkShow{
 	display: block;
-	font-size: 1.8em;
+	font-size: 16px;
 }
 
 #dialog-window .linkDl{
 	display: block;
-	font-size: 1.8em;
+	font-size: 16px;
 }
 
 .abulle{
@@ -929,11 +957,18 @@ input.form-submit, a.button {
 	color: white;
 }
 
-.abulle:hover .infobulle{
+.abulle .infobulle li{
+	list-style-type: none;
+	line-height: 20px;
+	border-bottom: 1px dotted;
+}
+
+.abulle:hover .infobulle, .infobulle:hover{
 	position: absolute;
 	margin-top:-110px;
 	margin-left:-150px;
 	display: block;
+	z-index: 999;
 }
 
 .anb{
@@ -986,7 +1021,7 @@ input.form-submit, a.button {
 	z-index: 9999 !important;
 }
 
-#edit-sort-bef-combine-created-desc:hover::after{
+#edit-sort-bef-combine-field-date-de-creation-value-desc:hover::after{
 	content: "Trier par date de création descendant";
 	position: absolute;
 	z-index: 9999;
@@ -998,7 +1033,7 @@ input.form-submit, a.button {
 	padding-left: 2px;
 }
 
-#edit-sort-bef-combine-created-asc:hover::after{
+#edit-sort-bef-combine-field-date-de-creation-value-asc:hover::after{
 	content: "Trier par date de création ascendant";
 	position: absolute;
 	z-index: 9999;
@@ -1036,4 +1071,17 @@ input.form-submit, a.button {
 
 #edit-combine{
 	min-height: 35px;
+}
+
+.region-home-last-maps .col-md-6, .region-home-more-downloaded-maps .col-md-6{
+	width: 120px;
+	height: 86px;
+	padding: 0;
+	margin-left: 20px;
+	margin-bottom: 5px;
+	border: 1px solid black;
+}
+
+.region.region-home-month-maps img {
+	border: 1px solid black;
 }

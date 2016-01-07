@@ -112,7 +112,7 @@
 		<span class="infobulleNb">
 			<?php
 				if (array_key_exists('count', $fields)) {
-					print $fields['count']->content . ' téléchargements pour cette carte';
+					print $fields['count']->content . ' téléchargement(s) pour cette carte';
 				}
 				else {
 					print 'Aucun téléchargement pour cette carte';

@@ -107,8 +107,10 @@ function cartotheque_form_element(&$variables) {
 	$prefix = isset($element['#field_prefix']) ? '<span class="field-prefix">' . $element['#field_prefix'] . '</span> ' : '';
 	$suffix = isset($element['#field_suffix']) ? ' <span class="field-suffix">' . $element['#field_suffix'] . '</span>' : '';
 
-	if(array_key_exists('#name',$element) && $element['#name']=="combine")
+	//if(array_key_exists('#name',$element) && $element['#name']=="combine") {
+	if(array_key_exists('#name',$element) && $element['#name']=="pgsql_combine_filter_views") {
 		$prefix = '<span class="field-prefix input-group-addon search" id="basic-addon-search"></span>';
+	}
 
 	switch ($element['#title_display']) {
 		case 'before':
@@ -197,16 +199,20 @@ function cartotheque_preprocess_node(&$vars) {
 		if (isset($vars['field_mots_cles'])) {
 			foreach ($vars['field_mots_cles'] as $keyword) {
 				$term = $keyword['taxonomy_term'];
-				$vars['keywordsLinks'] .= '<a href="'. $base_url. theme_get_setting('cartotheque_map_list_url').'&field_mots_cles_tid[]='.$term->tid.'">'.$term->name.'</a> ';
+				$vars['keywordsLinks'] .= ' <a href="'. $base_url. theme_get_setting('cartotheque_map_list_url').'&field_mots_cles_tid[]='.$term->tid.'">'.$term->name.'</a>,';
 			}
+
+			$vars['keywordsLinks'] = trim($vars['keywordsLinks'], ',');
 		}
 		
 		$vars['inspireKeywordsLinks'] = '';
 		if (isset($vars['field_mots_cles_thesaurus'])) {
 			foreach ($vars['field_mots_cles_thesaurus'] as $keyword) {
 				$term = $keyword['taxonomy_term'];
-				$vars['InspirekeywordsLinks'] .= '<a href="'. $base_url. theme_get_setting('cartotheque_map_list_url').'&field_mots_cles_thesaurus_tid[]='.$term->tid.'">'.$term->name.'</a> ';
+				$vars['inspireKeywordsLinks'] .= ' <a href="'. $base_url. theme_get_setting('cartotheque_map_list_url').'&field_mots_cles_thesaurus_tid[]='.$term->tid.'">'.$term->name.'</a>,';
 			}
+
+			$vars['inspireKeywordsLinks'] = trim($vars['inspireKeywordsLinks'], ',');
 		}
 		
 		// Statistiques d'accès
@@ -278,6 +284,7 @@ function cartotheque_retrieve_search_params() {
 	
 	$searchParams = array(
 		'combine',
+		'pgsql_combine_filter_views',
 		'field_emprise_geographique_value',
 		'field_mots_cles_tid',
 		'field_thematique_tid',
