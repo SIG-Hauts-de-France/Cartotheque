@@ -129,7 +129,7 @@ function tic_geosource_form_alter(&$form, &$form_state, $form_id) {
 		);
 
 		// Agrandir les inputs textes
-		drupal_add_css('.form-text{ width: 100%; } .form-file{ width: 40%;} div.image-widget-data{ width: 100%; }', 'inline');
+		drupal_add_css('.form-text{ width: 100%; } .form-file{ width: 90%;} div.image-widget-data{ width: 100%; } .autocomplete-deluxe-container.autocomplete-deluxe-multiple{ width: 100%; }', 'inline');
 		
 		
 		// Cette fonction nécessite que le cache soit désactivé; ajax fichiers ne fonctionne pas avec
@@ -381,8 +381,15 @@ function tic_geosource_generate_map_thumbnail($node) {
 	if (!isset($node->field_image_carte['und'][0]['fid'])) {
 		return;
 	}
+
+	// file_load renvoie false en cas d'erreur
 	$fid = $node->field_image_carte['und'][0]['fid'];
 	$file = file_load($fid);
+	if ($file === false) { return; }
+
+	// file_validate_errors returns array with elements on error
+	$errors = file_validate_is_image($file);
+	if (!empty($errors)) { return; }
 	
 	//image_style_create_derivative
 	$node->field_imagette['und'][0] = array(
