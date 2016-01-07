@@ -186,32 +186,35 @@ jQuery( document ).ready( function() {
  * Barre de recherche fixe
  */
 jQuery(document).ready(function() {
+
 	var searchBar = jQuery('.sticky-right-bar');
 	var screen = jQuery(window);
-	var header = jQuery('.fixable-header');
+	//var header = jQuery('.fixable-header');
+	var header = jQuery('header');
 	
 	var top = jQuery('header').offset().top;
 
-	var triggerTop = 106;
+	var triggerTop = 10;
 
 	// touchmove event support	
-	if (jQuery.browser.mobile) {
-		jQuery('body').bind('touchmove', function (event) {
-			if (jQuery(this).scrollTop() >= triggerTop) {
-				header.addClass('fixed-header');
-			}
-			else {
-				header.removeClass('fixed-header');
-			}
-		});
-	}
-
-	jQuery(window).scroll(function (event) {
+	jQuery('body').on('touchmove', function (event) {
 		if (jQuery(this).scrollTop() >= triggerTop) {
 			header.addClass('fixed-header');
 		}
 		else {
 			header.removeClass('fixed-header');
+		}
+
+	});
+
+	jQuery(window).scroll(function (event) {
+		if (jQuery(this).scrollTop() >= triggerTop) {
+			header.addClass('fixed-header');
+			//searchBar.addClass('sticky-right-bar-up');
+		}
+		else {
+			header.removeClass('fixed-header');
+			//searchBar.removeClass('sticky-right-bar-up');
 		}
 	});
 	// Limiter l'effet a la page de résultat des cartes
@@ -230,7 +233,7 @@ jQuery(document).ready(function() {
 		}
 
 	}
-	
+
 	if (screen.width() > 768) {
 		searchBar.sticky({
 			topSpacing: spaceTop,

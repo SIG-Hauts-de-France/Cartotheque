@@ -8,6 +8,11 @@ header{
 	background:#fafbfb;
 	border-bottom: solid 1px #95a6b0;
 	margin-bottom:40px;
+
+	position: fixed;
+	top: 0;
+	width: 100%;
+	z-index: 100;
 }
 footer{
 	background:#fafbfb;
@@ -17,6 +22,10 @@ footer{
 }
 footer ul.menu {
 	float: right;
+}
+
+#mainContent{
+	margin-top: 200px;
 }
 
 header *{
@@ -694,6 +703,10 @@ ul.pagination li { margin: 0; }
 		margin-left: auto;
 		margin-right: auto;
 	}
+
+	.form-file{
+		width: 80% !important;
+	}
 }
 @media (max-width: 360px){
 	header{
@@ -879,6 +892,18 @@ input.form-submit, a.button {
 #ui-id-4 input{
 	width: auto;
 }
+
+/*
+.sticky-right-bar-up {
+	top: 150px !important;
+}
+
+.sticky-right-bar{
+	position: fixed;
+	top: 230px;
+	transition: all .75s;
+}
+*/
 
 #sticky-wrapper .content{
 	background-color: white;
@@ -1084,4 +1109,10 @@ input.form-submit, a.button {
 
 .region.region-home-month-maps img {
 	border: 1px solid black;
+}
+
+.thematiquedd a {
+	display: list-item;
+	list-style-type: none;
+	margin-left: 10px;
 }
