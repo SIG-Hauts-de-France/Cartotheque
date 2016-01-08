@@ -893,6 +893,10 @@ input.form-submit, a.button {
 	width: auto;
 }
 
+.sticky-wrapper{
+	padding-top: 30px;
+}
+
 /*
 .sticky-right-bar-up {
 	top: 150px !important;
