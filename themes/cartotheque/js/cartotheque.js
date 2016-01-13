@@ -129,6 +129,11 @@ jQuery( document ).ready( function() {
 */
 });
 
+// Submit form on post per page change
+jQuery(document).ready(function() {
+	jQuery('#edit-items-per-page').on('change', function() { this.form.submit(); });
+});
+
 // Attach chosen to advanced search form
 jQuery(document).ready(function() {
 
