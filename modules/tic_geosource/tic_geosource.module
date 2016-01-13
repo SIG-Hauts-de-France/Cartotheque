@@ -9,18 +9,6 @@ define('TIC_GEOSOURCE_GRANT_ID_EXTERNE', 0);
 define('TIC_GEOSOURCE_GRANT_ID_INTERNE', 1);
 define('TIC_GEOSOURCE_GRANT_ID_ARCHIVE', 2);
 
-// DEBUG
-function tic_geosource_node_view($node, $v, $e) {
-	return;
-	
-	module_load_include('inc', 'tic_geosource', 'includes/tic_geosource.utils');
-	$client = tic_geosource_load_csw_client();
-	$client->jsonGetRecordsModifiedSince('');
-	//tic_geosource_process_record_json('6d6dc16d-93d8-4ea7-ae75-6933a08e4b6e');
-	die('ok');
-	return;
-	 
-}
 
 /**
  * Implements hook_cron_queue_info
