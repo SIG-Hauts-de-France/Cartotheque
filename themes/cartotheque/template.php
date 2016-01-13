@@ -280,8 +280,18 @@ function cartotheque_retrieve_search_params() {
 		$_SESSION['tic_user_has_searched'] = false;
 	}
 
+	// Reset search on front page
+	if (drupal_is_front_page()) {
+		$_SESSION['tic_user_has_searched'] = false;
+		$_SESSION['tic_search_params'] = serialize(array('field_cartotheque_value' => 'NPdCP'));
+		return;
+	}
+
 	$params = drupal_get_query_parameters();
 	
+	// TODO: workaround date params
+
+	// params to be saved
 	$searchParams = array(
 		'combine',
 		'pgsql_combine_filter_views',
@@ -289,12 +299,15 @@ function cartotheque_retrieve_search_params() {
 		'field_mots_cles_tid',
 		'field_thematique_tid',
 		'field_collections_tid',
+		'field_categorie_tid',
 		'combine_1',
+		'pgsql_combine_filter_views',
 		'field_type_de_carte_value',
 		'sort_by',
 		'sort_order',
 		'field_cartotheque_value',
 		'field_date_de_creation_value',
+		'field_date_de_creation_value_op',
 		'sort_bef_combine',
 		'items_per_page',
 	);
@@ -323,6 +336,7 @@ function cartotheque_retrieve_search_params() {
 	if ($_SESSION['tic_user_has_searched'] == false) {
 		$_SESSION['tic_user_has_searched'] = $hasSearched;
 	}
+
 	$_SESSION['tic_search_params'] = serialize($savedParams);
 }
 

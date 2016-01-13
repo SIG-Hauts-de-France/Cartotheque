@@ -78,6 +78,7 @@
 			<?php
 			if ($fields['field_fichier_carte']->content) {
 				print '<div class="file-dialog" style="display: none;" title="Fichier carte">';
+				print '<span class="ui-helper-hidden-accessible"><input type="text" /></span>';
 				print '<span class="linkShow"><a href="'.$fields['field_fichier_carte']->content.'" target="_blank">Visualiser</a></span>';
 				print '<span class="linkDl"><a href="'.$fields['field_fichier_carte']->content.'" download>Télécharger</a></span>';
 				print '</div>';
@@ -85,6 +86,7 @@
 			
 			if ($fields['field_image_carte']->content) {
 				print '<div class="image-dialog" style="display: none;" title="Image carte">';
+				print '<span class="ui-helper-hidden-accessible"><input type="text" /></span>';
 				print '<span class="linkShow"><a href="'.$fields['field_image_carte']->content.'">Visualiser</a></span>';
 				print '<span class="linkDl"><a href="'.$fields['field_image_carte']->content.'" download>Télécharger</a></span>';
 				print '</div>';

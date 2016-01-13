@@ -483,7 +483,17 @@ div.infoMap dt, .infosGenerales dt{
 	 width:150px;
 	 text-align :right;
 	 margin-right:8px;
+	text-align: left;
  }
+
+.infosGenerales dd:before{
+	content: ": ";
+}
+
+.infosGenerales dd *{
+	display: inline-block;
+}
+
  .infosGenerales dd{
 	 margin-left:158px;
  }
@@ -495,6 +505,7 @@ div.infoMap dt, .infosGenerales dt{
 	 /*border-left: solid 1px #94a6b0;*/
 	 width:110px;
 	 margin-left:50px;
+	text-align: left;
  }
 div.descMap p{
 	text-align:justify;
@@ -667,7 +678,8 @@ ul.pagination li { margin: 0; }
 
 	#accordion{
 		padding: 5px;
-		font-size: 0.7em;
+		/*font-size: 0.7em;*/
+		font-size: 14px;
 	}
 
 	#accordion .ui-accordion-content{
@@ -1115,8 +1127,22 @@ input.form-submit, a.button {
 	border: 1px solid black;
 }
 
+.thematiquedd:before{
+	content: ": ";
+}
+
 .thematiquedd a {
 	display: list-item;
 	list-style-type: none;
-	margin-left: 10px;
+	margin-left: 16px;
+}
+
+.thematiquedd a:first-child{
+	margin-top: -17px;
+}
+
+#edit-submit-map-list{
+	background-color: #BABABA;
+	color: #fff;
+	margin-left: 2em;
 }

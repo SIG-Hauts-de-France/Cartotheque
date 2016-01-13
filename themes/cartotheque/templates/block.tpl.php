@@ -59,7 +59,7 @@
 	<?php if ($block_html_id == 'block-views-newest-maps-block'): ?>
 		<a href="<?php print $mapListUrl . '&sort_bef_combine=created ASC'; ?>">
 	<?php elseif ($block_html_id == 'block-views-most-downloaded-block'): ?>
-		<a href="<?php print $mapListUrl . '&sort_bef_combine=count DESC&field_type_de_carte_value=Statique'; ?>">
+		<a href="<?php print $mapListUrl . '&sort_bef_combine=count DESC'; ?>">
 	<?php endif; ?>
 	<?php print $block->subject ?>
 	<?php if ($block_html_id == 'block-views-newest-maps-block' || $block_html_id == 'block-views-most-downloaded-block'): ?>

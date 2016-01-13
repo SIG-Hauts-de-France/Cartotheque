@@ -135,12 +135,12 @@ $type_carte = strtolower($node->field_type_de_carte['und'][0]['value']);
 		<div class="nbAction">
 			<div class="anb">
 			<?php print $stats_total_count ?><span class="nbImg"></span>
-			<span class="infobulleNb node"><?php print $stats_total_count ?> consultations</span>
+			<span class="infobulleNb node"><?php print $stats_total_count ?> vue(s) pour cette carte</span>
 			</div>
 			<?php if ($type_carte == 'statique'): ?>
 			<div class="anb">
 			<?php print $download_count ?><span class="nbPdf"></span>
-			<span class="infobulleNb node"><?php print $download_count ?> téléchargements</span>
+			<span class="infobulleNb node"><?php print $download_count ?> téléchargement(s) pour cette carte</span>
 			</div>
 			<?php endif; ?>
 		</div>
@@ -152,17 +152,17 @@ $type_carte = strtolower($node->field_type_de_carte['und'][0]['value']);
 		$infosGenerales .= "<dl>";
 		if(array_key_exists('field_auteur',$content)) {
 			$content['field_auteur']['#label_display'] = 'hidden';
-			$infosGenerales .= "<dt>".$content['field_auteur']['#title'].":</dt>";
+			$infosGenerales .= "<dt>".$content['field_auteur']['#title']."</dt>";
 			$infosGenerales .= "<dd>".render($content['field_auteur']['#items'][0]['node']->title)."</dd>";
 		}
 		if(array_key_exists('field_emprise_geographique',$content)) {
 			$content['field_emprise_geographique']['#label_display'] = 'hidden';
-			$infosGenerales .= "<dt>".$content['field_emprise_geographique']['#title'].":</dt>";
+			$infosGenerales .= "<dt>".$content['field_emprise_geographique']['#title']."</dt>";
 			$infosGenerales .= "<dd>".render($content['field_emprise_geographique'])."</dd>";
 		}
 		if($type_carte == 'statique' && array_key_exists('field_echelle',$content)) {
 			$content['field_echelle']['#label_display'] = 'hidden';
-			$infosGenerales .= "<dt>".$content['field_echelle']['#title'].":</dt>";
+			$infosGenerales .= "<dt>".$content['field_echelle']['#title']."</dt>";
 			$infosGenerales .= "<dd>".render($content['field_echelle'])."</dd>";
 		}
 		$infosGenerales .= "</dl>";
@@ -171,13 +171,13 @@ $type_carte = strtolower($node->field_type_de_carte['und'][0]['value']);
 		$infosGenerales .= '<p><u>Thématiques:</u></p>';		
 		if(array_key_exists('field_categorie',$content)) {
 			$content['field_categorie']['#label_display'] = 'hidden';
-			$infosGenerales .= '<dt>'.$content['field_categorie']['#title'].':</dt>';
+			$infosGenerales .= '<dt>'.$content['field_categorie']['#title'].'</dt>';
 			//$infosGenerales .= '<dd>'. $categoryName .'</dd>';
 			$infosGenerales .= '<dd>'. $categoryLink .'</dd>';
 		}
 		if(array_key_exists('field_thematique',$content)) {
 			$content['field_thematique']['#label_display'] = 'hidden';
-			$infosGenerales .= '<dt>'.$content['field_thematique']['#title'].':</dt>';
+			$infosGenerales .= '<dt>'.$content['field_thematique']['#title'].'</dt>';
 			$infosGenerales .= '<dd class="thematiquedd">'. $thematiquesLinks .'</dd>';
 		}
 		$infosGenerales .= '</dl>';
@@ -234,11 +234,11 @@ $type_carte = strtolower($node->field_type_de_carte['und'][0]['value']);
 		<?php
 		
 		if ($imgLink != '') {
-			print '<div id="imgLink" title="Fichier png" style="display: none;"><span class="linkDl"><a href="'.$imgLink.'" download>Télécharger</a></span><span class="linkShow"><a href="'.$imgLink.'" target="_blank">Visualiser</a></span></div>';
+			print '<div id="imgLink" title="Fichier png" style="display: none;"><span class="ui-helper-hidden-accessible"><input type="text" /></span><span class="linkDl"><a href="'.$imgLink.'" download>Télécharger</a></span><span class="linkShow"><a href="'.$imgLink.'" target="_blank">Visualiser</a></span></div>';
 		}
 
 		if ($pdfLink != '') {
-			print '<div id="pdfLink" title="Fichier pdf" style="display: none;"><span class="linkDl"><a href="'.$pdfLink.'" download>Télécharger</a></span><span class="linkShow"><a href="'.$pdfLink.'" target="_blank">Visualiser</a></span></div>';
+			print '<div id="pdfLink" title="Fichier pdf" style="display: none;"><span class="ui-helper-hidden-accessible"><input type="text" /></span><span class="linkDl"><a href="'.$pdfLink.'" download>Télécharger</a></span><span class="linkShow"><a href="'.$pdfLink.'" target="_blank">Visualiser</a></span></div>';
 		}
 		?>
 		<div class="keyWordMap">Mots clés Inspire : <span class="keyWord"><?php
@@ -259,21 +259,28 @@ $type_carte = strtolower($node->field_type_de_carte['und'][0]['value']);
 		</div>
 	</div>
 	<?php if ($type_carte == 'statique'): ?>
-	<?php if ($collections_count > 0): ?>
 	<div class="collectionsMap">
 		<h4>Collection(s) à laquelle(s) appartient la carte</h4>
 		<?php
-			$content['field_collections']['#label_display'] = 'hidden';
-			print render($collections);
+
+			if ($collections_count > 0) { 
+				$content['field_collections']['#label_display'] = 'hidden';
+				print render($collections);
+			}
+			else {
+				print 'Aucune';
+			}
 		?>
 	</div>
-	<?php endif; ?>
 	<?php endif; ?>
 	<div class="ressourcesMap">
 		<h4>Ressources associées</h4>
 		<?php
-			$content['field_ressources_associes']['#label_display'] = 'hidden';
-			print render($content['field_ressources_associes']);
+			if (! is_null($content['field_ressources_associes']) ) {
+				$content['field_ressources_associes']['#label_display'] = 'hidden';
+				print render($content['field_ressources_associes']);
+			}
+			else { print 'Aucune'; }
 		?>
 	</div>
 </div>

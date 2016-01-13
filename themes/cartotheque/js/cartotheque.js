@@ -107,7 +107,7 @@ jQuery( document ).ready( function() {
 	jQuery('#edit-field-date-de-creation-value-op').append('<option value="<">Est inférieur à</option>');
 	jQuery('#edit-field-date-de-creation-value-op').append('<option value=">">Est supérieur à</option>');
 	jQuery('#edit-field-date-de-creation-value-op').append('<option value="=">Est égal à</option>');
-	jQuery('#edit-field-date-de-creation-value-op').append('<option value="contains">Contient</option>');
+	//jQuery('#edit-field-date-de-creation-value-op').append('<option value="contains">Contient</option>');
 
 	jQuery('#edit-field-date-de-creation-value-value-datepicker-popup-1').attr('placeholder', 'Choisir..');
 
@@ -226,7 +226,7 @@ jQuery(document).ready(function() {
 
 	if (jQuery('#mainContent').width() < 980) {
 
-		spaceTop = 115;
+		//spaceTop = 115;
 
 		if (jQuery('#admin-menu').length > 0) {
 			spaceTop += jQuery('#admin-menu').height();
