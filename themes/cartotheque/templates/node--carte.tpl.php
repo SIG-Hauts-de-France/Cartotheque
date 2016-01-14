@@ -171,13 +171,13 @@ $type_carte = strtolower($node->field_type_de_carte['und'][0]['value']);
 		$infosGenerales .= '<p><u>Thématiques:</u></p>';		
 		if(array_key_exists('field_categorie',$content)) {
 			$content['field_categorie']['#label_display'] = 'hidden';
-			$infosGenerales .= '<dt>'.$content['field_categorie']['#title'].'</dt>';
+			$infosGenerales .= '<dt>'.$content['field_categorie']['#title'].' :</dt>';
 			//$infosGenerales .= '<dd>'. $categoryName .'</dd>';
 			$infosGenerales .= '<dd>'. $categoryLink .'</dd>';
 		}
 		if(array_key_exists('field_thematique',$content)) {
 			$content['field_thematique']['#label_display'] = 'hidden';
-			$infosGenerales .= '<dt>'.$content['field_thematique']['#title'].'</dt>';
+			$infosGenerales .= '<dt>'.$content['field_thematique']['#title'].' :</dt>';
 			$infosGenerales .= '<dd class="thematiquedd">'. $thematiquesLinks .'</dd>';
 		}
 		$infosGenerales .= '</dl>';
@@ -275,13 +275,16 @@ $type_carte = strtolower($node->field_type_de_carte['und'][0]['value']);
 	<?php endif; ?>
 	<div class="ressourcesMap">
 		<h4>Ressources associées</h4>
+		<div>
 		<?php
 			if (! is_null($content['field_ressources_associes']) ) {
 				$content['field_ressources_associes']['#label_display'] = 'hidden';
-				print render($content['field_ressources_associes']);
+				//print render($content['field_ressources_associes']);
+				print render($ressourcesAssociees);
 			}
 			else { print 'Aucune'; }
 		?>
+		</div>
 	</div>
 </div>
 

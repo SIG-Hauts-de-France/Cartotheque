@@ -134,6 +134,13 @@ jQuery(document).ready(function() {
 	jQuery('#edit-items-per-page').on('change', function() { this.form.submit(); });
 });
 
+// Deplacer l'exemple recherche date en placeholder
+jQuery(document).ready(function() {
+	var example = jQuery('.form-item-field-date-de-creation-value-value-date .description');
+	jQuery('#edit-field-date-de-creation-value-value-datepicker-popup-1').attr('placeholder', example.text());
+	example.remove();
+});
+
 // Attach chosen to advanced search form
 jQuery(document).ready(function() {
 
@@ -151,6 +158,11 @@ jQuery(document).ready(function() {
 	jQuery('#edit-field-thematique-tid').chosen(chosenOpts);
 	jQuery('#edit-field-categorie-tid').chosen(chosenOpts);
 
+});
+
+// ouvrir liens sources dans nouvel onglet
+jQuery(document).ready(function() {
+	jQuery('.field-name-field-source-des-donnees a').attr('target', 'about:_blank');
 });
 
 

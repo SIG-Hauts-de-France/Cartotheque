@@ -214,6 +214,13 @@ function cartotheque_preprocess_node(&$vars) {
 
 			$vars['inspireKeywordsLinks'] = trim($vars['inspireKeywordsLinks'], ',');
 		}
+
+		$vars['ressourcesAssociees'] = '';
+		if (isset($vars['field_ressources_associes'])) {
+			foreach ($vars['field_ressources_associes'] as $res) {
+				$vars['ressourcesAssociees'] .= '<a target="about:_blank" href="'.$res['value'].'">'.$res['value'].'</a> ';
+			}
+		}
 		
 		// Statistiques d'accès
 		if (function_exists('statistics_get')) {
@@ -356,6 +363,11 @@ function cartotheque_generate_search_url() {
 	// Recherche par defaut sur NPDcP
 	if (!isset($savedParams['field_cartotheque_value'])) {
 		$savedParams['field_cartotheque_value'] = Array('NPdCP');
+	}
+
+	//Tri par défaut
+	if (!isset($savedParams['sort_bef_combine'])) {
+		$savedParams['sort_bef_combine'] = 'field_date_de_creation_value DESC';
 	}
 	
 	foreach($savedParams as $p => $v) {

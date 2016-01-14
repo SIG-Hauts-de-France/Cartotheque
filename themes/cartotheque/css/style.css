@@ -265,6 +265,7 @@ section.actus div.maps div.mapZoom, div.map div.mapZoom {
 
 div.mapZoom .img-responsive{
 	max-width: initial;
+	margin-top: 25px;
 }
 
 div.mapZoom > .closeZoom{
@@ -477,17 +478,19 @@ div.infoMap dt, div.infoMap dd{
 }
 div.infoMap dt, .infosGenerales dt{
 	float:left;
-	margin-right: 4px;
+	/*margin-right: 4px;*/
 }
  .infosGenerales dt{
-	 width:150px;
+	 width:140px;
 	 text-align :right;
-	 margin-right:8px;
+	 /*margin-right:8px;*/
 	text-align: left;
  }
 
 .infosGenerales dd:before{
 	content: ": ";
+	color: white;
+	vertical-align: text-top;
 }
 
 .infosGenerales dd *{
@@ -495,7 +498,7 @@ div.infoMap dt, .infosGenerales dt{
 }
 
  .infosGenerales dd{
-	 margin-left:158px;
+	 /*margin-left:158px;*/
  }
 .infosGenerales dt, .infosGenerales dd{
 	font-size:13px;
@@ -503,16 +506,18 @@ div.infoMap dt, .infosGenerales dt{
 }
  .infosGenerales dl.themaMap dt{
 	 /*border-left: solid 1px #94a6b0;*/
-	 width:110px;
-	 margin-left:50px;
+	 /*width:110px;*/
+	 /*margin-left:50px;*/
 	text-align: left;
+	width: unset;
+	margin-right: 1%;
  }
 div.descMap p{
 	text-align:justify;
 }
 div.imgMapFiche {
-text-align:center;
-border:solid 1px #a4b2bb;
+	text-align:center;
+	border:solid 1px #a4b2bb;
 }
 div.imgMapFiche, div.imgMap img {
 	border:solid 1px #a4b2bb;
@@ -627,7 +632,7 @@ ul.pagination li { margin: 0; }
 
 @media (max-width: 800px){
 	div.imgMap, div.descMap{
-	display:block;
+		display:block;
 	}
 	div.imgMap img{
 		width:100%;
@@ -686,6 +691,14 @@ ul.pagination li { margin: 0; }
 		padding: 10px 10px;
 	}
 
+	#edit-submit-map-list{
+		font-size: 14px;
+	}
+
+	#edit-reset{
+		margin-top: 4px;
+	}
+
 	#mainContent{
 		width: 98%;
 		margin-left: 1%;
@@ -717,9 +730,12 @@ ul.pagination li { margin: 0; }
 		/*margin-right: auto;*/
 	}
 
-
 	.form-file{
 		width: 80% !important;
+	}
+
+	.infosGenerales {
+		padding: 0;
 	}
 }
 @media (max-width: 360px){
@@ -1070,7 +1086,7 @@ input.form-submit, a.button {
 	z-index: 9999;
 	background-color: white;
 	top: -50px;
-	left: -10px;
+	left: -35px;
 	width: 160px !important;
 	border: 1px solid #bababa;
 	padding-left: 2px;
@@ -1082,7 +1098,7 @@ input.form-submit, a.button {
 	z-index: 9999;
 	background-color: white;
 	top: -50px;
-	left: -10px;
+	left: -35px;
 	width: 160px !important;
 	border: 1px solid #bababa;
 	padding-left: 2px;
@@ -1094,7 +1110,7 @@ input.form-submit, a.button {
 	z-index: 9999;
 	background-color: white;
 	top: -50px;
-	left: -10px;
+	left: -35px;
 	width: 160px !important;
 	border: 1px solid #bababa;
 	padding-left: 2px;
@@ -1106,7 +1122,7 @@ input.form-submit, a.button {
 	z-index: 9999;
 	background-color: white;
 	top: -50px;
-	left: -10px;
+	left: -35px;
 	width: 160px !important;
 	border: 1px solid #bababa;
 	padding-left: 2px;
@@ -1138,13 +1154,16 @@ input.form-submit, a.button {
 	content: ": ";
 }
 
-.thematiquedd a {
+/*.thematiquedd a {*/
+.themaMap a {
 	display: list-item;
 	list-style-type: none;
-	margin-left: 16px;
+	/*margin-left: 16px;*/
+	margin-left: 0.5em;
 }
 
-.thematiquedd a:first-child{
+/*.thematiquedd a:first-child{*/
+.themaMap a:first-child{
 	margin-top: -17px;
 }
 
@@ -1152,4 +1171,10 @@ input.form-submit, a.button {
 	background-color: #BABABA;
 	color: #fff;
 	margin-left: 2em;
+}
+
+.ressourcesMap a{
+	display: list-item;
+	list-style-type: none;
+	width: 0;
 }
