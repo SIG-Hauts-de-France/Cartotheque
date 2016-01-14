@@ -707,14 +707,16 @@ ul.pagination li { margin: 0; }
 	}
 
 	.region-home-last-maps .col-md-6, .region-home-more-downloaded-maps .col-md-6{
-		width: 83% !important;
-		height: 88px !important;
+		/*width: 83% !important;*/
+		/*height: 88px !important;*/
+		margin-left: 18px !important;
 	}
 
 	.region-home-last-maps .col-md-6 img, .region-home-more-downloaded-maps .col-md-6 img{
-		margin-left: auto;
-		margin-right: auto;
+		/*margin-left: auto;*/
+		/*margin-right: auto;*/
 	}
+
 
 	.form-file{
 		width: 80% !important;
@@ -1110,15 +1112,20 @@ input.form-submit, a.button {
 	padding-left: 2px;
 }
 
-#edit-combine{
+#edit-combine, #edit-pgsql-combine-filter-views{
 	min-height: 35px;
 }
 
 .region-home-last-maps .col-md-6, .region-home-more-downloaded-maps .col-md-6{
+	/*
 	width: 120px;
 	height: 86px;
+	*/
+	width: 100px;
+	height: 100px;
 	padding: 0;
-	margin-left: 20px;
+	/*margin-left: 20px;*/
+	margin-left: 34px;
 	margin-bottom: 5px;
 	border: 1px solid black;
 }
