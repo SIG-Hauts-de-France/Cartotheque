@@ -117,7 +117,7 @@ function tic_geosource_form_alter(&$form, &$form_state, $form_id) {
 		);
 
 		// Agrandir les inputs textes
-		drupal_add_css('.form-text{ width: 100%; } .form-file{ width: 90%;} div.image-widget-data{ width: 100%; } .autocomplete-deluxe-container.autocomplete-deluxe-multiple{ width: 100%; }', 'inline');
+		drupal_add_css('.form-text{ width: 100%; } .form-file{ width: 90%;} div.image-widget-data{ width: 100%; } .autocomplete-deluxe-container.autocomplete-deluxe-multiple{ width: 100%; } #edit-field-image-carte{ padding: 0; border: 0; }', 'inline');
 		
 		
 		// Cette fonction nécessite que le cache soit désactivé; ajax fichiers ne fonctionne pas avec
@@ -188,8 +188,9 @@ function tic_geosource_form_validate(&$form, &$form_state) {
 	);
 
 	// Agrandir les inputs textes
-	drupal_add_css('.form-text{ width: 100%; } .form-file{ width: 40%;} div.image-widget-data{ width: 100%; }', 'inline');
+	//drupal_add_css('.form-text{ width: 100%; } .form-file{ width: 40%;} div.image-widget-data{ width: 100%; }', 'inline');
 
+	drupal_add_css('.form-text{ width: 100%; } .form-file{ width: 90%;} div.image-widget-data{ width: 100%; } .autocomplete-deluxe-container.autocomplete-deluxe-multiple{ width: 100%; } #edit-field-image-carte{ padding: 0; border: 0; }', 'inline');
 	
 	// Si edition de carte; assigner automatiquement le type de carte pour la validation
 	if ($form['nid']['#value']) {
