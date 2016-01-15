@@ -1138,7 +1138,7 @@ function tic_geosource_node_access($node, $op, $account) {
 		return true;
 	}
 	
-	if (!$node->type == 'carte') { return true; }
+	if ($node->type != 'carte') { return true; }
 
 	// I'm the owner !
 	if ($node->uid == $user->uid) { return true; }
@@ -1216,8 +1216,21 @@ function tic_geosource_node_grants($account, $op) {
  */
 function tic_geosource_node_access_records($node) {
 	$statut = 'interne';
-	
-	if ($node->type != 'carte') { return; }
+	$grants = array();
+
+	if ($node->type != 'carte') {
+		// Pas une carte, accès en lecture pour tous
+		$grants[] = array(
+			'realm' => TIC_GEOSOURCE_REALM,
+			'gid' => TIC_GEOSOURCE_GRANT_ID_EXTERNE,
+			'grant_view' => 1,
+			'grant_update' => 0,
+			'grant_delete' => 0,
+			'priority' => 0,
+		);
+
+		return $grants;
+	}
 	
 	if (isset($node->field_statut['und'][0]['value'])) {
 		$statut = strtolower($node->field_statut['und'][0]['value']);
