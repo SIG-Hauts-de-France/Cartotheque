@@ -367,7 +367,7 @@ function cartotheque_generate_search_url() {
 
 	//Tri par défaut
 	if (!isset($savedParams['sort_bef_combine'])) {
-		$savedParams['sort_bef_combine'] = 'field_date_de_creation_value DESC';
+		$savedParams['sort_bef_combine'] = 'timestamp DESC';
 	}
 	
 	foreach($savedParams as $p => $v) {

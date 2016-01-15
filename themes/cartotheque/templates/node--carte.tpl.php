@@ -182,7 +182,7 @@ $type_carte = strtolower($node->field_type_de_carte['und'][0]['value']);
 		}
 		$infosGenerales .= '</dl>';
 	
-		$infosGenerales .= "<dl>";
+		$infosGenerales .= '<dl class="sourceDonnees">';
 		$infosGenerales .= '<dt>Sources de données :</dt>';
 		$infosGenerales .= '<dd>' .
 					render($content['field_date_source_des_donnees']) .

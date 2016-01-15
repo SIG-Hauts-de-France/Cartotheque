@@ -394,7 +394,7 @@ div.orderList span a, div.form-type-bef-link a{
 	height:16px;
 	color: transparent;
 }
-div.orderList span.orderZa, div.form-item-edit-sort-bef-combine-field-date-de-creation-value-desc{
+div.orderList span.orderZa, div.form-item-edit-sort-bef-combine-timestamp-desc{
 	background-position: -45px 0;
 }
 div.orderList span.order01, div.form-item-edit-sort-bef-combine-title-asc{
@@ -404,7 +404,7 @@ div.orderList span.order10, div.form-item-edit-sort-bef-combine-title-desc{
 	background-position: -23px 0;
 }
 
-div.form-item-edit-sort-bef-combine-field-date-de-creation-value-asc{
+div.form-item-edit-sort-bef-combine-timestamp-asc{
 	background-position: -68px 0;
 }
 
@@ -489,7 +489,7 @@ div.infoMap dt, .infosGenerales dt{
 
 .infosGenerales dd:before{
 	content: ": ";
-	color: white;
+	/*color: white;*/
 	vertical-align: text-top;
 }
 
@@ -498,7 +498,7 @@ div.infoMap dt, .infosGenerales dt{
 }
 
  .infosGenerales dd{
-	 /*margin-left:158px;*/
+	 margin-left:158px;
  }
 .infosGenerales dt, .infosGenerales dd{
 	font-size:13px;
@@ -508,9 +508,14 @@ div.infoMap dt, .infosGenerales dt{
 	 /*border-left: solid 1px #94a6b0;*/
 	 /*width:110px;*/
 	 /*margin-left:50px;*/
+
+	/*
 	text-align: left;
 	width: unset;
 	margin-right: 1%;
+	*/
+
+	width: auto;
  }
 div.descMap p{
 	text-align:justify;
@@ -1080,7 +1085,7 @@ input.form-submit, a.button {
 	z-index: 9999 !important;
 }
 
-#edit-sort-bef-combine-field-date-de-creation-value-desc:hover::after{
+#edit-sort-bef-combine-timestamp-desc:hover::after{
 	content: "Trier par date de création descendant";
 	position: absolute;
 	z-index: 9999;
@@ -1092,7 +1097,7 @@ input.form-submit, a.button {
 	padding-left: 2px;
 }
 
-#edit-sort-bef-combine-field-date-de-creation-value-asc:hover::after{
+#edit-sort-bef-combine-timestamp-asc:hover::after{
 	content: "Trier par date de création ascendant";
 	position: absolute;
 	z-index: 9999;
@@ -1159,12 +1164,22 @@ input.form-submit, a.button {
 	display: list-item;
 	list-style-type: none;
 	/*margin-left: 16px;*/
-	margin-left: 0.5em;
+	/*margin-left: 80px;*/
 }
 
 /*.thematiquedd a:first-child{*/
 .themaMap a:first-child{
-	margin-top: -17px;
+	margin-top: -18px;
+	/*margin-left: 4px;*/
+}
+
+.themaMap dd{
+	/*margin-left: 110px;*/
+	margin-left: 92px;
+}
+
+.themaMap dd:before{
+	color: #fff;
 }
 
 #edit-submit-map-list{
@@ -1177,4 +1192,16 @@ input.form-submit, a.button {
 	display: list-item;
 	list-style-type: none;
 	width: 0;
+}
+
+.sourceDonnees dt{
+	width: auto;
+}
+
+.sourceDonnees dd:before{
+	color: #fff;
+}
+
+.sourceDonnees dd{
+	margin-left: 120px;
 }
