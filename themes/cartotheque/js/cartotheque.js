@@ -163,6 +163,7 @@ jQuery(document).ready(function() {
 // ouvrir liens sources dans nouvel onglet
 jQuery(document).ready(function() {
 	jQuery('.field-name-field-source-des-donnees a').attr('target', 'about:_blank');
+	jQuery('.sourceDonnees dd a').attr('target', 'about:_blank');
 });
 
 

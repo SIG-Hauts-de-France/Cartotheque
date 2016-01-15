@@ -395,6 +395,7 @@ div.orderList span a, div.form-type-bef-link a{
 	color: transparent;
 }
 div.orderList span.orderZa, div.form-item-edit-sort-bef-combine-timestamp-desc{
+	display: none;
 	background-position: -45px 0;
 }
 div.orderList span.order01, div.form-item-edit-sort-bef-combine-title-asc{
@@ -405,6 +406,17 @@ div.orderList span.order10, div.form-item-edit-sort-bef-combine-title-desc{
 }
 
 div.form-item-edit-sort-bef-combine-timestamp-asc{
+	display: none;
+	background-position: -68px 0;
+}
+
+#edit-sort-bef-combine-field-date-de-creation-value-desc{
+	/*display: none;*/
+	background-position: -45px 0;
+}
+
+#edit-sort-bef-combine-field-date-de-creation-value-asc{
+	/*display: none;*/
 	background-position: -68px 0;
 }
 
@@ -1085,7 +1097,7 @@ input.form-submit, a.button {
 	z-index: 9999 !important;
 }
 
-#edit-sort-bef-combine-timestamp-desc:hover::after{
+#edit-sort-bef-combine-field-date-de-creation-value-desc:hover::after{
 	content: "Trier par date de création descendant";
 	position: absolute;
 	z-index: 9999;
@@ -1097,7 +1109,7 @@ input.form-submit, a.button {
 	padding-left: 2px;
 }
 
-#edit-sort-bef-combine-timestamp-asc:hover::after{
+#edit-sort-bef-combine-field-date-de-creation-value-asc:hover::after{
 	content: "Trier par date de création ascendant";
 	position: absolute;
 	z-index: 9999;
@@ -1148,11 +1160,11 @@ input.form-submit, a.button {
 	/*margin-left: 20px;*/
 	margin-left: 34px;
 	margin-bottom: 5px;
-	border: 1px solid black;
+	border: 1px solid #95A6B0;
 }
 
 .region.region-home-month-maps img {
-	border: 1px solid black;
+	border: 1px solid #95A6B0;
 }
 
 .thematiquedd:before{
@@ -1204,4 +1216,8 @@ input.form-submit, a.button {
 
 .sourceDonnees dd{
 	margin-left: 120px;
+}
+
+.sourceDonnees dd .field.field-name-field-source-des-donnees a{
+	display: block;
 }
