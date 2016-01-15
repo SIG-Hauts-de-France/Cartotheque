@@ -149,7 +149,9 @@ function tic_geosource_form_alter(&$form, &$form_state, $form_id) {
 			if (strtolower($form['#node']->field_type_de_carte['und'][0]['value']) == 'statique') {
 				$form['field_date_de_mise_jour']['#access'] = false;
 				$form['field_url_carte']['#access'] = false;
-				$form['field_numero_de_carte']['und'][0]['#disabled'] = true;
+				if ($form['#node']->status == NODE_PUBLISHED) {
+					$form['field_numero_de_carte']['und'][0]['#disabled'] = true;
+				}
 			}
 			else {
 				$form['field_numero_de_carte']['#access'] = false;
@@ -200,16 +202,40 @@ function tic_geosource_form_validate(&$form, &$form_state) {
 		$form['#attached']['js'][] = drupal_get_path('module', 'tic_geosource') . '/js/adapt_form.js';
 	}
 
+	if (isset($form_state['values']['field_type_de_carte']['und'][0]['value'])) {
+		$type = $form_state['values']['field_type_de_carte']['und'][0]['value'];
+	}
+	else { $type = 'Statique'; }
+
+	// Desactivation de la validation pour les cartes brouillon
 	if ($form_state['values']['status'] == 0) {
 		// Flush validation errors
 		drupal_get_messages();
 
 		// Force validation
 		$errors = &drupal_static('form_set_error', NULL, TRUE);
+
+		// Afficher un message si le numero de carte est réservé
+		if (strtolower($type) == 'statique') {
+			if (isset($form_state['values']['field_numero_de_carte']['und'][0]['value'])) {
+				// si nid existant
+				if ($form['nid']['#value']) {
+					$validNumCarte = tic_geosource_check_unique_map_identifier($form_state['values']['field_numero_de_carte']['und'][0]['value'], $form['nid']['#value']);
+				}
+				else {
+					// sinon nouveau node
+					$validNumCarte = tic_geosource_check_unique_map_identifier($form_state['values']['field_numero_de_carte']['und'][0]['value'], false);
+				}
+				
+				if (!$validNumCarte) {
+					form_set_error('field_numero_de_carte', 'Ce numéro de carte est déjà utilisé');
+				}
+			}
+		}
+
 		return $form; 
 	}
 	
-	$type = $form_state['values']['field_type_de_carte']['und'][0]['value'];
 	if (strtolower($type) == 'statique') {
 		
 		//statique seulement: numero de carte obligatoire
@@ -304,6 +330,7 @@ function tic_geosource_form_validate(&$form, &$form_state) {
 	
 	return $form;
 }
+
 
 /**
  * Callback ajax de création de contact lors de la creation d'une carte
