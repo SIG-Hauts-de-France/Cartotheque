@@ -57,7 +57,7 @@
 <?php if ($block->subject): ?>
   <h2<?php print $title_attributes; ?>>
 	<?php if ($block_html_id == 'block-views-newest-maps-block'): ?>
-		<a href="<?php print $mapListUrl . '&sort_bef_combine=field_date_de_creation_value DESC'; ?>">
+		<a href="<?php print $mapListUrl . '&sort_bef_combine=timestamp DESC'; ?>">
 	<?php elseif ($block_html_id == 'block-views-most-downloaded-block'): ?>
 		<a href="<?php print $mapListUrl . '&sort_bef_combine=count DESC'; ?>">
 	<?php endif; ?>

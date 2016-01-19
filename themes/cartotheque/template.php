@@ -382,3 +382,27 @@ function cartotheque_generate_search_url() {
 	
 	return $url;
 }
+
+/**
+ * Implements hook_mail_alter
+ *
+ */
+function cartotheque_mail_alter(&$message) {
+	// Modifier seulement les mail de contact
+	if ($message['id'] != 'contact_page_mail') { return; }
+
+	$message['subject'] = '[Cartothèque]';
+}
+
+/**
+ * Implements hook_form_alter
+ *
+ *
+ */
+function cartotheque_form_alter(&$form, $form_state, $form_id) {
+	if ($form_id == 'contact_site_form') {
+		//var_dump($form);
+		$form['subject']['#required'] = FALSE;
+		$form['subject']['#access'] = FALSE;
+	}
+}
