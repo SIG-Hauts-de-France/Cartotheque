@@ -160,6 +160,13 @@ jQuery(document).ready(function() {
 
 });
 
+jQuery(document).ready(function() {
+	//disable transitions on image for buggy ipad
+	if (navigator.userAgent.match(/iPad/i)) {
+		jQuery('header img').css('transition', 'none');
+	}
+});
+
 // ouvrir liens sources dans nouvel onglet
 jQuery(document).ready(function() {
 	jQuery('.field-name-field-source-des-donnees a').attr('target', 'about:_blank');

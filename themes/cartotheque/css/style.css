@@ -37,7 +37,7 @@ header img{
 	margin:40px;
 	margin-left: -15px;
 	/** fix bug safari **/
-	transition: none;
+	/*transition: none;*/
 }
 header h1{
 	margin:0;
