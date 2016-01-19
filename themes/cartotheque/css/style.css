@@ -28,14 +28,16 @@ footer ul.menu {
 	margin-top: 200px;
 }
 
-header *{
-	transition: all 0.2s ease-in 0.2s;
+header * {
+	transition: all 0.1s ease-in 0.1s;
 }
 
 header img{
 	float:left; 
 	margin:40px;
 	margin-left: -15px;
+	/** fix bug safari **/
+	transition: none;
 }
 header h1{
 	margin:0;
@@ -127,6 +129,7 @@ header ul.topNav li.user a{
 	/* display: none; */
 	margin: 20px;
 	font-size: 33px;
+	/**margin-top: 40px;**/
 }
 
 .fixed-header h1 br{
@@ -687,7 +690,8 @@ ul.pagination li { margin: 0; }
 	header h1{
 		font-size:36px;
 		line-height: 0.7em;
-		display: none;
+		margin-top: 75px;
+		/*display: none;*/
 	}
 
 	header img{
@@ -697,6 +701,11 @@ ul.pagination li { margin: 0; }
 	header h1 span{
 		font-size:22px;
 	}
+
+	.fixed-header h1{
+		margin-top: 40px;
+	}
+
 
 	#accordion{
 		padding: 5px;
@@ -710,10 +719,13 @@ ul.pagination li { margin: 0; }
 
 	#edit-submit-map-list{
 		font-size: 14px;
+		margin-right: 0;
+		margin-left: 1.2em !important;
 	}
 
 	#edit-reset{
-		margin-top: 4px;
+		/*margin-top: 4px;*/
+		font-size: 14px;
 	}
 
 	#mainContent{
