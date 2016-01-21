@@ -277,7 +277,7 @@ $type_carte = strtolower($node->field_type_de_carte['und'][0]['value']);
 		<h4>Ressources associées</h4>
 		<div>
 		<?php
-			if (! is_null($content['field_ressources_associes']) ) {
+			if ( array_key_exists('field_ressources_associes', $content) ) {
 				$content['field_ressources_associes']['#label_display'] = 'hidden';
 				//print render($content['field_ressources_associes']);
 				print render($ressourcesAssociees);
