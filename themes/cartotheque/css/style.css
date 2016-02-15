@@ -1233,3 +1233,12 @@ input.form-submit, a.button {
 .sourceDonnees dd .field.field-name-field-source-des-donnees a{
 	display: block;
 }
+
+/**
+ * Correction bug affichage firefox 24
+ * Firefox 28- (https://jeffclayton.wordpress.com/2014/07/22/firefox-css-hacks-collection/)
+ *
+ */
+@supports ( not ((-moz-appearance:none) and (list-style-type:japanese-formal) ) ) {
+    div.linkMap { position: relative !important; } 
+}
