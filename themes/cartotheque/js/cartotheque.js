@@ -96,7 +96,8 @@ jQuery( document ).ready( function() {
 
 	jQuery( "#accordion" ).accordion({
 		active: accordionActive,
-		collapsible: true
+		collapsible: true,
+		heightStyle: "content"
 	});
 
 
