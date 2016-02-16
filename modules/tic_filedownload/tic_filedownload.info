@@ -1,0 +1,10 @@
+name = TIC File download / preview
+description = Suggérer le preview ou forcer le téléchargement du fichier
+core = 7.x
+dependencies[] = field
+dependencies[] = bundle_copy
+dependencies[] = node_reference
+dependencies[] = date
+dependencies[] = url
+dependencies[] = email
+dependencies[] = entity
