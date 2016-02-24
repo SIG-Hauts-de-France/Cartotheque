@@ -949,43 +949,53 @@ function tic_geosource_cron() {
 	
 	$client = tic_geosource_load_csw_client();
 	
-	if (!is_object($client)) {
-		watchdog('tic_geosource', 'Impossible de charger le client CSW');
-		return;
-	}
-	
-	try {
-		// Récupérer les cartes
-		$uuids = $client->jsonGetRecordsModifiedSince($date, 'map');
-		$queue = DrupalQueue::get('tic_geosource_sync');
-		foreach ($uuids as $uuid) {
-			$queue->createItem($uuid);
+	// Synchro Geosource => Drupal
+	$geosourceToDrupal = variable_get('geosource_geosource_to_drupal', 0);
+
+	if ($geosourceToDrupal != 0) {
+		if (!is_object($client)) {
+			watchdog('tic_geosource', 'Impossible de charger le client CSW');
+			return;
 		}
 		
-		// Récupérer les services
-		$uuids = $client->jsonGetRecordsModifiedSince($date, 'service');
+		try {
+			// Récupérer les cartes
+			$uuids = $client->jsonGetRecordsModifiedSince($date, 'map');
+			$queue = DrupalQueue::get('tic_geosource_sync');
+			foreach ($uuids as $uuid) {
+				$queue->createItem($uuid);
+			}
+			
+			// Récupérer les services
+			$uuids = $client->jsonGetRecordsModifiedSince($date, 'service');
+			foreach ($uuids as $uuid) {
+				$queue->createItem($uuid);
+			}
+		}
+		catch (Exception $e) {
+			watchdog('tic_geosource', 'Erreur lors de la récupération des ressources modifiées: '.$e->getMessage());
+		}
+		
+		// Vérifier que les ressources Drupal ayant un UUID existent toujours dans Geosource
+		$uuids = array();
+		$uuids = tic_geosource_get_all_records_uuids();
+		$checkQueue = DrupalQueue::get('tic_geosource_check_exists');
 		foreach ($uuids as $uuid) {
-			$queue->createItem($uuid);
+			$checkQueue->createItem($uuid);
 		}
 	}
-	catch (Exception $e) {
-		watchdog('tic_geosource', 'Erreur lors de la récupération des ressources modifiées: '.$e->getMessage());
-	}
 	
-	// Vérifier que les ressources Drupal ayant un UUID existent toujours dans Geosource
-	$uuids = array();
-	$uuids = tic_geosource_get_all_records_uuids();
-	$checkQueue = DrupalQueue::get('tic_geosource_check_exists');
-	foreach ($uuids as $uuid) {
-		$checkQueue->createItem($uuid);
-	}
-	
-	// Push des fiches existant dans Drupal mais pas dans Geosource
-	$nids = tic_geosource_get_unpushed_maps();
-	$pushQueue = DrupalQueue::get('tic_geosource_push_pending');
-	
-	foreach($nids as $nid) {
-		$pushQueue->createItem($nid);
+	// Synchro Drupal => Geosource
+
+	$drupalToGeosource = variable_get('geosource_drupal_to_geosource', 0);
+	if ($drupalToGeosource != 0) {
+		// Push des fiches existant dans Drupal mais pas dans Geosource
+		$nids = tic_geosource_get_unpushed_maps();
+		$pushQueue = DrupalQueue::get('tic_geosource_push_pending');
+		
+		foreach($nids as $nid) {
+			$pushQueue->createItem($nid);
+		}
 	}
 	
 	// Mettre a jour les droits d'accès pour prendre en compte les modifications du champ diffusion (interne / externe / archive)

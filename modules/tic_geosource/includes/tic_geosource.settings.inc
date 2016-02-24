@@ -66,6 +66,16 @@ function tic_geosource_config($form, &$form_state) {
 		'#default_value' => variable_get('geosource_sync_delay', ''),
 		'#description' => 'Délai entre deux synchronisations avec Geosource (en secondes)',
 	);
+	$form['geosource_sync']['geosource_drupal_to_geosource'] = array(
+		'#type' => 'checkbox',
+		'#title' => 'Synchronisation Drupal => Geosource',
+		'#default_value' => variable_get('geosource_drupal_to_geosource', 0),
+	);
+	$form['geosource_sync']['geosource_geosource_to_drupal'] = array(
+		'#type' => 'checkbox',
+		'#title' => 'Synchronisation Geosource => Drupal',
+		'#default_value' => variable_get('geosource_geosource_to_drupal', 0),
+	);
 	// TODO: utilisateur pour les cartes créées par la synchro
 	// TODO: auteur par défaut pour les cartes créées par la synchro n'ayant pas d'email associé
 	
@@ -78,41 +88,50 @@ function tic_geosource_sync() {
 	$queuedItems = 0;
 	
 	module_load_include('inc', 'tic_geosource', 'includes/tic_geosource.utils');
+
+	$geosourceToDrupal = variable_get('geosource_geosource_to_drupal', 0);
+
+	if ($geosourceToDrupal != 0) {
 	
-	try {
-		$client = tic_geosource_load_csw_client();
-		//TODO: ajouter une méthode getAll dans cswGeoClient.php
-		//$xml = $client->getRecordsModifiedSince(new DateTime('01-01-2000'));
-		//$allUuids = tic_geosource_get_result_uuids($xml);
-		$uuids = $client->jsonGetRecordsModifiedSince('', 'map');
-		
-		// Ajouter les uuids a traiter dans le queue
-		$queue = DrupalQueue::get('tic_geosource_sync');
-		foreach ($uuids as $uuid) {
-			$queue->createItem($uuid);
-			$queuedItems++;
-		}
-		
-		$uuids = $client->jsonGetRecordsModifiedSince('', 'service');
-		if (is_array($uuids)) {
+		try {
+			$client = tic_geosource_load_csw_client();
+			//TODO: ajouter une méthode getAll dans cswGeoClient.php
+			//$xml = $client->getRecordsModifiedSince(new DateTime('01-01-2000'));
+			//$allUuids = tic_geosource_get_result_uuids($xml);
+			$uuids = $client->jsonGetRecordsModifiedSince('', 'map');
+			
+			// Ajouter les uuids a traiter dans le queue
+			$queue = DrupalQueue::get('tic_geosource_sync');
 			foreach ($uuids as $uuid) {
 				$queue->createItem($uuid);
 				$queuedItems++;
 			}
+			
+			$uuids = $client->jsonGetRecordsModifiedSince('', 'service');
+			if (is_array($uuids)) {
+				foreach ($uuids as $uuid) {
+					$queue->createItem($uuid);
+					$queuedItems++;
+				}
+			}
+		}
+		catch (Exception $e) {
+			watchdog('tic_geosource', 'Erreur a la synchronisation initiale: '.$e->getMessage());
+			$error = true;
+		}
+
+		if ($error == false) {
+			$pageContent['#markup'] = '<p>La synchronisation avec Geosource a été lancée ('.$queuedItems.' fiches ajoutées dans la file d\'attente)</p>';
+		}
+		else {
+			$pageContent['#markup'] = '<p>Une erreur est survenue lors du lancement de la synchronisation avec Geosource</p>';
 		}
 	}
-	catch (Exception $e) {
-		watchdog('tic_geosource', 'Erreur a la synchronisation initiale: '.$e->getMessage());
-		$error = true;
+	else {
+		$pageContent['#markup'] = '<p>La synchronisation de Geosource vers Drupal doit être activée pour utiliser cette fonctionnalité</p>';
 	}
 	
 	drupal_set_title('Synchronisation avec Geosource');
-	if ($error == false) {
-		$pageContent['#markup'] = '<p>La synchronisation avec Geosource a été lancée ('.$queuedItems.' fiches ajoutées dans la file d\'attente)</p>';
-	}
-	else {
-		$pageContent['#markup'] = '<p>Une erreur est survenue lors du lancement de la synchronisation avec Geosource</p>';
-	}
 	
 	return drupal_render($pageContent);
 }
