@@ -50,6 +50,11 @@ function tic_geosource_process_record($uuid) {
 
 function tic_geosource_process_record_json($uuid) {
 	$client = tic_geosource_load_csw_client();
+	if (!is_object($client)) {
+		watchdog('tic_geosource', 'Could not load CSW client');
+		return;
+	}
+
 	try {
 		$record = $client->jsonGetRecordByUuid($uuid);
 	}
