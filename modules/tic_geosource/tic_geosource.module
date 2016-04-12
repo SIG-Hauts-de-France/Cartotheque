@@ -17,16 +17,21 @@ define('TIC_GEOSOURCE_GRANT_ID_ARCHIVE', 2);
 function tic_geosource_cron_queue_info() {
 	$time = variable_get('geosource_server_timeout', 60);
 	
+	// Synchro Geosource => Drupal
 	$queues['tic_geosource_sync'] = array(
 		'worker callback' => 'tic_geosource_queue_worker',
 		'skip on cron' => false,
 		'time' => $time*4,
 	);
+
+	// Synchro Geosource => Drupal (suppression)
 	$queues['tic_geosource_check_exists'] = array(
 		'worker callback' => 'tic_geosource_check_worker',
 		'skip on cron' => false,
 		'time' => $time*4,
 	);
+
+	// Synchro Drupal => Geosource (ressources en attente)
 	$queues['tic_geosource_push_pending'] = array(
 		'worker callback' => 'tic_geosource_push_worker',
 		'skip on cron' => false,
@@ -919,12 +924,18 @@ function tic_geosource_remove_record($node) {
 /*
  * Implements callback_queue_worker
  *
- * 
+ * Synchro Geosource => Drupal 
  */
 function tic_geosource_queue_worker($uuid) {
-	module_load_include('inc', 'tic_geosource', 'includes/tic_geosource.utils');
-	
-	tic_geosource_process_record_json($uuid);
+	$geosourceToDrupal = variable_get('geosource_geosource_to_drupal', 0);
+
+	if ($geosourceToDrupal != 0) {	
+		module_load_include('inc', 'tic_geosource', 'includes/tic_geosource.utils');
+		tic_geosource_process_record_json($uuid);
+	}
+	else {
+		watchdog('Ressource '.$uuid.' ignoree car synchro Geosource => Drupal desactivee');
+	}
 }
 
 /**
@@ -1040,18 +1051,30 @@ function tic_geosource_get_unpushed_maps() {
  *
  */
 function tic_geosource_check_worker($uuid) {
-	module_load_include('inc', 'tic_geosource', 'includes/tic_geosource.utils');
-	
-	$cronRunning = &drupal_static('tic_geosource_cron_run', false);
-	$cronRunning = true;
-	tic_geosource_check_record($uuid);
+	$geosourceToDrupal = variable_get('geosource_geosource_to_drupal', 0);
+	if ($geosourceToDrupal != 0) {
+		module_load_include('inc', 'tic_geosource', 'includes/tic_geosource.utils');
+		
+		$cronRunning = &drupal_static('tic_geosource_cron_run', false);
+		$cronRunning = true;
+		tic_geosource_check_record($uuid);
+	}
+	else {
+		watchdog('tic_geosource', 'Traitement de '.$uuid.' ignoré car synchro geosource => drupal désactivée');
+	}
 }
 
 /**
- * Cron worker
+ * Synchro Drupal => Geosource
  *
  */
 function tic_geosource_push_worker($nid) {
+	$drupalToGeosource = variable_get('geosource_drupal_to_geosource', 0);
+	if ($drupalToGeosource == 0) {
+		watchdog('tic_geosource', 'synchronisation du node '.$nid.' ignorée car synchronisation Drupal => Geosource désactivée');
+		return;
+	}
+
 	module_load_include('inc', 'tic_geosource', 'includes/tic_geosource.utils');
 	$cronRunning = &drupal_static('tic_geosource_cron_run', false);
 	$cronRunning = true;
