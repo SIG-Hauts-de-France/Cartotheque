@@ -153,7 +153,7 @@
 			</div>
 			<span class="telecharger">télécharger</span>
 		</div>
-		<p>les cartes de la Région<br/><strong><?php if($site_slogan) print $site_slogan; ?></strong></p>
+		<p>les cartes de la Région Hauts-de-France<br/><strong><?php if($site_slogan) print $site_slogan; ?></strong></p>
 		</section>
 		
 		<!-- Search block -->
