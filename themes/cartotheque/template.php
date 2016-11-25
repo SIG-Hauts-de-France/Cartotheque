@@ -405,4 +405,10 @@ function cartotheque_form_alter(&$form, $form_state, $form_id) {
 		$form['subject']['#required'] = FALSE;
 		$form['subject']['#access'] = FALSE;
 	}
+
+	// Ajouter un lien de reset de mot de passe
+	if ($form_id == 'user_login') {
+		$form['pass']['#description'] .= '   <span class="reset-password-link"><a href="/?q=user/password">Mot de passe perdu ?</a></span>';
+	}
+
 }
