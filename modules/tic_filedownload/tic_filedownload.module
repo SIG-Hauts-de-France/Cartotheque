@@ -36,6 +36,9 @@ function tic_filedownload_file_download($uri) {
   if (isset($_REQUEST['forcedl'])) {
 	  $headers['Content-Disposition'] = 'attachment; filename="'. mime_header_encode($file->filename) .'"';
   }
+  else {
+	$headers['Content-Disposition'] = 'filename="'.mime_header_encode($file->filename).'"';
+  }
 
   return $headers;
 }
