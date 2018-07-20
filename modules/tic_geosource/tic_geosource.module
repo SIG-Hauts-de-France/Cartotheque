@@ -97,6 +97,22 @@ function tic_geosource_menu() {
 	return $items;
 }
 
+/**
+ * Implements hook_menu_alter
+ * Override the Autocomplete deluxe path and callback to sort the Ajax result
+ */
+function tic_geosource_menu_alter(&$items){
+
+    $items['autocomplete_deluxe/taxonomy'] = array(
+        'title' => 'Autocomplete deluxe taxonomy',
+        'page callback' => 'tic_geosource_deluxe_taxonomy_callback',
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
+
+    return $items;
+
+}
 
 /**
  * Implements hook_form_alter
@@ -1340,4 +1356,93 @@ function tic_geosource_node_access_records($node) {
 	}
 	
 	return $grants;
+}
+
+/**
+ * Custom taxonomy callback, which also accepts an empty string search.
+ * Override from Autocomplete Deluxe Module
+ */
+function tic_geosource_deluxe_taxonomy_callback($field_name, $tags_typed = '', $limit = 10) {
+    $field = field_info_field($field_name);
+    //$field = field_info_field('field_mots_cles');
+    $use_synonyms = !empty($_GET['synonyms']);
+
+    // The user enters a comma-separated list of tags. We only autocomplete the last tag.
+    $tags_typed = drupal_explode_tags($tags_typed);
+    $tag_last = drupal_strtolower(array_pop($tags_typed));
+
+    $matches = array();
+
+    // Part of the criteria for the query come from the field's own settings.
+    $vids = array();
+    $vocabularies = taxonomy_vocabulary_get_names();
+    foreach ($field['settings']['allowed_values'] as $tree) {
+        // If the content taxonomy setting content_taxonomy_ignore_in_suggestions
+        // is set, then the vocabulary is ignored.
+        if (empty($tree['content_taxonomy_ignore_in_suggestions'])) {
+            $vids[] = $vocabularies[$tree['vocabulary']]->vid;
+        }
+    }
+
+    $query = db_select('taxonomy_term_data', 't');
+    $query->addTag('translatable');
+    $query->addTag('term_access');
+
+    if (module_exists('synonyms') && !empty($use_synonyms)) {
+        $query->leftJoin('field_data_synonyms_synonym', 'fdss', 'fdss.entity_id = t.tid');
+    }
+
+    if ($tag_last != '') {
+        // Do not select already entered terms.
+        if (!empty($tags_typed)) {
+            $query->condition('t.name', $tags_typed, 'NOT IN');
+        }
+        // Select rows that match by term name.
+        $query
+            ->fields('t', array('tid', 'name'))
+            ->condition('t.vid', $vids);
+
+        if (module_exists('synonyms') && !empty($use_synonyms)) {
+            $or = db_or();
+            $or->condition('fdss.synonyms_synonym_value', '%' . db_like($tag_last) . '%', 'LIKE');
+            $or->condition('t.name', '%' . db_like($tag_last) . '%', 'LIKE');
+            $query->condition($or);
+        }
+        else {
+            $query->condition('t.name', '%' . db_like($tag_last) . '%', 'LIKE');
+        }
+
+        if (isset($limit) && $limit > 0) {
+            $query->range(0, $limit);
+        }
+        $query->orderBy('t.name', 'ASC');
+        $tags_return = $query->execute()
+            ->fetchAllKeyed();
+    }
+    else {
+        $query
+            ->fields('t', array('tid', 'name'))
+            ->condition('t.vid', $vids);
+
+        if (isset($limit) && $limit > 0) {
+            $query->range(0, $limit);
+        }
+        $query->orderBy('t.name', 'ASC');
+        $tags_return = $query->execute()
+            ->fetchAllKeyed();
+    }
+
+    $prefix = count($tags_typed) ? drupal_implode_tags($tags_typed) . ', ' : '';
+
+    $term_matches = array();
+    foreach ($tags_return as $tid => $name) {
+        $n = $name;
+        // Term names containing commas or quotes must be wrapped in quotes.
+        if (strpos($name, ',') !== FALSE || strpos($name, '"') !== FALSE) {
+            $n = '"' . str_replace('"', '""', $name) . '"';
+        }
+        $term_matches[$prefix . $n] = check_plain($name);
+    }
+
+    drupal_json_output($term_matches);
 }
