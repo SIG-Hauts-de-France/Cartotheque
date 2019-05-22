@@ -1,0 +1,10 @@
+name = TIC Redmine Data Importer
+description = Permet de récupérer les données de remplissage de formulaire de carte depuis Redmine
+core = 7.x
+version = 1
+package = Redmine
+
+files[] = tic_redmine_data_importer.module
+
+dependencies[] = redmine_rest_api
+dependencies[] = tic_geosource

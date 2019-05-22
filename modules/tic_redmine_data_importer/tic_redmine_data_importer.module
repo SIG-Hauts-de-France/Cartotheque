@@ -1,0 +1,104 @@
+<?php
+
+//creation du path AJAX pour la recherche de carte selon le numéro de carte
+function tic_redmine_data_importer_menu()
+{
+	$items = array();
+	$items['tic_redmine_data_importer/get/number/%'] = array(
+			'title'		    => 'AJAX Tic Redmine Data Importer Get Number',
+			'page callback' => 'tic_redmine_data_importer_ajax_search_callback',
+			'page arguments'    => array(3),
+			'access arguments'  => array("access content"),
+			'type' 		    => MENU_CALLBACK
+	);
+	return $items;
+}
+
+//callback
+function tic_redmine_data_importer_ajax_search_callback($number)
+{
+	$number = trim($number);
+
+	$end_reached = false;
+	$offset = 0;
+	$total = 0;
+	$limit = 100;
+	$issues_all = array();
+	while (!$end_reached)
+	{
+		$issues = redmine_rest_api_call("issues", array("project_id" => 2, "status_id" => 7, "offset" => $offset, "limit" => $limit, "cf_1" => $number));
+
+		$total = $issues->decoded_data->total_count;
+		$offset = $offset + $limit;
+		$issues_all = array_merge($issues_all, $issues->decoded_data->issues);
+		
+		if ($issues->code !== 200 || $offset >= $total)
+		   $end_reached = true;
+	}
+
+	//We make the search here to not communicate all fields
+	$issue_found_index = -1;
+
+	$issues_all_max = count($issues_all);
+	for ($i = 0; $i < $issues_all_max; $i++)
+	{
+		//perform the search by cf custom field : card number
+		if (strcmp(trim($issues_all[$i]->custom_fields[0]->value), $number) == 0)
+		{
+			$issue_found_index = $i;
+			break ;
+		}
+	}
+
+	$toJsonOutput = array("status" => 1); //check Redmine response set default to 1
+	$toJsonOutput['found'] = ($issue_found_index > -1) ? 1 : 0;
+	$toJsonOutput['issue'] = ($issue_found_index > -1) ? $issues_all[$issue_found_index] : false;
+
+	drupal_json_output($toJsonOutput);
+}
+
+//Surcharge du formulaire de création de carte pour y ajouter le bouton d'import depuis Redmine
+function tic_redmine_data_importer_form_alter(&$form, &$form_state, $form_id)
+{
+ 	if ($form_id !== "carte_node_form")
+		return ;
+
+	//surcharger les styles CSS pour placer le bouton à droite du numéro de carte
+
+	$mod_css = "/* Téicée - CSS Addon : Module TIC Redmine Data Importer Start */";
+	//bouton
+	$mod_css .= "#redmine_data_importer_call_button {height: 28px;}";
+	$mod_css .= "#edit-redmine-data-importer-call {display:inline-block;}";
+
+	//champs numéro de carte
+	$mod_css .= "#edit-field-numero-de-carte {display:inline-block;width:calc(98% - 212px);}";
+	$mod_css .= "/* Téicée - CSS Addon : Module TIC Redmine Data Importer End */";
+
+	drupal_add_css($mod_css, "inline");
+	drupal_add_library("system", "drupal.ajax");
+
+	//inject the required JS file into the current page
+	$module_path = drupal_get_path("module", "tic_redmine_data_importer");
+	drupal_add_js($module_path."/resources/js/main.js");
+
+	//overrride :
+	drupal_add_js($module_path."/resources/js/override.js");
+
+ 	//ajoute le bouton d'import Redmine
+	$form['redmine_data_importer_call'] = array(
+	    "#type"		=> "item",
+	    "#markup"		=> "<button id=\"redmine_data_importer_call_button\" onclick=\"javascript:tic_redmine_data_importer_init();return false;\">".t('Importer depuis Redmine')."</button>",
+	    "#weight"		=> 0
+	);
+
+	//place le bouton en haut de page (première position) -> evolution faire que le module puisse être attaché à un champ depuis l'administration
+	//get the weight of Numéro de carte and place the button to weight + 1 to be next and make the CSS mod functionnal
+	/*
+		foreach ($form as $field)
+		{
+			$form[$field]['#weight']++;
+		}
+	*/
+}
+
+?>

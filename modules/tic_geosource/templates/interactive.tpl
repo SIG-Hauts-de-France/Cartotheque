@@ -175,7 +175,7 @@ $uuid?
                      <gmd:identifier>
                         <gmd:MD_Identifier>
                            <gmd:code>
-                              <gmx:Anchor xlink:href="http://localhost:8080/geosource/srv/fre/thesaurus.download?ref=external.theme.inspire-theme">geonetwork.thesaurus.external.theme.inspire-theme</gmx:Anchor>
+                              <gmx:Anchor xlink:href="http://geosource.hautsdefrance.fr/geosource/srv/fre/thesaurus.download?ref=external.theme.inspire-theme">geonetwork.thesaurus.external.theme.inspire-theme</gmx:Anchor>
                            </gmd:code>
                         </gmd:MD_Identifier>
                      </gmd:identifier>
@@ -257,7 +257,7 @@ $uuid?
                 <gmd:URL>{$url}</gmd:URL>
               </gmd:linkage>
               <gmd:protocol>
-                <gco:CharacterString>WWW:DOWNLOAD-1.0-http--download</gco:CharacterString>
+                <gco:CharacterString>WWW:LINK-1.0-http--link</gco:CharacterString>
               </gmd:protocol>
               <gmd:name>
                 <gmx:MimeFileType xmlns:gmx="http://www.isotc211.org/2005/gmx" type="" />

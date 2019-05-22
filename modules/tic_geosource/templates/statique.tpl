@@ -68,10 +68,20 @@ $uuid?
           <gmd:date>
             <gmd:CI_Date>
               <gmd:date>
-                <gco:Date>{$creation_date}</gco:Date>
+                <gco:Date>{$publication_date}</gco:Date>
               </gmd:date>
               <gmd:dateType>
                 <gmd:CI_DateTypeCode codeList="http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#CI_DateTypeCode" codeListValue="publication" />
+              </gmd:dateType>
+            </gmd:CI_Date>
+          </gmd:date>
+          <gmd:date>
+            <gmd:CI_Date>
+              <gmd:date>
+                <gco:Date>{$creation_date}</gco:Date>
+              </gmd:date>
+              <gmd:dateType>
+                <gmd:CI_DateTypeCode codeList="http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#CI_DateTypeCode" codeListValue="creation" />
               </gmd:dateType>
             </gmd:CI_Date>
           </gmd:date>
@@ -181,7 +191,7 @@ $uuid?
                      <gmd:identifier>
                         <gmd:MD_Identifier>
                            <gmd:code>
-                              <gmx:Anchor xlink:href="http://localhost:8080/geosource/srv/fre/thesaurus.download?ref=external.theme.inspire-theme">geonetwork.thesaurus.external.theme.inspire-theme</gmx:Anchor>
+                              <gmx:Anchor xlink:href="http://geosource.hautsdefrance.fr/geosource/srv/fre/thesaurus.download?ref=external.theme.inspire-theme">geonetwork.thesaurus.external.theme.inspire-theme</gmx:Anchor>
                            </gmd:code>
                         </gmd:MD_Identifier>
                      </gmd:identifier>
@@ -249,6 +259,15 @@ $uuid?
           </gmd:version>
         </gmd:MD_Format>
       </gmd:distributionFormat>
+[$formats]
+        <gmd:distributionFormat>
+        <gmd:MD_Format>
+          <gmd:name>
+            <gco:CharacterString>PNG</gco:CharacterString>
+          </gmd:name>
+        </gmd:MD_Format>
+      </gmd:distributionFormat>
+[/$format]
       <gmd:transferOptions>
         <gmd:MD_DigitalTransferOptions>
 [$files]
@@ -258,7 +277,7 @@ $uuid?
                 <gmd:URL>{$url}</gmd:URL>
               </gmd:linkage>
               <gmd:protocol>
-                <gco:CharacterString>WWW:DOWNLOAD-1.0-http--download</gco:CharacterString>
+                <gco:CharacterString>WWW:LINK-1.0-http--link</gco:CharacterString>
               </gmd:protocol>
               <gmd:name>
                 <gmx:MimeFileType xmlns:gmx="http://www.isotc211.org/2005/gmx" type="" />
@@ -300,7 +319,7 @@ $uuid?
         <gmd:DQ_DomainConsistency>
           <gmd:result xmlns:gn="http://www.fao.org/geonetwork" xmlns:gmx="http://www.isotc211.org/2005/gmx" xmlns:srv="http://www.isotc211.org/2005/srv" xmlns:xlink="http://www.w3.org/1999/xlink">
             <gmd:DQ_ConformanceResult>
-              <gmd:specification>
+              <gmd:citation>
                 <gmd:CI_Citation>
                   <gmd:title>
                     <gco:CharacterString>{$map_title}</gco:CharacterString>
@@ -316,7 +335,7 @@ $uuid?
                     </gmd:CI_Date>
                   </gmd:date>
                 </gmd:CI_Citation>
-              </gmd:specification>
+              </gmd:citation>
               <gmd:explanation gco:nilReason="missing">
                 <gco:CharacterString />
               </gmd:explanation>

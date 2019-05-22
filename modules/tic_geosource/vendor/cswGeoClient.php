@@ -62,15 +62,17 @@ class cswGeoClient {
      * @return bool Request success / error
      */
     private function _callHTTPCSW($request) {
-		$request->setConfig('timeout', $this->_timeout);
-
+    	$request->setConfig('timeout', $this->_timeout);
         try {
-            $resp= $request->send();
+
+			$resp = $request->send();
+            //watchdog('tic_geosource', "Body : ".$resp->getBody());
             //if (200 == $resp->getStatus()) {
+
             if (200 == $resp->getStatus()) {
               $this->_response = $resp->getBody();
               $cookies = $resp->getCookies();
-              foreach ($cookies as $cook) {                  
+              foreach ($cookies as $cook) {
                   if ($cook['name']=='JSESSIONID') $this->_sessionID = $cook['value'];
               }
               return true;
@@ -292,7 +294,7 @@ class cswGeoClient {
 		$urlVars = array(
 			'id' => $geoid,
 		);
-		
+
 		foreach ($categories as $cat) {
 			switch($cat) {
 				case 'map':
@@ -305,7 +307,7 @@ class cswGeoClient {
 		}
 		
 		$url->setQueryVariables($urlVars);
-		
+
 		// auth needed
 		$this->_authentication($request);
 		
@@ -348,31 +350,32 @@ class cswGeoClient {
 		
 		return false;
 	}
-	
-	public function publish($geoid) {
-		$request = new HTTP_Request2($this->_authentAddress.'/srv/eng/md.publish');
-		$request->setMethod(HTTP_Request2::METHOD_GET);
-		$url = $request->getUrl();
-		
-		$urlVars = array(
-			'ids' => $geoid,
-		);
-		
-		$url->setQueryVariables($urlVars);
-		
-		// auth needed
-		$this->_authentication($request);
-		
-		return $this->_callHTTPCSW($request);
-	}
-	
+
+    public function publish($geoid) {
+        $request = new HTTP_Request2($this->_authentAddress.'/srv/fre/md.publish');
+        $request->setMethod(HTTP_Request2::METHOD_GET);
+        $url = $request->getUrl();
+
+        $urlVars = array(
+            'id' => $geoid,
+        );
+
+        $url->setQueryVariables($urlVars);
+
+        // auth needed
+        $this->_authentication($request);
+
+        return $this->_callHTTPCSW($request);
+    }
+
+
 	public function unpublish($geoid) {
 		$request = new HTTP_Request2($this->_authentAddress.'/srv/eng/md.unpublish');
 		$request->setMethod(HTTP_Request2::METHOD_GET);
 		$url = $request->getUrl();
 		
 		$urlVars = array(
-			'ids' => $geoid,
+			'id' => $geoid,
 		);
 		
 		$url->setQueryVariables($urlVars);
@@ -382,6 +385,85 @@ class cswGeoClient {
 		
 		return $this->_callHTTPCSW($request);
 	}
+
+    /**
+     * Rendre public une carte
+	 * @param $geoid
+     * @return bool
+     * @throws HTTP_Request2_LogicException
+     */
+    public function setPrivileges($geoid) {
+        $request = new HTTP_Request2($this->_authentAddress.'/srv/fre/metadata.select');
+        $this->_authentication($request);
+        $request->setMethod(HTTP_Request2::METHOD_GET);
+        $url = $request->getUrl();
+
+        $urlVars = array(
+            'id' => $geoid,
+            'selected' => "add",
+        );
+
+        $url->setQueryVariables($urlVars);
+
+        $this->_callHTTPCSW($request);
+
+        $request->setUrl($this->_authentAddress.'/srv/fre/xml.metadata.batch.update.privileges');
+        $url = $request->getUrl();
+        // _1_1(Group All action View) _1_1(Group All action Download)
+        $url->setQuery("_1_0&_1_1");
+
+        $done = $this->_callHTTPCSW($request);
+
+        $request->setUrl($this->_authentAddress.'/srv/fre/metadata.select');
+        $url = $request->getUrl();
+        $urlVars = array(
+            'id' => $geoid,
+            'selected' => "remove",
+        );
+        $url->setQueryVariables($urlVars);
+
+        $this->_callHTTPCSW($request);
+
+        return $done;
+
+    }
+
+    /**
+     * Modification des privileges pour rendre la carte privée
+     * @param $geoid
+     * @return bool
+     * @throws HTTP_Request2_LogicException
+     */
+    public function unsetPrivileges($geoid) {
+        $request = new HTTP_Request2($this->_authentAddress.'/srv/fre/metadata.select');
+        $this->_authentication($request);
+        $request->setMethod(HTTP_Request2::METHOD_GET);
+        $url = $request->getUrl();
+
+        $urlVars = array(
+            'id' => $geoid,
+            'selected' => "add",
+        );
+
+        $url->setQueryVariables($urlVars);
+
+        $this->_callHTTPCSW($request);
+
+        $request->setUrl($this->_authentAddress.'/srv/fre/xml.metadata.batch.update.privileges');
+        $done = $this->_callHTTPCSW($request);
+
+        $request->setUrl($this->_authentAddress.'/srv/fre/metadata.select');
+        $url = $request->getUrl();
+        $urlVars = array(
+            'id' => $geoid,
+            'selected' => "remove",
+        );
+        $url->setQueryVariables($urlVars);
+
+        $this->_callHTTPCSW($request);
+
+        return $done;
+    }
 	
 	/**
 	 * retrieve csw repository capabilities
