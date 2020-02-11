@@ -33,7 +33,7 @@ header * {
 }
 
 header img{
-	float:left; 
+	float:left;
 	margin:40px;
 	margin-left: -15px;
 	/** fix bug safari **/
@@ -221,10 +221,10 @@ section.searchMap{
 	padding-bottom:15px;
 }
 .input-group span.search{
-background-image: url("../images/i_search.png");
-background-repeat: no-repeat;
-padding-right: 32px;
-background-position: 12px 5px;
+	background-image: url("../images/i_search.png");
+	background-repeat: no-repeat;
+	padding-right: 32px;
+	background-position: 12px 5px;
 }
 p.searchMore{
 	margin-top:40px;
@@ -264,7 +264,7 @@ section.actus div.maps div.mapZoom, div.map div.mapZoom {
 	background:#c1c1c1;
 	-webkit-box-shadow: 2px 2px 4px 2px rgba(0,0,0,0.2);
 	box-shadow: 2px 2px 4px 2px rgba(0,0,0,0.2);
-	
+
 }
 
 div.mapZoom .img-responsive{
@@ -310,56 +310,56 @@ section.actus div.view-content div.mapZoom img { margin-bottom: 0; }
 
 
 .rslides {
-  position: relative;
-  list-style: none;
-  overflow: hidden;
-  width: 100%;
-  padding: 0;
-  margin: 0;
+	position: relative;
+	list-style: none;
+	overflow: hidden;
+	width: 100%;
+	padding: 0;
+	margin: 0;
 }
 
 ul.rslides li {
-  -webkit-backface-visibility: hidden;
-  position: absolute;
-  display: none;
-  width: 100%;
-  left: 0;
-  top: 0;
-  margin: 0;
+	-webkit-backface-visibility: hidden;
+	position: absolute;
+	display: none;
+	width: 100%;
+	left: 0;
+	top: 0;
+	margin: 0;
 }
 
 .rslides li:first-child {
-  position: relative;
-  display: block;
-  float: left;
-  }
+	position: relative;
+	display: block;
+	float: left;
+}
 
 .rslides img {
-  display: block;
-  height: auto;
-  float: left;
-  width: 100%;
-  border: 0;
-  }
-  
-  .callbacks_nav.next {
-    left: auto;
-    background-position: right top;
-    right: 0px;
+	display: block;
+	height: auto;
+	float: left;
+	width: 100%;
+	border: 0;
+}
+
+.callbacks_nav.next {
+	left: auto;
+	background-position: right top;
+	right: 0px;
 }
 .callbacks_nav {
-    position: absolute;
-    top: 52%;
-    left: 0px;
-    opacity: 0.7;
-    z-index: 3;
-    text-indent: -9999px;
-    overflow: hidden;
-    text-decoration: none;
-    height: 61px;
-    width: 38px;
-    background: transparent url("../images/themes.gif") no-repeat scroll left top;
-    margin-top: -45px;
+	position: absolute;
+	top: 52%;
+	left: 0px;
+	opacity: 0.7;
+	z-index: 3;
+	text-indent: -9999px;
+	overflow: hidden;
+	text-decoration: none;
+	height: 61px;
+	width: 38px;
+	background: transparent url("../images/themes.gif") no-repeat scroll left top;
+	margin-top: -45px;
 }
 
 
@@ -383,7 +383,7 @@ div.orderList{
 	/*margin-right:20px;*/
 }
 div.orderList label{
-display:none;
+	display:none;
 }
 div.orderList span, div.form-type-bef-link {
 	display:inline-block;
@@ -496,15 +496,16 @@ div.infoMap dt, .infosGenerales dt{
 	float:left;
 	/*margin-right: 4px;*/
 }
- .infosGenerales dt{
-	 width:140px;
-	 text-align :right;
-	 /*margin-right:8px;*/
+.infosGenerales dt{
+	width:140px;
+	text-align :right;
+	/*margin-right:8px;*/
 	text-align: left;
- }
+}
 
 .infosGenerales dd:before{
-	content: ": ";
+    content: none;
+	/*content: ": ";*/
 	/*color: white;*/
 	vertical-align: text-top;
 }
@@ -513,17 +514,17 @@ div.infoMap dt, .infosGenerales dt{
 	display: inline-block;
 }
 
- .infosGenerales dd{
-	 margin-left:158px;
- }
+.infosGenerales dd{
+	margin-left:158px;
+}
 .infosGenerales dt, .infosGenerales dd{
 	font-size:13px;
 	font-weight:400;
 }
- .infosGenerales dl.themaMap dt{
-	 /*border-left: solid 1px #94a6b0;*/
-	 /*width:110px;*/
-	 /*margin-left:50px;*/
+.infosGenerales dl.themaMap dt{
+	/*border-left: solid 1px #94a6b0;*/
+	/*width:110px;*/
+	/*margin-left:50px;*/
 
 	/*
 	text-align: left;
@@ -532,7 +533,7 @@ div.infoMap dt, .infosGenerales dt{
 	*/
 
 	width: auto;
- }
+}
 div.descMap p{
 	text-align:justify;
 }
@@ -847,7 +848,7 @@ div.linkTheMap >  span.imgMap span.linkIcone{
 div.linkTheMap >  span.pdfMap span.linkIcone{
 	background-position: -68px 0;
 }
-div.keyWordMap:before{
+div.keyWordMap:before, div.thematique-hdf-map:before{
 	content: "";
 	height: 1px;
 	width: 100%;
@@ -855,11 +856,11 @@ div.keyWordMap:before{
 	display: block;
 	margin-top: 20px;
 }
-div.keyWordMap{
-	font-size: 13px;
+div.keyWordMap, div.thematique-hdf-map{
+    font-size: 13px;
 }
-div.keyWordMap span.keyWord{
-	font-style:italic;
+div.keyWordMap span.keyWord, div.thematique-hdf-map span.thematique-hdf{
+    font-style:italic;
 }
 
 .collectionsMap{
@@ -872,7 +873,7 @@ div.keyWordMap span.keyWord{
 	line-height:35px;
 }
 .collectionsMap th{
-border-bottom:0;
+	border-bottom:0;
 }
 
 
@@ -892,57 +893,57 @@ form.node-form fieldset .fieldset-legend { margin-top: 0.5em; padding-left: 15px
 form.node-form label { display: block; }
 
 input.form-text:focus, input.form-file:focus, textarea.form-textarea:focus, select.form-select:focus {
-    color: #000;
-    border-color: #ACE;
+	color: #000;
+	border-color: #ACE;
 }
 input.form-file, textarea.form-textarea, select.form-select {
-    padding: 2px;
-    border-width: 1px;
-    border-style: solid;
-    border-color: #999 #CCC #CCC;
-    -moz-border-top-colors: none;
-    -moz-border-right-colors: none;
-    -moz-border-bottom-colors: none;
-    -moz-border-left-colors: none;
-    border-image: none;
-    background: #FFF none repeat scroll 0% 0%;
-    color: #333;
-    display:inline;
-    margin-right: 5px;
+	padding: 2px;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #999 #CCC #CCC;
+	-moz-border-top-colors: none;
+	-moz-border-right-colors: none;
+	-moz-border-bottom-colors: none;
+	-moz-border-left-colors: none;
+	border-image: none;
+	background: #FFF none repeat scroll 0% 0%;
+	color: #333;
+	display:inline;
+	margin-right: 5px;
 }
 ul.tips, div.description, .form-item div.description {
-    margin: 5px 0px;
-    line-height: 1.231em;
-    font-size: 0.923em;
-    color: #666;
+	margin: 5px 0px;
+	line-height: 1.231em;
+	font-size: 0.923em;
+	color: #666;
 }
 input.form-submit, a.button {
-    cursor: pointer;
-    padding: 4px 17px;
-    margin-bottom: 1em;
-    margin-right: 1em;
-    color: #5A5A5A;
-    text-align: center;
-    font-weight: normal;
-    font-size: 1.077em;
-    font-family: "Lucida Grande",Verdana,sans-serif;
-    border-width: 1px;
-    border-style: solid;
-    border-color: #E4E4E4 #D2D2D2 #B4B4B4;
-    -moz-border-top-colors: none;
-    -moz-border-right-colors: none;
-    -moz-border-bottom-colors: none;
-    -moz-border-left-colors: none;
-    border-image: none;
-    background: transparent url("images/buttons.png") repeat-x scroll 0px 0px;
-    border-radius: 20px;
+	cursor: pointer;
+	padding: 4px 17px;
+	margin-bottom: 1em;
+	margin-right: 1em;
+	color: #5A5A5A;
+	text-align: center;
+	font-weight: normal;
+	font-size: 1.077em;
+	font-family: "Lucida Grande",Verdana,sans-serif;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #E4E4E4 #D2D2D2 #B4B4B4;
+	-moz-border-top-colors: none;
+	-moz-border-right-colors: none;
+	-moz-border-bottom-colors: none;
+	-moz-border-left-colors: none;
+	border-image: none;
+	/*	background: transparent url("images/buttons.png") repeat-x scroll 0px 0px; */
+	border-radius: 20px;
 }
 
 #ui-id-2{
-    height: initial !important;
+	height: initial !important;
 }
 #ui-id-4{
-    height: initial !important;
+	height: initial !important;
 }
 
 #ui-id-4 select{
@@ -1035,8 +1036,8 @@ input.form-submit, a.button {
 	color: white;
 	background-color: #767A7C;
 	padding:15px;
-     	border-radius:3px;
-     	box-shadow:0 0 2px rgba(0,0,0,.5);
+	border-radius:3px;
+	box-shadow:0 0 2px rgba(0,0,0,.5);
 	transition: all .25s;
 	font-size: 0.7em;
 	display: none;
@@ -1082,7 +1083,7 @@ input.form-submit, a.button {
 	background-color: #767A7C;
 	padding: 15px;
 	border-radius: 3px;
-     	box-shadow:0 0 2px rgba(0,0,0,.5);
+	box-shadow:0 0 2px rgba(0,0,0,.5);
 	display: block;
 }
 
@@ -1180,9 +1181,12 @@ input.form-submit, a.button {
 	border: 1px solid #95A6B0;
 }
 
+
 .thematiquedd:before{
-	content: ": ";
+    content: none;
+    
 }
+
 
 /*.thematiquedd a {*/
 .themaMap a {
@@ -1204,7 +1208,8 @@ input.form-submit, a.button {
 }
 
 .themaMap dd:before{
-	color: #fff;
+        color: #fff;
+	content: none;
 }
 
 #edit-submit-map-list{
@@ -1224,7 +1229,8 @@ input.form-submit, a.button {
 }
 
 .sourceDonnees dd:before{
-	color: #fff;
+/*    color: #fff; */
+    content: none;
 }
 
 .sourceDonnees dd{
@@ -1235,11 +1241,24 @@ input.form-submit, a.button {
 	display: block;
 }
 
+.sourceDonnees dd .field-name-field-url-source-des-donnees,
+.sourceDonnees dd .field-name-field-url-source-des-donnees .field-item{
+	display: block;
+}
+
 /**
  * Correction bug affichage firefox 24
  * Firefox 28- (https://jeffclayton.wordpress.com/2014/07/22/firefox-css-hacks-collection/)
  *
  */
 @supports ( not ((-moz-appearance:none) and (list-style-type:japanese-formal) ) ) {
-    div.linkMap { position: relative !important; } 
+	div.linkMap { position: relative !important; }
+}
+
+/**
+ * Fix du 8-11-2019 par tlemignan@teicee.com pour permettre l'affichage des messages d'erreurs.
+ * L'affichage du menu étant fixé par dessus la page courante, il faut donc appliquer la même rêgle à tous les blocs déjà pris en charge
+ */
+.messages.error {
+    margin-top: 200px;
 }
