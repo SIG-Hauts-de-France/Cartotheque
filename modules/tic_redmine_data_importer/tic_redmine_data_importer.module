@@ -19,22 +19,6 @@ function tic_redmine_data_importer_ajax_search_callback($number)
 {
 	$number = trim($number);
 
-	// check here that the $number is not already existing in database
-
-	$toJsonOutput = array("status" => 0, "already_recorded" => false); //check Redmine response set default to 1
-
-	$query = db_select("field_data_field_numero_de_carte", "nc");
-	$query->fields("nc", array("field_numero_de_carte_value"));
-	$query->condition("nc.deleted", 0, "=");
-	$query->condition("nc.field_numero_de_carte_value", $number, "=");
-	$query->range(0, 1);
-	$result = $query->execute();
-
-	$data = $result->fetchAll();
-
-	if (isset($data[0]->field_numero_de_carte_value))
-		$toJsonOutput['already_recorded'] = true;
-
 	$end_reached = false;
 	$offset = 0;
 	$total = 0;
@@ -45,11 +29,12 @@ function tic_redmine_data_importer_ajax_search_callback($number)
 		$issues = redmine_rest_api_call("issues", array("project_id" => 2, "status_id" => 7, "offset" => $offset, "limit" => $limit, "cf_1" => $number));
 
 		$total = $issues->decoded_data->total_count;
-		$offset = $offset + $limit;
 		$issues_all = array_merge($issues_all, $issues->decoded_data->issues);
 		
-		if ($issues->code !== 200 || $offset >= $total)
+		if (intval($issues->code) !== 200 || $offset >= $total) {
 		   $end_reached = true;
+		}
+		$offset = $offset + $limit;
 	}
 
 	//We make the search here to not communicate all fields
@@ -66,37 +51,33 @@ function tic_redmine_data_importer_ajax_search_callback($number)
 		}
 	}
 
-	$toJsonOutput['status'] = 1;	//check Redmine response set default to 1
+	$toJsonOutput = array("status" => 1); //check Redmine response set default to 1
 	$toJsonOutput['found'] = ($issue_found_index > -1) ? 1 : 0;
-	$toJsonOutput['issue'] = ($issue_found_index > -1) ? $issues_all[$issue_found_index] : false;
-
-	/*
-	*
-	*	Call to TIC Taxonomy Relational Dictionary
-	*	
-	*	Start
-	*/
-
-	if ($toJsonOutput['issue'] !== false)
+	//$toJsonOutput['issues'] = $issues_all;
+	$toJsonOutput['offset'] = $offset;
+	$toJsonOutput['limit'] = $limit;
+	$toJsonOutput['total'] = $total;
+	#---------------------------------------------------------------------------
+	# Demande : 796
+	#---------------------------------------------------------------------------
+	// ajouter ici la détection de la valeur  'Intégration Cartothèque' à 'Oui'
+	$toJsonOutput['integration_cartotheque'] = 0;
+	if ($toJsonOutput['found'] == 1)
 	{
-
-		//get the "theme_iso" value and send it to the module
-		$term_name = "Localisation (info et services de positionnement)";
-		$vocabulary_machine_name = "themes_ISO";
-
-		$tic_taxonomy_relational_dictionary = tic_taxonomy_relational_dictionary_search_by_term($term_name, $vocabulary_machine_name);
-
-		$toJsonOutput['tic_taxonomy_relational_dictionary_node'] = $tic_taxonomy_relational_dictionary;
-
-		//access to the good custom field
-
+		$max = count($issues_all[$issue_found_index]->custom_fields);
+		for ($i = 0; $i < $max; $i++)
+		{
+			if ($issues_all[$issue_found_index]->custom_fields[$i]->name == "Intégration Cartothèque")
+			{
+				$toJsonOutput['integration_cartotheque'] = ($issues_all[$issue_found_index]->custom_fields[$i]->value == "Oui")
+					? 1 : 0;
+			}
+		}
 	}
-	/*
-	*
-	*	Call to TIC Taxonomy Relational Dictionary
-	*	
-	*	End
-	*/
+	#----------------------------------------------------------------------------
+
+
+	$toJsonOutput['issue'] = ($issue_found_index > -1) ? $issues_all[$issue_found_index] : false;
 
 	drupal_json_output($toJsonOutput);
 }
@@ -108,11 +89,11 @@ function tic_redmine_data_importer_form_alter(&$form, &$form_state, $form_id)
 		return ;
 
 	//surcharger les styles CSS pour placer le bouton à droite du numéro de carte
-
 	$mod_css = "/* Téicée - CSS Addon : Module TIC Redmine Data Importer Start */";
+
 	//bouton
-	$mod_css .= "#redmine_data_importer_call_button {height: 28px;}";
-	$mod_css .= "#edit-redmine-data-importer-call {display:inline-block;}";
+	$mod_css .= "#redmine_data_importer_call_button {height: 34px;}";
+	$mod_css .= "#edit-redmine-data-importer-call {display:inline-block;vertical-align: bottom;}";
 
 	//champs numéro de carte
 	$mod_css .= "#edit-field-numero-de-carte {display:inline-block;width:calc(98% - 212px);}";
@@ -121,68 +102,17 @@ function tic_redmine_data_importer_form_alter(&$form, &$form_state, $form_id)
 	drupal_add_css($mod_css, "inline");
 	drupal_add_library("system", "drupal.ajax");
 
-	//inject the required JS file into the current page
 	$module_path = drupal_get_path("module", "tic_redmine_data_importer");
-	drupal_add_js($module_path."/resources/js/main.js");
 
 	//overrride :
 	drupal_add_js($module_path."/resources/js/override.js");
 
-	/*
-	*
-	*	Call to TIC Taxonomy Relational Dictionary
-	*	
-	*	Start
-	*/
-
-	//load all available nodes for this content
-	$node_group_name = "carto themes auto link";
-
-	//$node_group_list = tic_taxonomy_relational_dictionary_search_by_node_group_name($node_group_name, true);
-
-	$node_group_list = tic_taxonomy_relational_dictionary_import(array($node_group_name));
-
-	drupal_add_js("var tic_trd_node_group = ".json_encode($node_group_list).";//console.log('node group : ', tic_trd_node_group);", "inline");
-	/*
-	*
-	*	Call to TIC Taxonomy Relational Dictionary
-	*	
-	*	End
-	*/
-
-	/*
-	*	A PLACER DANS TIC GEO SOURCE ? Formulaire de création de carte
-	*/
-
-	$form['thematiques_hdf_parent'] = array(
-		"#type"			=> "select",
-		"#title"		=> t("Thématiques Parentes HdF (Hauts de France)"),
-		"#options"		=> tic_taxonomy_relational_dictionary_form_select_output("thematiques_HdF", 0),
-		"#weight"		=> 2,
-		"#required"		=> true,
-		"#attributes"	=> array(
-							"id"		=> array("select-thematiques-hdf-parent"),
-							"onchange"	=> array("tic_redmine_data_importer_thematical_select_parent_onchange()")
-						)
-	);
-
-	$form['thematiques_hdf_children'] = array(
-		"#type"			=> "select",
-		"#title"		=> t("Thématiques Enfants HdF (Hauts de France)"),
-		"#options"		=> array(),
-		"#weight"		=> 3,
-		"#required"		=> false,
-		"#attributes"	=> array(
-							"id"		=> array("select-thematiques-hdf-children"),
-							"onload"	=> array("tic_redmine_data_importer_thematical_select_children_hide_init()"),
-						)
-	);
-
-	drupal_add_css(".form-item.form-type-select.form-item-thematiques-hdf-children {display:none;}", "inline");
+	//inject the required JS file into the current page
+	drupal_add_js($module_path."/resources/js/main.js");
 
  	//ajoute le bouton d'import Redmine
 	$form['redmine_data_importer_call'] = array(
-	    "#type"			=> "item",
+	    "#type"		=> "item",
 	    "#markup"		=> "<button id=\"redmine_data_importer_call_button\" onclick=\"javascript:tic_redmine_data_importer_init();return false;\">".t('Importer depuis Redmine')."</button>",
 	    "#weight"		=> 0
 	);
@@ -195,6 +125,16 @@ function tic_redmine_data_importer_form_alter(&$form, &$form_state, $form_id)
 			$form[$field]['#weight']++;
 		}
 	*/
+
+	// removing children from list
+	$options_max = count($form['field_thematique_hdf']['und']['#options']);
+	$parents = array();
+	foreach($form['field_thematique_hdf']['und']['#options'] as $key => $value)
+	{
+		if ($value[0] !== "-")
+		   $parents[$key] = $value;
+	}
+	$form['field_thematique_hdf']['und']['#options'] = $parents;
 }
 
 ?>
