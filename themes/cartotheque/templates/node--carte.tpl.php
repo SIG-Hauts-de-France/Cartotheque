@@ -165,32 +165,43 @@ $type_carte = strtolower($node->field_type_de_carte['und'][0]['value']);
 			$infosGenerales .= "<dt>".$content['field_echelle']['#title']."</dt>";
 			$infosGenerales .= "<dd>".render($content['field_echelle'])."</dd>";
 		}
-		$infosGenerales .= "</dl>";
+#		$infosGenerales .= "</dl>";
+#
+#		$infosGenerales .= '<dl class="themaMap">';
+#		$infosGenerales .= '<p><u>Thématiques:</u></p>';		
+#		if(array_key_exists('field_categorie',$content)) {
+#			$content['field_categorie']['#label_display'] = 'hidden';
+#			$infosGenerales .= '<dt>'.$content['field_categorie']['#title'].' :</dt>';
+#			//$infosGenerales .= '<dd>'. $categoryName .'</dd>';
+#			$infosGenerales .= '<dd>'. $categoryLink .'</dd>';
+#		}
+#		if(array_key_exists('field_thematique',$content)) {
+#			$content['field_thematique']['#label_display'] = 'hidden';
+#			$infosGenerales .= '<dt>'.$content['field_thematique']['#title'].' :</dt>';
+#			$infosGenerales .= '<dd class="thematiquedd">'. $thematiquesLinks .'</dd>';
+#		}
+#		$infosGenerales .= '</dl>';
 
-		$infosGenerales .= '<dl class="themaMap">';
-		$infosGenerales .= '<p><u>Thématiques:</u></p>';		
-		if(array_key_exists('field_categorie',$content)) {
-			$content['field_categorie']['#label_display'] = 'hidden';
-			$infosGenerales .= '<dt>'.$content['field_categorie']['#title'].' :</dt>';
-			//$infosGenerales .= '<dd>'. $categoryName .'</dd>';
-			$infosGenerales .= '<dd>'. $categoryLink .'</dd>';
+#		$infosGenerales .= '<h4>Sources de données</h4>';
+#		$infosGenerales .= '<dl class="sourceDonnees">';
+
+		if (!empty(render($content['field_date_source_des_donnees'])))
+		{
+			$infosGenerales .= '<dt>Date</dt>';
+			$infosGenerales .= '<dd>'.render($content['field_date_source_des_donnees']).'</dd>';
 		}
-		if(array_key_exists('field_thematique',$content)) {
-			$content['field_thematique']['#label_display'] = 'hidden';
-			$infosGenerales .= '<dt>'.$content['field_thematique']['#title'].' :</dt>';
-			$infosGenerales .= '<dd class="thematiquedd">'. $thematiquesLinks .'</dd>';
+		if (!empty(render($content['field_source_des_donnees'])))
+		{
+			$infosGenerales .= '<dt>Sources de données</dt>';
+			$infosGenerales .= '<dd>'.render($content['field_source_des_donnees']).'</dd>';
+		}
+		if (!empty(render($content['field_url_source_des_donnees'])))
+		{
+			$infosGenerales .= '<dt>Lien/URL</dt>';
+			$infosGenerales .= '<dd>'.render($content['field_url_source_des_donnees']).'</dd>';
 		}
 		$infosGenerales .= '</dl>';
-	
-		$infosGenerales .= '<dl class="sourceDonnees">';
-		$infosGenerales .= '<dt>Sources de données :</dt>';
-		$infosGenerales .= '<dd>' .
-					render($content['field_date_source_des_donnees']) .
-					render($content['field_source_des_donnees']) .
-					render($content['field_url_source_des_donnees']) .
-					'</dd>';
-		$infosGenerales .= '</dl>';
-		
+
 	?>
 
 	<div class="hidden-xs col-sm-12 infosGenerales">
@@ -241,15 +252,29 @@ $type_carte = strtolower($node->field_type_de_carte['und'][0]['value']);
 			print '<div id="pdfLink" title="Fichier pdf" style="display: none;"><span class="ui-helper-hidden-accessible"><input type="text" /></span><span class="linkDl"><a href="'.$pdfLink.'&forcedl" download>Télécharger</a></span><span class="linkShow"><a href="'.$pdfLink.'" target="_blank">Visualiser</a></span></div>';
 		}
 		?>
-		<div class="keyWordMap">Mots clés Inspire : <span class="keyWord"><?php
-			$content['field_mots_cles']['#label_display'] = 'hidden';
-			if ($inspireKeywordsLinks != '') {
-				print $inspireKeywordsLinks;
-			}
-			else { print ' <span class="no-keywords">-</span> '; }
+
+<!--		<div class="keyWordMap">Mots clés Inspire : <span class="keyWord">
+-->		<?php
+#			$content['field_mots_cles']['#label_display'] = 'hidden';
+#			if ($inspireKeywordsLinks != '') {
+#				print $inspireKeywordsLinks;
+#			}
+#			else { print ' <span class="no-keywords">-</span> '; }
+#			?>
+<!--			</span>
+		</div>
+-->
+
+		<div class="thematique-hdf-map">Thématique HdF : <span class="thematique-hdf"><?php
+		     $field = $content['field_thematique_hdf'];
+		     if (isset($field['#object']->field_thematique_hdf['und'][0]['taxonomy_term']) && property_exists($field['#object']->field_thematique_hdf['und'][0]['taxonomy_term'], "name"))
+			print " <a href=\"/?q=map-list&field_thematique_hdf_tid[]=".$field['#object']->field_thematique_hdf['und'][0]['taxonomy_term']->tid."\">".$field['#object']->field_thematique_hdf['und'][0]['taxonomy_term']->name."</a>";
+		     else
+			print ' <span class="no-keywords">-</span> ';
 			?></span>
 		</div>
-		<div class="keyWordMap">Mots clés complémentaires: <span class="keyWord"><?php
+
+		<div class="keyWordMap">Mots-clés : <span class="keyWord"><?php
 			$content['field_mots_cles']['#label_display'] = 'hidden';
 			if ($keywordsLinks != '') {
 				print $keywordsLinks;
