@@ -86,8 +86,17 @@ function tic_redmine_data_importer_ajax_search_callback($number)
 //Surcharge du formulaire de création de carte pour y ajouter le bouton d'import depuis Redmine
 function tic_redmine_data_importer_form_alter(&$form, &$form_state, $form_id)
 {
- 	if ($form_id !== "carte_node_form")
+	// Alter only for carte
+	if ($form_id !== "carte_node_form")
 		return ;
+
+	// Alter only for new node
+	$node = $form_state['node']; $new = false;
+	if (!isset($node->nid) || isset($node->is_new)) {
+		// This is a new node.
+		$new = true;
+	}
+	if(!$new) return;
 
 	//surcharger les styles CSS pour placer le bouton à droite du numéro de carte
 	$mod_css = "/* Téicée - CSS Addon : Module TIC Redmine Data Importer Start */";
