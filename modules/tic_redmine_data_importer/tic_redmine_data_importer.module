@@ -60,16 +60,17 @@ function tic_redmine_data_importer_ajax_search_callback($number)
 	#---------------------------------------------------------------------------
 	# Demande : 796
 	#---------------------------------------------------------------------------
-	// ajouter ici la détection de la valeur  'Intégration Cartothèque' à 'Oui'
+	// ajouter ici la détection de la valeur  'Alimentation Cartothèque' à 'Oui' et de 'Integration Cartothèque' à 'Oui'
 	$toJsonOutput['integration_cartotheque'] = 0;
-	if ($toJsonOutput['found'] == 1)
-	{
+	$toJsonOutput['alimentation_cartotheque'] = 0;
+	if ($toJsonOutput['found'] == 1) {
 		$max = count($issues_all[$issue_found_index]->custom_fields);
-		for ($i = 0; $i < $max; $i++)
-		{
-			if ($issues_all[$issue_found_index]->custom_fields[$i]->name == "Intégration Cartothèque")
-			{
-				$toJsonOutput['integration_cartotheque'] = ($issues_all[$issue_found_index]->custom_fields[$i]->value == "Oui")
+		for ($i = 0; $i < $max; $i++) {
+			if ($issues_all[$issue_found_index]->custom_fields[$i]->name == "Intégration Cartothèque") {
+				$toJsonOutput['integration_cartotheque'] = ($issues_all[$issue_found_index]->custom_fields[$i]->value == "Oui") ? 1 : 0;
+			}
+			if ($issues_all[$issue_found_index]->custom_fields[$i]->name == "Alimentation Cartothèque") {
+				$toJsonOutput['alimentation_cartotheque'] = (substr($issues_all[$issue_found_index]->custom_fields[$i]->value,0,3) == "Oui")
 					? 1 : 0;
 			}
 		}

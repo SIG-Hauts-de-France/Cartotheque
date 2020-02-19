@@ -171,9 +171,15 @@ function tic_redmine_data_importer_callback(result)
 	return ;
     }
 
-    if (result.integration_cartotheque !== 1)
+    if (result.alimentation_cartotheque !== 1)
     {
 	alert("Cette carte n'a pas autorisation à être intégrée à la cartothèque.");
+	return ;
+    }
+    
+    if (result.integration_cartotheque === 1)
+    {
+	alert("Cette carte a déjà été intégrée à la cartothèque.");
 	return ;
     }
 
