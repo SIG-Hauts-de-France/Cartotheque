@@ -25,6 +25,9 @@ footer ul.menu {
 }
 
 #mainContent{
+	margin-top: 229px;
+}
+.admin-menu #mainContent{
 	margin-top: 200px;
 }
 
