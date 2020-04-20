@@ -1,0 +1,19 @@
+<?php
+
+// Hook pour cacher les champs des formulaires cartes
+function tic_hdf_form_alter(&$form, &$form_state, $form_id)
+{
+	if ($form_id == "carte_node_form")
+	{
+		# Retirer les champs :
+		## - Catégorie ISO : field_categorie
+		## - Thématique : field_thematique
+		## - Mots-clés Inspire : field_mots_cles_thesaurus
+
+		unset($form['field_categorie']);
+		unset($form['field_thematique']);
+		unset($form['field_mots_cles_thesaurus']);
+	}
+}
+
+?>

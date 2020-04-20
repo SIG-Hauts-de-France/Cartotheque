@@ -1,0 +1,37 @@
+<?php
+
+	/**
+	* Module : Téicée Drupal 7.x Dictionnaire relationel de taxonomie
+	*
+	* @module
+	* @drupal
+	* @drupal7
+	* @teicee
+	*
+	*/
+
+	function tic_redmine_data_importer_menu()
+
+{
+
+	$items = array();
+
+	$items['tic_redmine_data_importer/get/number/%'] = array(
+
+							   'title'		    => 'AJAX Tic Redmine Data Importer Get Number',
+
+							   			       'page callback' => 'tic_redmine_data_importer_ajax_search_callback',
+
+										       	     	       'page arguments'    => array(3),
+
+												       	     		   'access arguments'  => array("access content"),
+
+															   	   	       'type'			    => MENU_CALLBACK
+
+																	       );
+
+																	       return $items;
+
+}
+
+?>

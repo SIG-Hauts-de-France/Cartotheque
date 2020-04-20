@@ -1,0 +1,5 @@
+name = TIC HdF (module des fonctions spéciales du site Cartothèque Hauts de France)
+description = Permet d'activer les préférences et options particulières du Drupal7 Cartothèque Hauts-de-France
+core = 7.x
+version = 1.1
+package = TIC

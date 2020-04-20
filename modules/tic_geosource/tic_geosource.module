@@ -658,7 +658,7 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
 			$keywords[] = tic_geosource_format_text($term->name);
 		}
 	}
-	
+	/*
 	// Mots cles thesaurus GEMET
 	$thesaurus = array();
 	if (isset($node->field_mots_cles_thesaurus['und'])) {
@@ -680,6 +680,17 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
 			$term = taxonomy_term_load($t['tid']);
 			$thematiques[] = tic_geosource_format_text($term->name);
 		}
+	}
+	*/
+
+	# Gestion Thématique HdF
+	$thematique_hdf = array();
+	if (isset($node->field_thematique_hdf['und'])) {
+	   foreach ($node->field_thematique_hdf['und'] as $t)
+	   {
+	 	$term = taxonomy_term_load($t['tid']);
+		$thematique_hdf[] = tic_geosource_format_text($term->name);
+	   }
 	}
 	
 	// fichier carte
@@ -834,9 +845,10 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
 		'source_description' => $sourceDesc,
 		'bbox' => $bbox,
 		'keywords' => $keywords,
-		'thesaurus' => $thesaurus,
-		'themes' => $thematiques,
-		'category' => $category,
+	//	'thesaurus' => $thesaurus,
+	//	'themes' => $thematiques,
+	//	'category' => $category,
+		'thematique_hdf' => $thematique_hdf,
 		'files' => $files,
 		'formatPdf' => $formatPdf,
 		'formatPng' => $formatPng,

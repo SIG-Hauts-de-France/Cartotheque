@@ -1,0 +1,10 @@
+name = TIC Relational Dictionary Taxonomy
+description = Dictionnaire de relation entre thématique, catégorie ISO, et mots-clés Inspire
+core = 7.x
+version = 1
+
+package = Taxonomy
+
+files[] = tic_taxonomy_relational_dictionary.module
+
+dependencies[] = taxonomy

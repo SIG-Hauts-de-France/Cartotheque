@@ -693,6 +693,7 @@ function tic_geosource_get_record_thumbnail($record) {
 
 
 /**
+ * OBSOLETE
  * Extraction des mots cles, mots cles thesaurus et themes
  * @param DOMDocument Geosource resource
  * @return array Tableau associatif themes et mots cles
@@ -729,6 +730,37 @@ function tic_geosource_get_keywords_and_themes($record) {
 		}
 	}
 	
+	return $ret;
+}
+
+/**
+ * Extraction des mots cles et thématiques HdF
+  * @param DOMDocument Geosource resource
+   * @return array Tableau associatif thematiques_hdf et mots cles
+    */
+    function tic_geosource_get_keywords_and_thematique_hdf($record)
+    {
+	$ret = array();
+
+	$ret['thematique_hdf'] = array();
+	$ret['keywords'] = array();
+
+	$nodes = $record->getElementsByTagName('descriptiveKeywords');
+	if (! $nodes->length > 0) {
+	   return $ret;
+	}
+
+	foreach ($nodes as $node)
+	{
+		$thesaurus = $node->getElementsByTagName('thesaurusName');
+		$typeCode = $node->getElementsByTagName('type');
+      		$key = ($thesaurus->length > 0) ? 'thematique_hdf' : 'keywords';
+		$knodes = $node->getElementsByTagName('keyword');
+		foreach($knodes as $k)
+		{
+			$ret[$key][] = $k->nodeValue;
+		}
+	}
 	return $ret;
 }
 
@@ -807,7 +839,12 @@ function tic_geosource_record_to_node($record) {
 	$contactEmail = tic_geosource_get_single_element_by_path($record, '//gmd:contact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:electronicMailAddress');
 	$empriseGeo = tic_geosource_get_record_bbox_equivalent($record);
 	$sourceInfos = tic_geosource_get_source_info($record);
-	$kt = tic_geosource_get_keywords_and_themes($record);
+
+	#  Obsolete :
+	#  $kt = tic_geosource_get_keywords_and_themes($record);
+	# Remplacé par : Ajout lecture données keywords + Ajout lecture données thèmatiques hdf :
+	$kt = tic_geosource_get_keywords_and_thematique_hdf($record);
+	 
 	$rawCreationDate = tic_geosource_get_single_element_by_path($record, '//gmd:MD_Metadata/gmd:dateStamp');
 	$rawUpdateDate = tic_geosource_get_single_element_by_path($record, '//gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:date/gmd:CI_Date/gmd:date');
 	
@@ -885,7 +922,10 @@ function tic_geosource_record_to_node($record) {
 			$node->field_mots_cles['und'][]['tid'] = $tid;
 		}
 	}
-	
+
+	/*
+		// OBSOLETE
+		
 	$node->field_mots_cles_thesaurus['und'] = array();
 	foreach($kt['keywords_thesaurus'] as $keyword) {
 		$tid = tic_geosource_get_tid_from_term_name('mots_cles_thesaurus_gemet', $keyword);
@@ -900,6 +940,16 @@ function tic_geosource_record_to_node($record) {
 		if ($tid) {
 			$node->field_thematique['und'][]['tid'] = $tid;
 		}
+	}
+	*/
+
+	### Gestion Thematique HdF
+	$node->field_thematique_hdf['und'] = array();
+	foreach($kt['thematique_hdf'] as $thematique_hdf)
+	{
+	       $tid = tic_geosource_get_tid_from_term_name('thematique_hdf', $thematique_hdf);
+	       if ($tid)
+	       	  $node->field_thematique_hdf['und'][]['tid'] = $tid;
 	}
 	
 	//Fichiers

@@ -27,6 +27,7 @@ function tic_redmine_data_importer_ajax_search_callback($number)
 	while (!$end_reached)
 	{
 		$issues = redmine_rest_api_call("issues", array("project_id" => 2, "status_id" => 7, "offset" => $offset, "limit" => $limit, "cf_1" => $number));
+		//$issues = redmine_rest_api_call("issues", array("project_id" => 2, "offset" => $offset, "limit" => $limit, "cf_1" => $number));
 
 		$total = $issues->decoded_data->total_count;
 		$issues_all = array_merge($issues_all, $issues->decoded_data->issues);
