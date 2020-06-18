@@ -53,7 +53,13 @@
   <?php print $scripts; ?>
 </head>
 <body class="<?php print $classes; ?>" <?php print $attributes;?>>
-<!-- Piwik -->
+  <div id="skip-link">
+    <a href="#main-content" class="element-invisible element-focusable"><?php print t('Skip to main content'); ?></a>
+  </div>
+  <?php print $page_top; ?>
+  <?php print $page; ?>
+  <?php print $page_bottom; ?>
+  <!-- Piwik -->
 <script type="text/javascript">
   var _paq = _paq || [];
   _paq.push(["trackPageView"]);
@@ -68,12 +74,5 @@
   })();
 </script>
 <!-- End Piwik Code -->
-
-  <div id="skip-link">
-    <a href="#main-content" class="element-invisible element-focusable"><?php print t('Skip to main content'); ?></a>
-  </div>
-  <?php print $page_top; ?>
-  <?php print $page; ?>
-  <?php print $page_bottom; ?>
 </body>
 </html>
