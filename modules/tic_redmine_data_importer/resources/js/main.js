@@ -52,7 +52,8 @@
 	{
 	    "common":"Mots Clés Complémentaires",
 	    "div_id":"autocomplete-deluxe-input",
-	    "cf_name":"Mots clés complémentaires",
+	    //"cf_name":"Mots clés complémentaires",
+	    "cf_name":"Mots clés",
 	    "separator":";",
 	    "input_type":"special-keyword-adder-autocomplete-deluxe"
 	},
@@ -95,8 +96,16 @@
 	    "cf_name":"Echelle",
 	    "input_type":"select",
 	    "filter":"echelle"
-	}
+	},
+	{
+	   "common": "Thématique HdF",	
+	   "div_id": "edit-field-thematique-hdf-und",
+	   "cf_name": "Thématique HdF",
+	   "input_type": "select",
+           "filter": "theme hdf"
 	
+    	}
+
     ];
 
 
@@ -198,8 +207,10 @@ function tic_redmine_data_importer_auto_hydrate_fields(cardInfoObj)
 {
     //launching the selection result display, then place them on selection
 
+
     function apply_filter(filter, value)
     {
+	   
 	switch (filter)
 	{
 	    case "author":
@@ -207,7 +218,7 @@ function tic_redmine_data_importer_auto_hydrate_fields(cardInfoObj)
 		 var initials = "";
 		 var name = value.split(" ");
 		 for (var v = 0; name[v]; v++)
-		 {
+		 {i
 		     name[v] = name[v].trim();
 		     initials += name[v][0].toUpperCase();
 		 }
@@ -227,8 +238,9 @@ function tic_redmine_data_importer_auto_hydrate_fields(cardInfoObj)
 
 		 var position_to_slice = value.indexOf("(");
 		 var value = value.slice(0, position_to_slice).trim();
-	    
+	   
 	    break;
+	
 	}
 	return value;
     }
@@ -236,7 +248,7 @@ function tic_redmine_data_importer_auto_hydrate_fields(cardInfoObj)
     for (var i = 0; relations[i]; i++)
     {
 	var value = false;
-	
+		
 	if (typeof relations[i].var_path !== "undefined")
         {	
 	    var path = relations[i].var_path.split("/");
@@ -320,6 +332,7 @@ function tic_redmine_data_importer_auto_hydrate_fields(cardInfoObj)
 	{
 	    //si plusieurs autocomplete-deluxe dans le formulaire, ajouter --1 --2 à la fin de chaque div_id => créer une fonction de pré calcul
 	    var values = value.split(relations[i].separator);
+	   
 	    for (var x = 0; values[x]; x++)
 	    {
 		autocomplete_deluxe_override.addValue(relations[i].div_id, values[x]);
