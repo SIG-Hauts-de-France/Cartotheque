@@ -15,6 +15,15 @@ function tic_theme_hdf_update_drush_command() {
 			'path'	=> dt('The path where the file to be imported is located.'),
 		),	
 	); 
+	$items['verify-update-theme-hdf'] = array(
+		'description' => dt('Command to verify thematic HdF via Excel Import.'),
+		'aliases'     => array('ihdfv'),
+		'callback'    => 'tic_theme_hdf_verify_import',
+		'bootstrap'   => DRUSH_BOOTSTRAP_DRUSH,
+		'arguments'   => array(
+			'path'	=> dt('The path where the file to be imported is located.'),
+		),	
+	); 
 	return $items;
 }
 
@@ -30,6 +39,28 @@ function tic_theme_hdf_update_drush_help($section) {
 	}
 }
 
+function tic_theme_hdf_verify_import($path) {
+	if(!empty($path) && file_exists($path)) {
+		module_load_include('inc', 'phpexcel');
+		// lecture du fichier excel
+		$result = phpexcel_import($path, TRUE, TRUE, array('setLoadSheetsOnly' => array('cartes_production_200228')));
+	
+		// On vérifie que pour chaque fiche du fichier Excel on a bien une thématique HDF	
+		if(is_array($result)) {
+			foreach($result as $sheet) {
+				foreach($sheet as $line) {
+					$node = node_load($line['nid']);
+					
+					if(isset($node->field_thematique_hdf) && count($node->field_thematique_hdf['und'])<=0) {
+						//echo "Map ".$node->field_numero_de_carte[0]." has not been imported.\n";
+						echo "Map ".field_get_items('node',$node,'field_numero_de_carte')[0]['value']." (".$line['nid'].") has not been imported.\n";
+						//dump( field_get_items('node',$node,'field_numero_de_carte')[0]['value'] );
+					}
+				}
+			}
+		}
+	}
+}
 
 function tic_theme_hdf_update_import($path) {
 
@@ -37,7 +68,8 @@ function tic_theme_hdf_update_import($path) {
 		module_load_include('inc', 'phpexcel');
 
 		// lecture du fichier excel
-		$result = phpexcel_import($path);
+		//$result = phpexcel_import($path);
+		$result = phpexcel_import($path, TRUE, TRUE, array('setLoadSheetsOnly' => array('cartes_production_200228')));
 
 		// Récupération du vid de la taxonomie
 		$vocabulary_name = 'thematique_hdf';
