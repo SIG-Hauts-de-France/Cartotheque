@@ -28,6 +28,7 @@
 	    "cf_name":"Catégorie ISO",
 	    "input_type":"select"
 	},
+/*
 	{
 	    "common":"thématique",
 	    "div_id":"edit-field-thematique-und",
@@ -42,6 +43,7 @@
 	    "separator":";",
 	    "input_type":"special-autocomplete-deluxe"
 	},
+*/
 	{
 	    "common":"Collection",
 	    "div_id":"edit-field-collections-und",
@@ -236,8 +238,10 @@ function tic_redmine_data_importer_auto_hydrate_fields(cardInfoObj)
 		 //récupération de l'échelle
 		 //espace + nombres seulement + :
 
-		 var position_to_slice = value.indexOf("(");
-		 var value = value.slice(0, position_to_slice).trim();
+		var position_to_slice = value.indexOf("(");
+		if(position_to_slice >= 0) {
+			var value = value.slice(0, position_to_slice).trim();
+		}
 	   
 	    break;
 	
@@ -289,6 +293,10 @@ function tic_redmine_data_importer_auto_hydrate_fields(cardInfoObj)
 	}
 	else if (["select"].indexOf(relations[i].input_type) !== -1)
 	{
+		/*
+		console.log(relations[i]);
+		console.log(value);
+		*/
 	    var select = document.getElementById(relations[i].div_id);
 	    if (select !== null)
 	    {
