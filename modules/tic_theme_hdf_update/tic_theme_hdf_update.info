@@ -1,3 +1,4 @@
 name = tic_theme_hdf_update
 description = Drush command update thematic HdF via import Excel
 core = 7.x
+dependencies[] = phpexcel
