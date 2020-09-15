@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<gmd:MD_Metadata xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gml="http://www.opengis.net/gml" xmlns:geonet="http://www.fao.org/geonetwork">
+<gmd:MD_Metadata xmlns:gmd="http://www.isotc211.org/2005/gmd"
+                 xmlns:gco="http://www.isotc211.org/2005/gco"
+                 xmlns:gts="http://www.isotc211.org/2005/gts"
+                 xmlns:gml="http://www.opengis.net/gml"
+                 xmlns:gmx="http://www.isotc211.org/2005/gmx"
+                 xmlns:xlink="http://www.w3.org/1999/xlink"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://www.isotc211.org/2005/gmd http://www.isotc211.org/2005/gmd/gmd.xsd http://www.isotc211.org/2005/gmx http://www.isotc211.org/2005/gmx/gmx.xsd http://www.isotc211.org/2005/srv http://schemas.opengis.net/iso/19139/20060504/srv/srv.xsd">
 ?$uuid
   <gmd:fileIdentifier>
     <gco:CharacterString>{$uuid}</gco:CharacterString>
@@ -199,7 +206,47 @@ $uuid?
                </gmd:thesaurusName>
             </gmd:MD_Keywords>
       </gmd:descriptiveKeywords>
-      <gmd:spatialResolution>
+      
+	
+              <gmd:descriptiveKeywords>
+            <gmd:MD_Keywords>
+[$thematique_hdf]
+                <gmd:keyword>
+                    <gco:CharacterString>{$value}</gco:CharacterString>
+                </gmd:keyword>
+[/$thematique_hdf]
+                <gmd:type>
+                    <gmd:MD_KeywordTypeCode codeListValue="theme" codeList="http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#MD_KeywordTypeCode"/>
+                </gmd:type>
+                <gmd:thesaurusName>
+                    <gmd:CI_Citation>
+                        <gmd:title>
+                            <gco:CharacterString>Thèmes - SIG - HdF</gco:CharacterString>
+                        </gmd:title>
+                        <gmd:date>
+                            <gmd:CI_Date>
+                                <gmd:date>
+                                    <gco:Date>2019-09-30</gco:Date>
+                                </gmd:date>
+                                <gmd:dateType>
+                                    <gmd:CI_DateTypeCode codeListValue="publication" codeList="http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#CI_DateTypeCode"/>
+                                </gmd:dateType>
+                            </gmd:CI_Date>
+                        </gmd:date>
+                        <gmd:identifier>
+                            <gmd:MD_Identifier>
+                                <gmd:code>
+                                    <gmx:Anchor xlink:href="https://geocatalogue.hautsdefrance.fr/geonetwork/srv/eng/thesaurus.download?ref=local.theme.themes_sig">geonetwork.thesaurus.local.theme.themes_sig</gmx:Anchor>
+                                </gmd:code>
+                            </gmd:MD_Identifier>
+                        </gmd:identifier>
+                    </gmd:CI_Citation>
+                </gmd:thesaurusName>
+            </gmd:MD_Keywords>
+        </gmd:descriptiveKeywords>
+
+
+<gmd:spatialResolution>
         <gmd:MD_Resolution>
           <gmd:equivalentScale>
             <gmd:MD_RepresentativeFraction>
