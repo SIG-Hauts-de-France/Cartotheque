@@ -18,12 +18,18 @@ function tic_redmine_data_importer_menu()
 function tic_redmine_data_importer_ajax_search_callback($number)
 {
 	$number = trim($number);
-
 	$end_reached = false;
 	$offset = 0;
 	$total = 0;
 	$limit = 100;
 	$issues_all = array();
+
+	// Vérification si la carte existe déjà dans Drupal
+	$map = db_query("select field_numero_de_carte_value from field_data_field_numero_de_carte
+				where field_numero_de_carte_value = :id", array(
+		':id' => $number,
+	));
+
 	while (!$end_reached)
 	{
 		$issues = redmine_rest_api_call("issues", array("project_id" => 2, "status_id" => 7, "offset" => $offset, "limit" => $limit, "cf_1" => $number));
@@ -53,6 +59,7 @@ function tic_redmine_data_importer_ajax_search_callback($number)
 	}
 
 	$toJsonOutput = array("status" => 1); //check Redmine response set default to 1
+	$toJsonOutput['map_exist'] = ($map->rowCount() == 0 )? 0 : 1;
 	$toJsonOutput['found'] = ($issue_found_index > -1) ? 1 : 0;
 	//$toJsonOutput['issues'] = $issues_all;
 	$toJsonOutput['offset'] = $offset;
@@ -62,7 +69,7 @@ function tic_redmine_data_importer_ajax_search_callback($number)
 	# Demande : 796
 	#---------------------------------------------------------------------------
 	// ajouter ici la détection de la valeur  'Alimentation Cartothèque' à 'Oui' et de 'Integration Cartothèque' à 'Oui'
-	$toJsonOutput['integration_cartotheque'] = 0;
+	$toJsonOutput['integration_cartoitheque'] = 0;
 	$toJsonOutput['alimentation_cartotheque'] = 0;
 	if ($toJsonOutput['found'] == 1) {
 		$max = count($issues_all[$issue_found_index]->custom_fields);
@@ -87,6 +94,7 @@ function tic_redmine_data_importer_ajax_search_callback($number)
 //Surcharge du formulaire de création de carte pour y ajouter le bouton d'import depuis Redmine
 function tic_redmine_data_importer_form_alter(&$form, &$form_state, $form_id)
 {
+	
 	// Alter only for carte
 	if ($form_id !== "carte_node_form")
 		return ;

@@ -164,6 +164,7 @@ function tic_redmine_data_importer_init()
     tic_redmine_data_importer_ajax_call_search("card_number", card_number);
 }
 
+
 function tic_redmine_data_importer_callback(result)
 {
     console.log("result", result);
@@ -173,6 +174,13 @@ function tic_redmine_data_importer_callback(result)
     {
 	alert("Le serveur Redmine ne répond pas");
 	return ;
+    }
+
+    //Vérification si carte déjà créé dans drupal
+    if (result.map_exist != 0)
+    {
+	alert("Ce numéro de carte existe déjà");
+	return;
     }
 
     //Search is a success or not ?
