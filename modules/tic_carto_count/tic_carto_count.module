@@ -342,3 +342,26 @@ function tic_carto_count_get_node_download_count($nid) {
 	
 	return "0";
 }
+
+function tic_carto_count_entity_property_info_alter(&$info) {
+	$info['node']['properties']['download_count'] = array(
+
+		'type' => 'decimal',
+
+		'label' => t('download_count'),
+
+		'sanitized' => TRUE,
+
+		'getter callback' => 'tic_carto_count_search_api_property_download_count_getter_callback',
+
+	);
+}
+
+function tic_carto_count_search_api_property_download_count_getter_callback($item) {
+
+	$download_count = tic_carto_count_get_node_download_count($item->nid);
+
+	return intval($download_count);
+
+}
+

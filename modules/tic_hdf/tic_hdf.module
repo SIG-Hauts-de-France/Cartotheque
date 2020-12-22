@@ -16,4 +16,8 @@ function tic_hdf_form_alter(&$form, &$form_state, $form_id)
 	}
 }
 
+function tic_hdf_views_query_alter(&$view, &$query)
+{
+	#die($view->name);
+}
 ?>
