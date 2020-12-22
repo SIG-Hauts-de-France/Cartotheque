@@ -305,13 +305,13 @@ function cartotheque_retrieve_search_params() {
 	$searchParams = array(
 		'combine',
 		'pgsql_combine_filter_views',
+		'search_api_views_fulltext',
 		'field_emprise_geographique_value',
 		'field_mots_cles_tid',
 		'field_thematique_tid',
 		'field_collections_tid',
 		'field_categorie_tid',
 		'combine_1',
-		'pgsql_combine_filter_views',
 		'field_type_de_carte_value',
 		'sort_by',
 		'sort_order',
@@ -329,6 +329,9 @@ function cartotheque_retrieve_search_params() {
 	
 	// Reset des params sauvés si nouvelle recherche
 	if (current_path() == 'map-list') {
+		$savedParams = array();
+	}
+	if (current_path() == 'map-list-new') {
 		$savedParams = array();
 	}
 	
