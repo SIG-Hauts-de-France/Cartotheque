@@ -31,6 +31,7 @@
 	<?php foreach ($widgets as $id => $widget): ?>
 	<?php if($widget->id == "edit-combine" && false) print $widget->widget; ?>
 	<?php if($widget->id == "edit-pgsql-combine-filter-views") print $widget->widget; ?>
+	<?php if($widget->id == "edit-search-api-views-fulltext") print $widget->widget; ?>
 	<?php endforeach; ?>
 <?php else: ?>
 <?php
@@ -39,8 +40,10 @@
 	foreach ($widgets as $id => $widget) {
 		//if($id=="filter-combine") $combine[] = $widget;
 		if($id=="filter-pgsql_combine_filter_views") $combine[] = $widget;
+		elseif($id=="filter-search_api_views_fulltext") $combine[] = $widget;
 		elseif($id=="sort-sort_bef_combine") $filter = $widget;
 		elseif($id=="filter-field_type_de_carte_value" || $id=="filter-field_cartotheque_value") $secondary[] = $widget;
+		elseif($id=="filter-field_type_de_carte" || $id=="filter-field_cartotheque") $secondary[] = $widget;
 		else $other[] = $widget;
 		//echo "<pre>".$id."</pre>";
 	}

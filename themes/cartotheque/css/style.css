@@ -596,7 +596,7 @@ div.nbAction{
 	color:#444;
 	float: left;
 }
-div.nbAction span.nbImg, div.nbAction span.nbPdf{
+div.nbAction span.nbImg, div.nbAction span.nbPdf, div.nbAction span.nbRelevance{
 	background-image:url(../images/i_actionmap.png);
 	background-repeat:no-repeat;
 	display:inline-block;
@@ -611,12 +611,17 @@ div.nbAction span.nbImg{
 div.nbAction span.nbPdf{
 	background-position: -56px 0;
 }
+div.nbAction span.nbRelevance{
+	background-image:url(../images/i_cup.png);
+	background-size: 18px 16px;
+	background-position: 5px 6px;
+}
 
 div.mapDate{
 	font-size: 12px;
 	color:#444;
 	font-style: italic;
-	margin-left: 155px;
+	margin-left: 185px;
 }
 
 div.mapDate span{
@@ -1046,16 +1051,20 @@ input.form-submit, a.button {
 	transition: all .25s;
 	font-size: 0.7em;
 	display: none;
+	line-height: 15px;
 }
 
 .abulle .infobulle a{
 	color: white;
+	width: 100%;
 }
 
 .abulle .infobulle li{
 	list-style-type: none;
 	line-height: 20px;
 	border-bottom: 1px dotted;
+	margin: 0;
+	padding-left: 7px;
 }
 
 .abulle:hover .infobulle, .infobulle:hover{

@@ -48,7 +48,6 @@
 <?php
 	global $base_url;
 	$mapListUrl = theme_get_setting('cartotheque_map_list_url');
-
 ?>
 
 <div id="<?php print $block_html_id; ?>" class="<?php print $classes; ?> bblock"<?php print $attributes; ?>>

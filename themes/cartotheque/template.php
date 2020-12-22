@@ -111,6 +111,9 @@ function cartotheque_form_element(&$variables) {
 	if(array_key_exists('#name',$element) && $element['#name']=="pgsql_combine_filter_views") {
 		$prefix = '<span class="field-prefix input-group-addon search" id="basic-addon-search"></span>';
 	}
+	if(array_key_exists('#name',$element) && $element['#name']=="search_api_views_fulltext") {
+		$prefix = '<span class="field-prefix input-group-addon search" id="basic-addon-search"></span>';
+	}
 
 	switch ($element['#title_display']) {
 		case 'before':
