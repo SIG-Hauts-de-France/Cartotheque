@@ -79,9 +79,9 @@
 	{
 	    "common":"Auteur",
 	    "div_id":"edit-field-auteur-und",
-	    "var_path":"author/name",
+	    "var_path":"assigned_to/name",
 	    "input_type":"select",
-	    "filter":"author"
+	    "filter":"assigned_to"
 	},
 	/*
 	{
@@ -121,7 +121,6 @@ function tic_redmine_data_importer_at_page_load()
 function tic_redmine_data_importer_clear_all_fields()
 {
     // clear all inputs at start and before prompting new map info
-
     for (var i = 0; relations[i]; i++)
     {
 	var element = document.getElementById(relations[i].div_id);
@@ -216,14 +215,12 @@ function tic_redmine_data_importer_ajax_call_search(name, value)
 function tic_redmine_data_importer_auto_hydrate_fields(cardInfoObj)
 {
     //launching the selection result display, then place them on selection
-
-
     function apply_filter(filter, value)
     {
 	   
 	switch (filter)
 	{
-	    case "author":
+	    case "assigned_to":
 	    
 		 var initials = "";
 		 var name = value.split(" ");
