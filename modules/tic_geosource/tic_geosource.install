@@ -58,30 +58,31 @@ function tic_geosource_install() {
 		return;
 	}
 	
-	if(!file_exists(dirname(__FILE__) . '/fixtures/export_taxonomy.txt')) {
-		drupal_set_message('Le fichier de fixtures n\'a pas pu etre trouvé', 'error');
+	$import_folder = DRUPAL_ROOT . '/sites/default/fixtures/';
+	
+	if(!file_exists($import_folder . 'export_nodetype.txt')) {
+		drupal_set_message("Le fichier de fixtures n'a pas pu etre trouvé", 'error');
+		return;
+	}
+	if(!file_exists($import_folder . 'export_taxonomy.txt')) {
+		drupal_set_message("Le fichier de fixtures n'a pas pu etre trouvé", 'error');
 		return;
 	}
 	
 	// Load the fixtures file
-	if(!file_exists(dirname(__FILE__) . '/fixtures/export_types.txt')) {
-		drupal_set_message('Le fichier de fixtures n\' a pas pu etre trouvé', 'error');
-		return;
-	}
-	
-	$ctypes = file_get_contents( dirname(__FILE__) . '/fixtures/export_types.txt' );
-	$taxo = file_get_contents( dirname(__FILE__) . '/fixtures/export_taxonomy.txt' );
+	$nodetype = file_get_contents( $import_folder . 'export_nodetype.txt' );
+	$taxonomy = file_get_contents( $import_folder . 'export_taxonomy.txt' );
 	
 	// First import taxonomy
 	$form_state = Array();
-	$form_state['values']['macro'] = $taxo;
+	$form_state['values']['macro'] = $taxonomy;
 	$form_state['values']['type'] = 'taxonomy_term';
 	$form_state['values']['op'] = t('Import');
 	drupal_form_submit('bundle_copy_import', $form_state);
 	
 	// Import fixtures via bundle copy
 	$form_state = Array();
-	$form_state['values']['macro'] = $ctypes;
+	$form_state['values']['macro'] = $nodetype;
 	$form_state['values']['type'] = 'node';
 	$form_state['values']['op'] = t('Import');
 	

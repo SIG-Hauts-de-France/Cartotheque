@@ -1,0 +1,3298 @@
+$data = array(
+  'bundles' => array(
+    'article' => (object) array(
+      'type' => 'article',
+      'name' => 'Article',
+      'base' => 'node_content',
+      'module' => 'node',
+      'description' => 'Utilisez les <em>articles</em> pour des contenus possédant une temporalité tels que des actualités, des communiqués de presse ou des billets de blog.',
+      'help' => '',
+      'has_title' => '1',
+      'title_label' => 'Title',
+      'custom' => '1',
+      'modified' => '1',
+      'locked' => '0',
+      'disabled' => '0',
+      'orig_type' => 'article',
+      'disabled_changed' => FALSE,
+      'bc_entity_type' => 'node',
+    ),
+    'carte' => (object) array(
+      'type' => 'carte',
+      'name' => 'Carte',
+      'base' => 'node_content',
+      'module' => 'node',
+      'description' => 'Carte GEOSOURCE',
+      'help' => '',
+      'has_title' => '1',
+      'title_label' => 'Titre',
+      'custom' => '1',
+      'modified' => '1',
+      'locked' => '0',
+      'disabled' => '0',
+      'orig_type' => 'carte',
+      'disabled_changed' => FALSE,
+      'bc_entity_type' => 'node',
+    ),
+    'contact' => (object) array(
+      'type' => 'contact',
+      'name' => 'Contact',
+      'base' => 'node_content',
+      'module' => 'node',
+      'description' => 'Contact / Auteur de carte',
+      'help' => '',
+      'has_title' => '1',
+      'title_label' => 'Nom',
+      'custom' => '1',
+      'modified' => '1',
+      'locked' => '0',
+      'disabled' => '0',
+      'orig_type' => 'contact',
+      'disabled_changed' => FALSE,
+      'bc_entity_type' => 'node',
+    ),
+    'page' => (object) array(
+      'type' => 'page',
+      'name' => 'Page de base',
+      'base' => 'node_content',
+      'module' => 'node',
+      'description' => 'Utilisez les <em>pages de base</em> pour votre contenu statique, tel que la page \'Qui sommes-nous\'.',
+      'help' => '',
+      'has_title' => '1',
+      'title_label' => 'Title',
+      'custom' => '1',
+      'modified' => '1',
+      'locked' => '0',
+      'disabled' => '0',
+      'orig_type' => 'page',
+      'disabled_changed' => FALSE,
+      'bc_entity_type' => 'node',
+    ),
+  ),
+  'fields' => array(
+    'body' => array(
+      'entity_types' => array(
+        0 => 'node',
+      ),
+      'translatable' => '0',
+      'settings' => array(),
+      'storage' => array(
+        'type' => 'field_sql_storage',
+        'settings' => array(),
+        'module' => 'field_sql_storage',
+        'active' => '1',
+        'details' => array(
+          'sql' => array(
+            'FIELD_LOAD_CURRENT' => array(
+              'field_data_body' => array(
+                'value' => 'body_value',
+                'summary' => 'body_summary',
+                'format' => 'body_format',
+              ),
+            ),
+            'FIELD_LOAD_REVISION' => array(
+              'field_revision_body' => array(
+                'value' => 'body_value',
+                'summary' => 'body_summary',
+                'format' => 'body_format',
+              ),
+            ),
+          ),
+        ),
+      ),
+      'foreign keys' => array(
+        'format' => array(
+          'table' => 'filter_format',
+          'columns' => array(
+            'format' => 'format',
+          ),
+        ),
+      ),
+      'indexes' => array(
+        'format' => array(
+          0 => 'format',
+        ),
+      ),
+      'field_name' => 'body',
+      'type' => 'text_with_summary',
+      'module' => 'text',
+      'active' => '1',
+      'locked' => '0',
+      'cardinality' => '1',
+      'deleted' => '0',
+      'columns' => array(
+        'value' => array(
+          'type' => 'text',
+          'size' => 'big',
+          'not null' => FALSE,
+        ),
+        'summary' => array(
+          'type' => 'text',
+          'size' => 'big',
+          'not null' => FALSE,
+        ),
+        'format' => array(
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => FALSE,
+        ),
+      ),
+      'bundles' => array(
+        'node' => array(
+          0 => 'article',
+          1 => 'page',
+        ),
+      ),
+    ),
+    'field_adresse_email' => array(
+      'translatable' => '0',
+      'entity_types' => array(),
+      'settings' => array(),
+      'storage' => array(
+        'type' => 'field_sql_storage',
+        'settings' => array(),
+        'module' => 'field_sql_storage',
+        'active' => '1',
+        'details' => array(
+          'sql' => array(
+            'FIELD_LOAD_CURRENT' => array(
+              'field_data_field_adresse_email' => array(
+                'email' => 'field_adresse_email_email',
+              ),
+            ),
+            'FIELD_LOAD_REVISION' => array(
+              'field_revision_field_adresse_email' => array(
+                'email' => 'field_adresse_email_email',
+              ),
+            ),
+          ),
+        ),
+      ),
+      'foreign keys' => array(),
+      'indexes' => array(),
+      'field_name' => 'field_adresse_email',
+      'type' => 'email',
+      'module' => 'email',
+      'active' => '1',
+      'locked' => '0',
+      'cardinality' => '1',
+      'deleted' => '0',
+      'columns' => array(
+        'email' => array(
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => FALSE,
+        ),
+      ),
+      'bundles' => array(
+        'node' => array(
+          0 => 'contact',
+        ),
+      ),
+    ),
+    'field_auteur' => array(
+      'translatable' => '0',
+      'entity_types' => array(),
+      'settings' => array(
+        'referenceable_types' => array(
+          'contact' => 'contact',
+          'article' => 0,
+          'carte' => 0,
+          'page' => 0,
+        ),
+        'view' => array(
+          'view_name' => '',
+          'display_name' => '',
+          'args' => array(),
+        ),
+      ),
+      'storage' => array(
+        'type' => 'field_sql_storage',
+        'settings' => array(),
+        'module' => 'field_sql_storage',
+        'active' => '1',
+        'details' => array(
+          'sql' => array(
+            'FIELD_LOAD_CURRENT' => array(
+              'field_data_field_auteur' => array(
+                'nid' => 'field_auteur_nid',
+              ),
+            ),
+            'FIELD_LOAD_REVISION' => array(
+              'field_revision_field_auteur' => array(
+                'nid' => 'field_auteur_nid',
+              ),
+            ),
+          ),
+        ),
+      ),
+      'foreign keys' => array(
+        'nid' => array(
+          'table' => 'node',
+          'columns' => array(
+            'nid' => 'nid',
+          ),
+        ),
+      ),
+      'indexes' => array(
+        'nid' => array(
+          0 => 'nid',
+        ),
+      ),
+      'field_name' => 'field_auteur',
+      'type' => 'node_reference',
+      'module' => 'node_reference',
+      'active' => '1',
+      'locked' => '0',
+      'cardinality' => '1',
+      'deleted' => '0',
+      'columns' => array(
+        'nid' => array(
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => FALSE,
+        ),
+      ),
+      'bundles' => array(
+        'node' => array(
+          0 => 'carte',
+        ),
+      ),
+    ),
+    'field_cartotheque' => array(
+      'translatable' => '0',
+      'entity_types' => array(),
+      'settings' => array(
+        'allowed_values' => array(
+          'NPdCP' => 'Région',
+          'Autre' => 'Autre',
+        ),
+        'allowed_values_function' => '',
+      ),
+      'storage' => array(
+        'type' => 'field_sql_storage',
+        'settings' => array(),
+        'module' => 'field_sql_storage',
+        'active' => '1',
+        'details' => array(
+          'sql' => array(
+            'FIELD_LOAD_CURRENT' => array(
+              'field_data_field_cartotheque' => array(
+                'value' => 'field_cartotheque_value',
+              ),
+            ),
+            'FIELD_LOAD_REVISION' => array(
+              'field_revision_field_cartotheque' => array(
+                'value' => 'field_cartotheque_value',
+              ),
+            ),
+          ),
+        ),
+      ),
+      'foreign keys' => array(),
+      'indexes' => array(
+        'value' => array(
+          0 => 'value',
+        ),
+      ),
+      'field_name' => 'field_cartotheque',
+      'type' => 'list_text',
+      'module' => 'list',
+      'active' => '1',
+      'locked' => '0',
+      'cardinality' => '1',
+      'deleted' => '0',
+      'columns' => array(
+        'value' => array(
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => FALSE,
+        ),
+      ),
+      'bundles' => array(
+        'node' => array(
+          0 => 'carte',
+        ),
+      ),
+    ),
+    'field_categorie' => array(
+      'translatable' => '0',
+      'entity_types' => array(),
+      'settings' => array(
+        'allowed_values' => array(
+          0 => array(
+            'vocabulary' => 'categorie',
+            'parent' => '0',
+          ),
+        ),
+      ),
+      'storage' => array(
+        'type' => 'field_sql_storage',
+        'settings' => array(),
+        'module' => 'field_sql_storage',
+        'active' => '1',
+        'details' => array(
+          'sql' => array(
+            'FIELD_LOAD_CURRENT' => array(
+              'field_data_field_categorie' => array(
+                'tid' => 'field_categorie_tid',
+              ),
+            ),
+            'FIELD_LOAD_REVISION' => array(
+              'field_revision_field_categorie' => array(
+                'tid' => 'field_categorie_tid',
+              ),
+            ),
+          ),
+        ),
+      ),
+      'foreign keys' => array(
+        'tid' => array(
+          'table' => 'taxonomy_term_data',
+          'columns' => array(
+            'tid' => 'tid',
+          ),
+        ),
+      ),
+      'indexes' => array(
+        'tid' => array(
+          0 => 'tid',
+        ),
+      ),
+      'field_name' => 'field_categorie',
+      'type' => 'taxonomy_term_reference',
+      'module' => 'taxonomy',
+      'active' => '1',
+      'locked' => '0',
+      'cardinality' => '1',
+      'deleted' => '0',
+      'columns' => array(
+        'tid' => array(
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => FALSE,
+        ),
+      ),
+      'bundles' => array(
+        'node' => array(
+          0 => 'carte',
+        ),
+      ),
+    ),
+    'field_collections' => array(
+      'translatable' => '0',
+      'entity_types' => array(),
+      'settings' => array(
+        'allowed_values' => array(
+          0 => array(
+            'vocabulary' => 'collections',
+            'parent' => '0',
+          ),
+        ),
+      ),
+      'storage' => array(
+        'type' => 'field_sql_storage',
+        'settings' => array(),
+        'module' => 'field_sql_storage',
+        'active' => '1',
+        'details' => array(
+          'sql' => array(
+            'FIELD_LOAD_CURRENT' => array(
+              'field_data_field_collections' => array(
+                'tid' => 'field_collections_tid',
+              ),
+            ),
+            'FIELD_LOAD_REVISION' => array(
+              'field_revision_field_collections' => array(
+                'tid' => 'field_collections_tid',
+              ),
+            ),
+          ),
+        ),
+      ),
+      'foreign keys' => array(
+        'tid' => array(
+          'table' => 'taxonomy_term_data',
+          'columns' => array(
+            'tid' => 'tid',
+          ),
+        ),
+      ),
+      'indexes' => array(
+        'tid' => array(
+          0 => 'tid',
+        ),
+      ),
+      'field_name' => 'field_collections',
+      'type' => 'taxonomy_term_reference',
+      'module' => 'taxonomy',
+      'active' => '1',
+      'locked' => '0',
+      'cardinality' => '-1',
+      'deleted' => '0',
+      'columns' => array(
+        'tid' => array(
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => FALSE,
+        ),
+      ),
+      'bundles' => array(
+        'node' => array(
+          0 => 'carte',
+        ),
+      ),
+    ),
+    'field_date_de_creation' => array(
+      'translatable' => '0',
+      'entity_types' => array(),
+      'settings' => array(
+        'granularity' => array(
+          'month' => 'month',
+          'day' => 'day',
+          'year' => 'year',
+          'hour' => 0,
+          'minute' => 0,
+          'second' => 0,
+        ),
+        'tz_handling' => 'none',
+        'timezone_db' => '',
+        'cache_enabled' => 0,
+        'cache_count' => '4',
+        'todate' => '',
+      ),
+      'storage' => array(
+        'type' => 'field_sql_storage',
+        'settings' => array(),
+        'module' => 'field_sql_storage',
+        'active' => '1',
+        'details' => array(
+          'sql' => array(
+            'FIELD_LOAD_CURRENT' => array(
+              'field_data_field_date_de_creation' => array(
+                'value' => 'field_date_de_creation_value',
+              ),
+            ),
+            'FIELD_LOAD_REVISION' => array(
+              'field_revision_field_date_de_creation' => array(
+                'value' => 'field_date_de_creation_value',
+              ),
+            ),
+          ),
+        ),
+      ),
+      'foreign keys' => array(),
+      'indexes' => array(),
+      'field_name' => 'field_date_de_creation',
+      'type' => 'date',
+      'module' => 'date',
+      'active' => '1',
+      'locked' => '0',
+      'cardinality' => '1',
+      'deleted' => '0',
+      'columns' => array(
+        'value' => array(
+          'type' => 'varchar',
+          'length' => 20,
+          'not null' => FALSE,
+          'sortable' => TRUE,
+          'views' => TRUE,
+        ),
+      ),
+      'bundles' => array(
+        'node' => array(
+          0 => 'carte',
+        ),
+      ),
+    ),
+    'field_date_de_mise_jour' => array(
+      'translatable' => '0',
+      'entity_types' => array(),
+      'settings' => array(
+        'granularity' => array(
+          'month' => 'month',
+          'day' => 'day',
+          'year' => 'year',
+          'hour' => 0,
+          'minute' => 0,
+          'second' => 0,
+        ),
+        'tz_handling' => 'none',
+        'timezone_db' => '',
+        'cache_enabled' => 0,
+        'cache_count' => '4',
+        'todate' => '',
+      ),
+      'storage' => array(
+        'type' => 'field_sql_storage',
+        'settings' => array(),
+        'module' => 'field_sql_storage',
+        'active' => '1',
+        'details' => array(
+          'sql' => array(
+            'FIELD_LOAD_CURRENT' => array(
+              'field_data_field_date_de_mise_jour' => array(
+                'value' => 'field_date_de_mise_jour_value',
+              ),
+            ),
+            'FIELD_LOAD_REVISION' => array(
+              'field_revision_field_date_de_mise_jour' => array(
+                'value' => 'field_date_de_mise_jour_value',
+              ),
+            ),
+          ),
+        ),
+      ),
+      'foreign keys' => array(),
+      'indexes' => array(),
+      'field_name' => 'field_date_de_mise_jour',
+      'type' => 'date',
+      'module' => 'date',
+      'active' => '1',
+      'locked' => '0',
+      'cardinality' => '1',
+      'deleted' => '0',
+      'columns' => array(
+        'value' => array(
+          'type' => 'varchar',
+          'length' => 20,
+          'not null' => FALSE,
+          'sortable' => TRUE,
+          'views' => TRUE,
+        ),
+      ),
+      'bundles' => array(
+        'node' => array(
+          0 => 'carte',
+        ),
+      ),
+    ),
+    'field_description' => array(
+      'translatable' => '0',
+      'entity_types' => array(),
+      'settings' => array(),
+      'storage' => array(
+        'type' => 'field_sql_storage',
+        'settings' => array(),
+        'module' => 'field_sql_storage',
+        'active' => '1',
+        'details' => array(
+          'sql' => array(
+            'FIELD_LOAD_CURRENT' => array(
+              'field_data_field_description' => array(
+                'value' => 'field_description_value',
+                'summary' => 'field_description_summary',
+                'format' => 'field_description_format',
+              ),
+            ),
+            'FIELD_LOAD_REVISION' => array(
+              'field_revision_field_description' => array(
+                'value' => 'field_description_value',
+                'summary' => 'field_description_summary',
+                'format' => 'field_description_format',
+              ),
+            ),
+          ),
+        ),
+      ),
+      'foreign keys' => array(
+        'format' => array(
+          'table' => 'filter_format',
+          'columns' => array(
+            'format' => 'format',
+          ),
+        ),
+      ),
+      'indexes' => array(
+        'format' => array(
+          0 => 'format',
+        ),
+      ),
+      'field_name' => 'field_description',
+      'type' => 'text_with_summary',
+      'module' => 'text',
+      'active' => '1',
+      'locked' => '0',
+      'cardinality' => '1',
+      'deleted' => '0',
+      'columns' => array(
+        'value' => array(
+          'type' => 'text',
+          'size' => 'big',
+          'not null' => FALSE,
+        ),
+        'summary' => array(
+          'type' => 'text',
+          'size' => 'big',
+          'not null' => FALSE,
+        ),
+        'format' => array(
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => FALSE,
+        ),
+      ),
+      'bundles' => array(
+        'node' => array(
+          0 => 'carte',
+        ),
+      ),
+    ),
+    'field_echelle' => array(
+      'translatable' => '0',
+      'entity_types' => array(),
+      'settings' => array(
+        'allowed_values' => array(
+          1000 => '1:1 000',
+          5000 => '1:5 000',
+          10000 => '1:10 000',
+          25000 => '1:25 000',
+          50000 => '1:50 000',
+          100000 => '1:100 000',
+          150000 => '1:150 000',
+          160000 => '1:160 000',
+          200000 => '1:200 000',
+          250000 => '1:250 000',
+          300000 => '1:300 000',
+          500000 => '1:500 000',
+          750000 => '1:750 000',
+          1000000 => '1:1 000 000',
+          1050000 => '1:1 050 000',
+          1560000 => '1:1 560 000',
+          1950000 => '1:1 950 000',
+          2021918 => '1:2 021 918',
+          2400000 => '1:2 400 000',
+          2800000 => '1:2 800 000',
+          4000000 => '1:4 000 000',
+          4500000 => '1:4 500 000',
+          5000000 => '1:5 000 000',
+          5500000 => '1:5 500 000',
+          5646743 => '1:5 646 743',
+          5800000 => '1:5 800 000',
+          7000000 => '1:7 000 000',
+          8000000 => '1:8 000 000',
+          8500000 => '1:8 500 000',
+          13500000 => '1:13 500 000',
+          15000000 => '1:15 000 000',
+          20000000 => '1:20 000 000',
+          22000000 => '1:22 000 000',
+          30000000 => '1:30 000 000',
+        ),
+        'allowed_values_function' => '',
+      ),
+      'storage' => array(
+        'type' => 'field_sql_storage',
+        'settings' => array(),
+        'module' => 'field_sql_storage',
+        'active' => '1',
+        'details' => array(
+          'sql' => array(
+            'FIELD_LOAD_CURRENT' => array(
+              'field_data_field_echelle' => array(
+                'value' => 'field_echelle_value',
+              ),
+            ),
+            'FIELD_LOAD_REVISION' => array(
+              'field_revision_field_echelle' => array(
+                'value' => 'field_echelle_value',
+              ),
+            ),
+          ),
+        ),
+      ),
+      'foreign keys' => array(),
+      'indexes' => array(
+        'value' => array(
+          0 => 'value',
+        ),
+      ),
+      'field_name' => 'field_echelle',
+      'type' => 'list_text',
+      'module' => 'list',
+      'active' => '1',
+      'locked' => '0',
+      'cardinality' => '1',
+      'deleted' => '0',
+      'columns' => array(
+        'value' => array(
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => FALSE,
+        ),
+      ),
+      'bundles' => array(
+        'node' => array(
+          0 => 'carte',
+        ),
+      ),
+    ),
+    'field_emprise_geographique' => array(
+      'translatable' => '0',
+      'entity_types' => array(),
+      'settings' => array(
+        'allowed_values' => array(
+          'Monde' => 'Monde',
+          'Europe' => 'Europe',
+          'France' => 'France',
+          'Région' => 'Région',
+          'Département' => 'Département',
+          'Infra-départemental' => 'Infra-départemental',
+        ),
+        'allowed_values_function' => '',
+      ),
+      'storage' => array(
+        'type' => 'field_sql_storage',
+        'settings' => array(),
+        'module' => 'field_sql_storage',
+        'active' => '1',
+        'details' => array(
+          'sql' => array(
+            'FIELD_LOAD_CURRENT' => array(
+              'field_data_field_emprise_geographique' => array(
+                'value' => 'field_emprise_geographique_value',
+              ),
+            ),
+            'FIELD_LOAD_REVISION' => array(
+              'field_revision_field_emprise_geographique' => array(
+                'value' => 'field_emprise_geographique_value',
+              ),
+            ),
+          ),
+        ),
+      ),
+      'foreign keys' => array(),
+      'indexes' => array(
+        'value' => array(
+          0 => 'value',
+        ),
+      ),
+      'field_name' => 'field_emprise_geographique',
+      'type' => 'list_text',
+      'module' => 'list',
+      'active' => '1',
+      'locked' => '0',
+      'cardinality' => '1',
+      'deleted' => '0',
+      'columns' => array(
+        'value' => array(
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => FALSE,
+        ),
+      ),
+      'bundles' => array(
+        'node' => array(
+          0 => 'carte',
+        ),
+      ),
+    ),
+    'field_fichier_carte' => array(
+      'translatable' => '0',
+      'entity_types' => array(),
+      'settings' => array(
+        'display_field' => 0,
+        'display_default' => 0,
+        'uri_scheme' => 'private',
+      ),
+      'storage' => array(
+        'type' => 'field_sql_storage',
+        'settings' => array(),
+        'module' => 'field_sql_storage',
+        'active' => '1',
+        'details' => array(
+          'sql' => array(
+            'FIELD_LOAD_CURRENT' => array(
+              'field_data_field_fichier_carte' => array(
+                'fid' => 'field_fichier_carte_fid',
+                'display' => 'field_fichier_carte_display',
+                'description' => 'field_fichier_carte_description',
+              ),
+            ),
+            'FIELD_LOAD_REVISION' => array(
+              'field_revision_field_fichier_carte' => array(
+                'fid' => 'field_fichier_carte_fid',
+                'display' => 'field_fichier_carte_display',
+                'description' => 'field_fichier_carte_description',
+              ),
+            ),
+          ),
+        ),
+      ),
+      'foreign keys' => array(
+        'fid' => array(
+          'table' => 'file_managed',
+          'columns' => array(
+            'fid' => 'fid',
+          ),
+        ),
+      ),
+      'indexes' => array(
+        'fid' => array(
+          0 => 'fid',
+        ),
+      ),
+      'field_name' => 'field_fichier_carte',
+      'type' => 'file',
+      'module' => 'file',
+      'active' => '1',
+      'locked' => '0',
+      'cardinality' => '1',
+      'deleted' => '0',
+      'columns' => array(
+        'fid' => array(
+          'description' => 'The {file_managed}.fid being referenced in this field.',
+          'type' => 'int',
+          'not null' => FALSE,
+          'unsigned' => TRUE,
+        ),
+        'display' => array(
+          'description' => 'Flag to control whether this file should be displayed when viewing content.',
+          'type' => 'int',
+          'size' => 'tiny',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 1,
+        ),
+        'description' => array(
+          'description' => 'A description of the file.',
+          'type' => 'text',
+          'not null' => FALSE,
+        ),
+      ),
+      'bundles' => array(
+        'node' => array(
+          0 => 'carte',
+        ),
+      ),
+    ),
+    'field_image' => array(
+      'indexes' => array(
+        'fid' => array(
+          0 => 'fid',
+        ),
+      ),
+      'settings' => array(
+        'uri_scheme' => 'public',
+        'default_image' => FALSE,
+      ),
+      'storage' => array(
+        'type' => 'field_sql_storage',
+        'settings' => array(),
+        'module' => 'field_sql_storage',
+        'active' => '1',
+        'details' => array(
+          'sql' => array(
+            'FIELD_LOAD_CURRENT' => array(
+              'field_data_field_image' => array(
+                'fid' => 'field_image_fid',
+                'alt' => 'field_image_alt',
+                'title' => 'field_image_title',
+                'width' => 'field_image_width',
+                'height' => 'field_image_height',
+              ),
+            ),
+            'FIELD_LOAD_REVISION' => array(
+              'field_revision_field_image' => array(
+                'fid' => 'field_image_fid',
+                'alt' => 'field_image_alt',
+                'title' => 'field_image_title',
+                'width' => 'field_image_width',
+                'height' => 'field_image_height',
+              ),
+            ),
+          ),
+        ),
+      ),
+      'entity_types' => array(),
+      'translatable' => '0',
+      'foreign keys' => array(
+        'fid' => array(
+          'table' => 'file_managed',
+          'columns' => array(
+            'fid' => 'fid',
+          ),
+        ),
+      ),
+      'field_name' => 'field_image',
+      'type' => 'image',
+      'module' => 'image',
+      'active' => '1',
+      'locked' => '0',
+      'cardinality' => '1',
+      'deleted' => '0',
+      'columns' => array(
+        'fid' => array(
+          'description' => 'The {file_managed}.fid being referenced in this field.',
+          'type' => 'int',
+          'not null' => FALSE,
+          'unsigned' => TRUE,
+        ),
+        'alt' => array(
+          'description' => 'Alternative image text, for the image\'s \'alt\' attribute.',
+          'type' => 'varchar',
+          'length' => 512,
+          'not null' => FALSE,
+        ),
+        'title' => array(
+          'description' => 'Image title text, for the image\'s \'title\' attribute.',
+          'type' => 'varchar',
+          'length' => 1024,
+          'not null' => FALSE,
+        ),
+        'width' => array(
+          'description' => 'The width of the image in pixels.',
+          'type' => 'int',
+          'unsigned' => TRUE,
+        ),
+        'height' => array(
+          'description' => 'The height of the image in pixels.',
+          'type' => 'int',
+          'unsigned' => TRUE,
+        ),
+      ),
+      'bundles' => array(
+        'node' => array(
+          0 => 'article',
+        ),
+      ),
+    ),
+    'field_image_carte' => array(
+      'translatable' => '0',
+      'entity_types' => array(),
+      'settings' => array(
+        'uri_scheme' => 'private',
+        'default_image' => 0,
+      ),
+      'storage' => array(
+        'type' => 'field_sql_storage',
+        'settings' => array(),
+        'module' => 'field_sql_storage',
+        'active' => '1',
+        'details' => array(
+          'sql' => array(
+            'FIELD_LOAD_CURRENT' => array(
+              'field_data_field_image_carte' => array(
+                'fid' => 'field_image_carte_fid',
+                'alt' => 'field_image_carte_alt',
+                'title' => 'field_image_carte_title',
+                'width' => 'field_image_carte_width',
+                'height' => 'field_image_carte_height',
+              ),
+            ),
+            'FIELD_LOAD_REVISION' => array(
+              'field_revision_field_image_carte' => array(
+                'fid' => 'field_image_carte_fid',
+                'alt' => 'field_image_carte_alt',
+                'title' => 'field_image_carte_title',
+                'width' => 'field_image_carte_width',
+                'height' => 'field_image_carte_height',
+              ),
+            ),
+          ),
+        ),
+      ),
+      'foreign keys' => array(
+        'fid' => array(
+          'table' => 'file_managed',
+          'columns' => array(
+            'fid' => 'fid',
+          ),
+        ),
+      ),
+      'indexes' => array(
+        'fid' => array(
+          0 => 'fid',
+        ),
+      ),
+      'field_name' => 'field_image_carte',
+      'type' => 'image',
+      'module' => 'image',
+      'active' => '1',
+      'locked' => '0',
+      'cardinality' => '1',
+      'deleted' => '0',
+      'columns' => array(
+        'fid' => array(
+          'description' => 'The {file_managed}.fid being referenced in this field.',
+          'type' => 'int',
+          'not null' => FALSE,
+          'unsigned' => TRUE,
+        ),
+        'alt' => array(
+          'description' => 'Alternative image text, for the image\'s \'alt\' attribute.',
+          'type' => 'varchar',
+          'length' => 512,
+          'not null' => FALSE,
+        ),
+        'title' => array(
+          'description' => 'Image title text, for the image\'s \'title\' attribute.',
+          'type' => 'varchar',
+          'length' => 1024,
+          'not null' => FALSE,
+        ),
+        'width' => array(
+          'description' => 'The width of the image in pixels.',
+          'type' => 'int',
+          'unsigned' => TRUE,
+        ),
+        'height' => array(
+          'description' => 'The height of the image in pixels.',
+          'type' => 'int',
+          'unsigned' => TRUE,
+        ),
+      ),
+      'bundles' => array(
+        'node' => array(
+          0 => 'carte',
+        ),
+      ),
+    ),
+    'field_imagette' => array(
+      'translatable' => '0',
+      'entity_types' => array(),
+      'settings' => array(
+        'uri_scheme' => 'private',
+        'default_image' => 0,
+      ),
+      'storage' => array(
+        'type' => 'field_sql_storage',
+        'settings' => array(),
+        'module' => 'field_sql_storage',
+        'active' => '1',
+        'details' => array(
+          'sql' => array(
+            'FIELD_LOAD_CURRENT' => array(
+              'field_data_field_imagette' => array(
+                'fid' => 'field_imagette_fid',
+                'alt' => 'field_imagette_alt',
+                'title' => 'field_imagette_title',
+                'width' => 'field_imagette_width',
+                'height' => 'field_imagette_height',
+              ),
+            ),
+            'FIELD_LOAD_REVISION' => array(
+              'field_revision_field_imagette' => array(
+                'fid' => 'field_imagette_fid',
+                'alt' => 'field_imagette_alt',
+                'title' => 'field_imagette_title',
+                'width' => 'field_imagette_width',
+                'height' => 'field_imagette_height',
+              ),
+            ),
+          ),
+        ),
+      ),
+      'foreign keys' => array(
+        'fid' => array(
+          'table' => 'file_managed',
+          'columns' => array(
+            'fid' => 'fid',
+          ),
+        ),
+      ),
+      'indexes' => array(
+        'fid' => array(
+          0 => 'fid',
+        ),
+      ),
+      'field_name' => 'field_imagette',
+      'type' => 'image',
+      'module' => 'image',
+      'active' => '1',
+      'locked' => '0',
+      'cardinality' => '1',
+      'deleted' => '0',
+      'columns' => array(
+        'fid' => array(
+          'description' => 'The {file_managed}.fid being referenced in this field.',
+          'type' => 'int',
+          'not null' => FALSE,
+          'unsigned' => TRUE,
+        ),
+        'alt' => array(
+          'description' => 'Alternative image text, for the image\'s \'alt\' attribute.',
+          'type' => 'varchar',
+          'length' => 512,
+          'not null' => FALSE,
+        ),
+        'title' => array(
+          'description' => 'Image title text, for the image\'s \'title\' attribute.',
+          'type' => 'varchar',
+          'length' => 1024,
+          'not null' => FALSE,
+        ),
+        'width' => array(
+          'description' => 'The width of the image in pixels.',
+          'type' => 'int',
+          'unsigned' => TRUE,
+        ),
+        'height' => array(
+          'description' => 'The height of the image in pixels.',
+          'type' => 'int',
+          'unsigned' => TRUE,
+        ),
+      ),
+      'bundles' => array(
+        'node' => array(
+          0 => 'carte',
+        ),
+      ),
+    ),
+    'field_isharvested' => array(
+      'translatable' => '0',
+      'entity_types' => array(),
+      'settings' => array(
+        'allowed_values' => array(
+          0 => '',
+          1 => '',
+        ),
+        'allowed_values_function' => '',
+      ),
+      'storage' => array(
+        'type' => 'field_sql_storage',
+        'settings' => array(),
+        'module' => 'field_sql_storage',
+        'active' => '1',
+        'details' => array(
+          'sql' => array(
+            'FIELD_LOAD_CURRENT' => array(
+              'field_data_field_isharvested' => array(
+                'value' => 'field_isharvested_value',
+              ),
+            ),
+            'FIELD_LOAD_REVISION' => array(
+              'field_revision_field_isharvested' => array(
+                'value' => 'field_isharvested_value',
+              ),
+            ),
+          ),
+        ),
+      ),
+      'foreign keys' => array(),
+      'indexes' => array(
+        'value' => array(
+          0 => 'value',
+        ),
+      ),
+      'field_name' => 'field_isharvested',
+      'type' => 'list_boolean',
+      'module' => 'list',
+      'active' => '1',
+      'locked' => '0',
+      'cardinality' => '1',
+      'deleted' => '0',
+      'columns' => array(
+        'value' => array(
+          'type' => 'int',
+          'not null' => FALSE,
+        ),
+      ),
+      'bundles' => array(
+        'node' => array(
+          0 => 'carte',
+        ),
+      ),
+    ),
+    'field_mots_cles' => array(
+      'translatable' => '0',
+      'entity_types' => array(),
+      'settings' => array(
+        'allowed_values' => array(
+          0 => array(
+            'vocabulary' => 'mots_cles',
+            'parent' => '0',
+          ),
+        ),
+        'options_list_callback' => '',
+      ),
+      'storage' => array(
+        'type' => 'field_sql_storage',
+        'settings' => array(),
+        'module' => 'field_sql_storage',
+        'active' => '1',
+        'details' => array(
+          'sql' => array(
+            'FIELD_LOAD_CURRENT' => array(
+              'field_data_field_mots_cles' => array(
+                'tid' => 'field_mots_cles_tid',
+              ),
+            ),
+            'FIELD_LOAD_REVISION' => array(
+              'field_revision_field_mots_cles' => array(
+                'tid' => 'field_mots_cles_tid',
+              ),
+            ),
+          ),
+        ),
+      ),
+      'foreign keys' => array(
+        'tid' => array(
+          'table' => 'taxonomy_term_data',
+          'columns' => array(
+            'tid' => 'tid',
+          ),
+        ),
+      ),
+      'indexes' => array(
+        'tid' => array(
+          0 => 'tid',
+        ),
+      ),
+      'field_name' => 'field_mots_cles',
+      'type' => 'taxonomy_term_reference',
+      'module' => 'taxonomy',
+      'active' => '1',
+      'locked' => '0',
+      'cardinality' => '-1',
+      'deleted' => '0',
+      'columns' => array(
+        'tid' => array(
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => FALSE,
+        ),
+      ),
+      'bundles' => array(
+        'node' => array(
+          0 => 'carte',
+        ),
+      ),
+    ),
+    'field_mots_cles_thesaurus' => array(
+      'translatable' => '0',
+      'entity_types' => array(),
+      'settings' => array(
+        'allowed_values' => array(
+          0 => array(
+            'vocabulary' => 'mots_cles_thesaurus_gemet',
+            'parent' => '0',
+          ),
+        ),
+      ),
+      'storage' => array(
+        'type' => 'field_sql_storage',
+        'settings' => array(),
+        'module' => 'field_sql_storage',
+        'active' => '1',
+        'details' => array(
+          'sql' => array(
+            'FIELD_LOAD_CURRENT' => array(
+              'field_data_field_mots_cles_thesaurus' => array(
+                'tid' => 'field_mots_cles_thesaurus_tid',
+              ),
+            ),
+            'FIELD_LOAD_REVISION' => array(
+              'field_revision_field_mots_cles_thesaurus' => array(
+                'tid' => 'field_mots_cles_thesaurus_tid',
+              ),
+            ),
+          ),
+        ),
+      ),
+      'foreign keys' => array(
+        'tid' => array(
+          'table' => 'taxonomy_term_data',
+          'columns' => array(
+            'tid' => 'tid',
+          ),
+        ),
+      ),
+      'indexes' => array(
+        'tid' => array(
+          0 => 'tid',
+        ),
+      ),
+      'field_name' => 'field_mots_cles_thesaurus',
+      'type' => 'taxonomy_term_reference',
+      'module' => 'taxonomy',
+      'active' => '1',
+      'locked' => '0',
+      'cardinality' => '-1',
+      'deleted' => '0',
+      'columns' => array(
+        'tid' => array(
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => FALSE,
+        ),
+      ),
+      'bundles' => array(
+        'node' => array(
+          0 => 'carte',
+        ),
+      ),
+    ),
+    'field_numero_de_carte' => array(
+      'not null' => TRUE,
+      'entity_types' => array(),
+      'translatable' => '0',
+      'settings' => array(
+        'max_length' => 255,
+      ),
+      'storage' => array(
+        'type' => 'field_sql_storage',
+        'settings' => array(),
+        'module' => 'field_sql_storage',
+        'active' => '1',
+        'details' => array(
+          'sql' => array(
+            'FIELD_LOAD_CURRENT' => array(
+              'field_data_field_numero_de_carte' => array(
+                'value' => 'field_numero_de_carte_value',
+                'format' => 'field_numero_de_carte_format',
+              ),
+            ),
+            'FIELD_LOAD_REVISION' => array(
+              'field_revision_field_numero_de_carte' => array(
+                'value' => 'field_numero_de_carte_value',
+                'format' => 'field_numero_de_carte_format',
+              ),
+            ),
+          ),
+        ),
+      ),
+      'foreign keys' => array(
+        'format' => array(
+          'table' => 'filter_format',
+          'columns' => array(
+            'format' => 'format',
+          ),
+        ),
+      ),
+      'indexes' => array(
+        'format' => array(
+          0 => 'format',
+        ),
+      ),
+      'field_name' => 'field_numero_de_carte',
+      'type' => 'text',
+      'module' => 'text',
+      'active' => '1',
+      'locked' => '0',
+      'cardinality' => '1',
+      'deleted' => '0',
+      'columns' => array(
+        'value' => array(
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => FALSE,
+        ),
+        'format' => array(
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => FALSE,
+        ),
+      ),
+      'bundles' => array(
+        'node' => array(
+          0 => 'carte',
+        ),
+      ),
+    ),
+    'field_ressources_associes' => array(
+      'translatable' => '0',
+      'entity_types' => array(),
+      'settings' => array(),
+      'storage' => array(
+        'type' => 'field_sql_storage',
+        'settings' => array(),
+        'module' => 'field_sql_storage',
+        'active' => '1',
+        'details' => array(
+          'sql' => array(
+            'FIELD_LOAD_CURRENT' => array(
+              'field_data_field_ressources_associes' => array(
+                'value' => 'field_ressources_associes_value',
+                'title' => 'field_ressources_associes_title',
+                'attributes' => 'field_ressources_associes_attributes',
+              ),
+            ),
+            'FIELD_LOAD_REVISION' => array(
+              'field_revision_field_ressources_associes' => array(
+                'value' => 'field_ressources_associes_value',
+                'title' => 'field_ressources_associes_title',
+                'attributes' => 'field_ressources_associes_attributes',
+              ),
+            ),
+          ),
+        ),
+      ),
+      'foreign keys' => array(),
+      'indexes' => array(),
+      'field_name' => 'field_ressources_associes',
+      'type' => 'url',
+      'module' => 'url',
+      'active' => '1',
+      'locked' => '0',
+      'cardinality' => '-1',
+      'deleted' => '0',
+      'columns' => array(
+        'value' => array(
+          'description' => 'The URL string.',
+          'type' => 'text',
+          'size' => 'big',
+          'not null' => FALSE,
+        ),
+        'title' => array(
+          'description' => 'The title of the URL.',
+          'type' => 'varchar',
+          'length' => 1024,
+          'not null' => FALSE,
+        ),
+        'attributes' => array(
+          'description' => 'The serialized array of attributes of the URL.',
+          'type' => 'blob',
+          'size' => 'big',
+          'not null' => FALSE,
+          'serialize' => TRUE,
+        ),
+      ),
+      'bundles' => array(
+        'node' => array(
+          0 => 'carte',
+        ),
+      ),
+    ),
+    'field_source_des_donnees' => array(
+      'translatable' => '0',
+      'entity_types' => array(),
+      'settings' => array(),
+      'storage' => array(
+        'type' => 'field_sql_storage',
+        'settings' => array(),
+        'module' => 'field_sql_storage',
+        'active' => '1',
+        'details' => array(
+          'sql' => array(
+            'FIELD_LOAD_CURRENT' => array(
+              'field_data_field_source_des_donnees' => array(
+                'value' => 'field_source_des_donnees_value',
+                'format' => 'field_source_des_donnees_format',
+              ),
+            ),
+            'FIELD_LOAD_REVISION' => array(
+              'field_revision_field_source_des_donnees' => array(
+                'value' => 'field_source_des_donnees_value',
+                'format' => 'field_source_des_donnees_format',
+              ),
+            ),
+          ),
+        ),
+      ),
+      'foreign keys' => array(
+        'format' => array(
+          'table' => 'filter_format',
+          'columns' => array(
+            'format' => 'format',
+          ),
+        ),
+      ),
+      'indexes' => array(
+        'format' => array(
+          0 => 'format',
+        ),
+      ),
+      'field_name' => 'field_source_des_donnees',
+      'type' => 'text_long',
+      'module' => 'text',
+      'active' => '1',
+      'locked' => '0',
+      'cardinality' => '1',
+      'deleted' => '0',
+      'columns' => array(
+        'value' => array(
+          'type' => 'text',
+          'size' => 'big',
+          'not null' => FALSE,
+        ),
+        'format' => array(
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => FALSE,
+        ),
+      ),
+      'bundles' => array(
+        'node' => array(
+          0 => 'carte',
+        ),
+      ),
+    ),
+    'field_statut' => array(
+      'translatable' => '0',
+      'entity_types' => array(),
+      'settings' => array(
+        'allowed_values' => array(
+          'archive' => 'Archivé',
+          'interne' => 'Interne',
+          'externe' => 'Externe',
+        ),
+        'allowed_values_function' => '',
+      ),
+      'storage' => array(
+        'type' => 'field_sql_storage',
+        'settings' => array(),
+        'module' => 'field_sql_storage',
+        'active' => '1',
+        'details' => array(
+          'sql' => array(
+            'FIELD_LOAD_CURRENT' => array(
+              'field_data_field_statut' => array(
+                'value' => 'field_statut_value',
+              ),
+            ),
+            'FIELD_LOAD_REVISION' => array(
+              'field_revision_field_statut' => array(
+                'value' => 'field_statut_value',
+              ),
+            ),
+          ),
+        ),
+      ),
+      'foreign keys' => array(),
+      'indexes' => array(
+        'value' => array(
+          0 => 'value',
+        ),
+      ),
+      'field_name' => 'field_statut',
+      'type' => 'list_text',
+      'module' => 'list',
+      'active' => '1',
+      'locked' => '0',
+      'cardinality' => '1',
+      'deleted' => '0',
+      'columns' => array(
+        'value' => array(
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => FALSE,
+        ),
+      ),
+      'bundles' => array(
+        'node' => array(
+          0 => 'carte',
+        ),
+      ),
+    ),
+    'field_tags' => array(
+      'settings' => array(
+        'allowed_values' => array(
+          0 => array(
+            'vocabulary' => 'tags',
+            'parent' => 0,
+          ),
+        ),
+      ),
+      'entity_types' => array(),
+      'translatable' => '0',
+      'storage' => array(
+        'type' => 'field_sql_storage',
+        'settings' => array(),
+        'module' => 'field_sql_storage',
+        'active' => '1',
+        'details' => array(
+          'sql' => array(
+            'FIELD_LOAD_CURRENT' => array(
+              'field_data_field_tags' => array(
+                'tid' => 'field_tags_tid',
+              ),
+            ),
+            'FIELD_LOAD_REVISION' => array(
+              'field_revision_field_tags' => array(
+                'tid' => 'field_tags_tid',
+              ),
+            ),
+          ),
+        ),
+      ),
+      'foreign keys' => array(
+        'tid' => array(
+          'table' => 'taxonomy_term_data',
+          'columns' => array(
+            'tid' => 'tid',
+          ),
+        ),
+      ),
+      'indexes' => array(
+        'tid' => array(
+          0 => 'tid',
+        ),
+      ),
+      'field_name' => 'field_tags',
+      'type' => 'taxonomy_term_reference',
+      'module' => 'taxonomy',
+      'active' => '1',
+      'locked' => '0',
+      'cardinality' => '-1',
+      'deleted' => '0',
+      'columns' => array(
+        'tid' => array(
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => FALSE,
+        ),
+      ),
+      'bundles' => array(
+        'node' => array(
+          0 => 'article',
+        ),
+      ),
+    ),
+    'field_thematique' => array(
+      'translatable' => '0',
+      'entity_types' => array(),
+      'settings' => array(
+        'allowed_values' => array(
+          0 => array(
+            'vocabulary' => 'thematique_gemet',
+            'parent' => '0',
+          ),
+        ),
+      ),
+      'storage' => array(
+        'type' => 'field_sql_storage',
+        'settings' => array(),
+        'module' => 'field_sql_storage',
+        'active' => '1',
+        'details' => array(
+          'sql' => array(
+            'FIELD_LOAD_CURRENT' => array(
+              'field_data_field_thematique' => array(
+                'tid' => 'field_thematique_tid',
+              ),
+            ),
+            'FIELD_LOAD_REVISION' => array(
+              'field_revision_field_thematique' => array(
+                'tid' => 'field_thematique_tid',
+              ),
+            ),
+          ),
+        ),
+      ),
+      'foreign keys' => array(
+        'tid' => array(
+          'table' => 'taxonomy_term_data',
+          'columns' => array(
+            'tid' => 'tid',
+          ),
+        ),
+      ),
+      'indexes' => array(
+        'tid' => array(
+          0 => 'tid',
+        ),
+      ),
+      'field_name' => 'field_thematique',
+      'type' => 'taxonomy_term_reference',
+      'module' => 'taxonomy',
+      'active' => '1',
+      'locked' => '0',
+      'cardinality' => '-1',
+      'deleted' => '0',
+      'columns' => array(
+        'tid' => array(
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => FALSE,
+        ),
+      ),
+      'bundles' => array(
+        'node' => array(
+          0 => 'carte',
+        ),
+      ),
+    ),
+    'field_thematique_hdf' => array(
+      'translatable' => '0',
+      'entity_types' => array(),
+      'settings' => array(
+        'allowed_values' => array(
+          0 => array(
+            'vocabulary' => 'thematique_hdf',
+            'parent' => '0',
+          ),
+        ),
+      ),
+      'storage' => array(
+        'type' => 'field_sql_storage',
+        'settings' => array(),
+        'module' => 'field_sql_storage',
+        'active' => '1',
+        'details' => array(
+          'sql' => array(
+            'FIELD_LOAD_CURRENT' => array(
+              'field_data_field_thematique_hdf' => array(
+                'tid' => 'field_thematique_hdf_tid',
+              ),
+            ),
+            'FIELD_LOAD_REVISION' => array(
+              'field_revision_field_thematique_hdf' => array(
+                'tid' => 'field_thematique_hdf_tid',
+              ),
+            ),
+          ),
+        ),
+      ),
+      'foreign keys' => array(
+        'tid' => array(
+          'table' => 'taxonomy_term_data',
+          'columns' => array(
+            'tid' => 'tid',
+          ),
+        ),
+      ),
+      'indexes' => array(
+        'tid' => array(
+          0 => 'tid',
+        ),
+      ),
+      'field_name' => 'field_thematique_hdf',
+      'type' => 'taxonomy_term_reference',
+      'module' => 'taxonomy',
+      'active' => '1',
+      'locked' => '0',
+      'cardinality' => '1',
+      'deleted' => '0',
+      'columns' => array(
+        'tid' => array(
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => FALSE,
+        ),
+      ),
+      'bundles' => array(
+        'node' => array(
+          0 => 'carte',
+        ),
+      ),
+    ),
+    'field_type_de_carte' => array(
+      'translatable' => '0',
+      'entity_types' => array(),
+      'settings' => array(
+        'allowed_values' => array(
+          'Statique' => 'Statique',
+          'Dynamique' => 'Dynamique',
+        ),
+        'allowed_values_function' => '',
+      ),
+      'storage' => array(
+        'type' => 'field_sql_storage',
+        'settings' => array(),
+        'module' => 'field_sql_storage',
+        'active' => '1',
+        'details' => array(
+          'sql' => array(
+            'FIELD_LOAD_CURRENT' => array(
+              'field_data_field_type_de_carte' => array(
+                'value' => 'field_type_de_carte_value',
+              ),
+            ),
+            'FIELD_LOAD_REVISION' => array(
+              'field_revision_field_type_de_carte' => array(
+                'value' => 'field_type_de_carte_value',
+              ),
+            ),
+          ),
+        ),
+      ),
+      'foreign keys' => array(),
+      'indexes' => array(
+        'value' => array(
+          0 => 'value',
+        ),
+      ),
+      'field_name' => 'field_type_de_carte',
+      'type' => 'list_text',
+      'module' => 'list',
+      'active' => '1',
+      'locked' => '0',
+      'cardinality' => '1',
+      'deleted' => '0',
+      'columns' => array(
+        'value' => array(
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => FALSE,
+        ),
+      ),
+      'bundles' => array(
+        'node' => array(
+          0 => 'carte',
+        ),
+      ),
+    ),
+    'field_url_carte' => array(
+      'translatable' => '0',
+      'entity_types' => array(),
+      'settings' => array(),
+      'storage' => array(
+        'type' => 'field_sql_storage',
+        'settings' => array(),
+        'module' => 'field_sql_storage',
+        'active' => '1',
+        'details' => array(
+          'sql' => array(
+            'FIELD_LOAD_CURRENT' => array(
+              'field_data_field_url_carte' => array(
+                'value' => 'field_url_carte_value',
+                'title' => 'field_url_carte_title',
+                'attributes' => 'field_url_carte_attributes',
+              ),
+            ),
+            'FIELD_LOAD_REVISION' => array(
+              'field_revision_field_url_carte' => array(
+                'value' => 'field_url_carte_value',
+                'title' => 'field_url_carte_title',
+                'attributes' => 'field_url_carte_attributes',
+              ),
+            ),
+          ),
+        ),
+      ),
+      'foreign keys' => array(),
+      'indexes' => array(),
+      'field_name' => 'field_url_carte',
+      'type' => 'url',
+      'module' => 'url',
+      'active' => '1',
+      'locked' => '0',
+      'cardinality' => '1',
+      'deleted' => '0',
+      'columns' => array(
+        'value' => array(
+          'description' => 'The URL string.',
+          'type' => 'text',
+          'size' => 'big',
+          'not null' => FALSE,
+        ),
+        'title' => array(
+          'description' => 'The title of the URL.',
+          'type' => 'varchar',
+          'length' => 1024,
+          'not null' => FALSE,
+        ),
+        'attributes' => array(
+          'description' => 'The serialized array of attributes of the URL.',
+          'type' => 'blob',
+          'size' => 'big',
+          'not null' => FALSE,
+          'serialize' => TRUE,
+        ),
+      ),
+      'bundles' => array(
+        'node' => array(
+          0 => 'carte',
+        ),
+      ),
+    ),
+    'field_url_source_des_donnees' => array(
+      'translatable' => '0',
+      'entity_types' => array(),
+      'settings' => array(),
+      'storage' => array(
+        'type' => 'field_sql_storage',
+        'settings' => array(),
+        'module' => 'field_sql_storage',
+        'active' => '1',
+        'details' => array(
+          'sql' => array(
+            'FIELD_LOAD_CURRENT' => array(
+              'field_data_field_url_source_des_donnees' => array(
+                'value' => 'field_url_source_des_donnees_value',
+                'title' => 'field_url_source_des_donnees_title',
+                'attributes' => 'field_url_source_des_donnees_attributes',
+              ),
+            ),
+            'FIELD_LOAD_REVISION' => array(
+              'field_revision_field_url_source_des_donnees' => array(
+                'value' => 'field_url_source_des_donnees_value',
+                'title' => 'field_url_source_des_donnees_title',
+                'attributes' => 'field_url_source_des_donnees_attributes',
+              ),
+            ),
+          ),
+        ),
+      ),
+      'foreign keys' => array(),
+      'indexes' => array(),
+      'field_name' => 'field_url_source_des_donnees',
+      'type' => 'url',
+      'module' => 'url',
+      'active' => '1',
+      'locked' => '0',
+      'cardinality' => '-1',
+      'deleted' => '0',
+      'columns' => array(
+        'value' => array(
+          'description' => 'The URL string.',
+          'type' => 'text',
+          'size' => 'big',
+          'not null' => FALSE,
+        ),
+        'title' => array(
+          'description' => 'The title of the URL.',
+          'type' => 'varchar',
+          'length' => 1024,
+          'not null' => FALSE,
+        ),
+        'attributes' => array(
+          'description' => 'The serialized array of attributes of the URL.',
+          'type' => 'blob',
+          'size' => 'big',
+          'not null' => FALSE,
+          'serialize' => TRUE,
+        ),
+      ),
+      'bundles' => array(
+        'node' => array(
+          0 => 'carte',
+        ),
+      ),
+    ),
+    'field_uuid' => array(
+      'translatable' => '0',
+      'entity_types' => array(),
+      'settings' => array(
+        'max_length' => '255',
+      ),
+      'storage' => array(
+        'type' => 'field_sql_storage',
+        'settings' => array(),
+        'module' => 'field_sql_storage',
+        'active' => '1',
+        'details' => array(
+          'sql' => array(
+            'FIELD_LOAD_CURRENT' => array(
+              'field_data_field_uuid' => array(
+                'value' => 'field_uuid_value',
+                'format' => 'field_uuid_format',
+              ),
+            ),
+            'FIELD_LOAD_REVISION' => array(
+              'field_revision_field_uuid' => array(
+                'value' => 'field_uuid_value',
+                'format' => 'field_uuid_format',
+              ),
+            ),
+          ),
+        ),
+      ),
+      'foreign keys' => array(
+        'format' => array(
+          'table' => 'filter_format',
+          'columns' => array(
+            'format' => 'format',
+          ),
+        ),
+      ),
+      'indexes' => array(
+        'format' => array(
+          0 => 'format',
+        ),
+      ),
+      'field_name' => 'field_uuid',
+      'type' => 'text',
+      'module' => 'text',
+      'active' => '1',
+      'locked' => '0',
+      'cardinality' => '1',
+      'deleted' => '0',
+      'columns' => array(
+        'value' => array(
+          'type' => 'varchar',
+          'length' => '255',
+          'not null' => FALSE,
+        ),
+        'format' => array(
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => FALSE,
+        ),
+      ),
+      'bundles' => array(
+        'node' => array(
+          0 => 'carte',
+        ),
+      ),
+    ),
+  ),
+  'instances' => array(
+    'body' => array(
+      0 => array(
+        'label' => 'Body',
+        'widget' => array(
+          'type' => 'text_textarea_with_summary',
+          'settings' => array(
+            'rows' => 20,
+            'summary_rows' => 5,
+          ),
+          'weight' => -4,
+          'module' => 'text',
+        ),
+        'settings' => array(
+          'display_summary' => TRUE,
+          'text_processing' => 1,
+          'user_register_form' => FALSE,
+        ),
+        'display' => array(
+          'default' => array(
+            'label' => 'hidden',
+            'type' => 'text_default',
+            'settings' => array(),
+            'module' => 'text',
+            'weight' => 0,
+          ),
+          'teaser' => array(
+            'label' => 'hidden',
+            'type' => 'text_summary_or_trimmed',
+            'settings' => array(
+              'trim_length' => 600,
+            ),
+            'module' => 'text',
+            'weight' => 0,
+          ),
+        ),
+        'required' => FALSE,
+        'description' => '',
+        'field_name' => 'body',
+        'entity_type' => 'node',
+        'bundle' => 'article',
+        'deleted' => '0',
+        'default_value' => NULL,
+      ),
+      1 => array(
+        'label' => 'Body',
+        'widget' => array(
+          'type' => 'text_textarea_with_summary',
+          'settings' => array(
+            'rows' => 20,
+            'summary_rows' => 5,
+          ),
+          'weight' => -4,
+          'module' => 'text',
+        ),
+        'settings' => array(
+          'display_summary' => TRUE,
+          'text_processing' => 1,
+          'user_register_form' => FALSE,
+        ),
+        'display' => array(
+          'default' => array(
+            'label' => 'hidden',
+            'type' => 'text_default',
+            'settings' => array(),
+            'module' => 'text',
+            'weight' => 0,
+          ),
+          'teaser' => array(
+            'label' => 'hidden',
+            'type' => 'text_summary_or_trimmed',
+            'settings' => array(
+              'trim_length' => 600,
+            ),
+            'module' => 'text',
+            'weight' => 0,
+          ),
+        ),
+        'required' => FALSE,
+        'description' => '',
+        'field_name' => 'body',
+        'entity_type' => 'node',
+        'bundle' => 'page',
+        'deleted' => '0',
+        'default_value' => NULL,
+      ),
+    ),
+    'field_adresse_email' => array(
+      0 => array(
+        'label' => 'Adresse email',
+        'widget' => array(
+          'weight' => '-4',
+          'type' => 'email_textfield',
+          'module' => 'email',
+          'active' => 1,
+          'settings' => array(
+            'size' => '60',
+          ),
+        ),
+        'settings' => array(
+          'user_register_form' => FALSE,
+        ),
+        'display' => array(
+          'default' => array(
+            'label' => 'above',
+            'type' => 'email_default',
+            'settings' => array(),
+            'module' => 'email',
+            'weight' => 0,
+          ),
+          'teaser' => array(
+            'type' => 'hidden',
+            'label' => 'above',
+            'settings' => array(),
+            'weight' => 0,
+          ),
+        ),
+        'required' => 1,
+        'description' => '',
+        'default_value' => NULL,
+        'field_name' => 'field_adresse_email',
+        'entity_type' => 'node',
+        'bundle' => 'contact',
+        'deleted' => '0',
+      ),
+    ),
+    'field_auteur' => array(
+      0 => array(
+        'label' => 'Auteur',
+        'widget' => array(
+          'weight' => '12',
+          'type' => 'options_select',
+          'module' => 'options',
+          'active' => 1,
+          'settings' => array(),
+        ),
+        'settings' => array(
+          'user_register_form' => FALSE,
+        ),
+        'display' => array(
+          'default' => array(
+            'label' => 'inline',
+            'type' => 'node_reference_default',
+            'weight' => '7',
+            'settings' => array(),
+            'module' => 'node_reference',
+          ),
+          'teaser' => array(
+            'type' => 'hidden',
+            'label' => 'above',
+            'settings' => array(),
+            'weight' => 0,
+          ),
+        ),
+        'required' => 1,
+        'description' => '',
+        'default_value' => NULL,
+        'field_name' => 'field_auteur',
+        'entity_type' => 'node',
+        'bundle' => 'carte',
+        'deleted' => '0',
+      ),
+    ),
+    'field_cartotheque' => array(
+      0 => array(
+        'label' => 'Cartothèque',
+        'widget' => array(
+          'weight' => '21',
+          'type' => 'options_select',
+          'module' => 'options',
+          'active' => 1,
+          'settings' => array(),
+        ),
+        'settings' => array(
+          'user_register_form' => FALSE,
+        ),
+        'display' => array(
+          'default' => array(
+            'label' => 'above',
+            'type' => 'list_default',
+            'settings' => array(),
+            'module' => 'list',
+            'weight' => 23,
+          ),
+          'teaser' => array(
+            'type' => 'hidden',
+            'label' => 'above',
+            'settings' => array(),
+            'weight' => 0,
+          ),
+        ),
+        'required' => 0,
+        'description' => '',
+        'default_value' => array(
+          0 => array(
+            'value' => 'NPdCP',
+          ),
+        ),
+        'field_name' => 'field_cartotheque',
+        'entity_type' => 'node',
+        'bundle' => 'carte',
+        'deleted' => '0',
+      ),
+    ),
+    'field_categorie' => array(
+      0 => array(
+        'label' => 'Catégorie ISO',
+        'widget' => array(
+          'weight' => '23',
+          'type' => 'options_select',
+          'module' => 'options',
+          'active' => 1,
+          'settings' => array(),
+        ),
+        'settings' => array(
+          'user_register_form' => FALSE,
+        ),
+        'display' => array(
+          'default' => array(
+            'label' => 'inline',
+            'type' => 'taxonomy_term_reference_link',
+            'weight' => '17',
+            'settings' => array(),
+            'module' => 'taxonomy',
+          ),
+          'teaser' => array(
+            'type' => 'hidden',
+            'label' => 'above',
+            'settings' => array(),
+            'weight' => 0,
+          ),
+        ),
+        'required' => 1,
+        'description' => '',
+        'default_value' => NULL,
+        'field_name' => 'field_categorie',
+        'entity_type' => 'node',
+        'bundle' => 'carte',
+        'deleted' => '0',
+      ),
+    ),
+    'field_collections' => array(
+      0 => array(
+        'label' => 'Collections',
+        'widget' => array(
+          'weight' => '13',
+          'type' => 'options_select',
+          'module' => 'options',
+          'active' => 1,
+          'settings' => array(),
+        ),
+        'settings' => array(
+          'user_register_form' => FALSE,
+        ),
+        'display' => array(
+          'default' => array(
+            'label' => 'above',
+            'type' => 'taxonomy_term_reference_link',
+            'weight' => '19',
+            'settings' => array(),
+            'module' => 'taxonomy',
+          ),
+          'teaser' => array(
+            'type' => 'hidden',
+            'label' => 'above',
+            'settings' => array(),
+            'weight' => 0,
+          ),
+        ),
+        'required' => 0,
+        'description' => '',
+        'default_value' => NULL,
+        'field_name' => 'field_collections',
+        'entity_type' => 'node',
+        'bundle' => 'carte',
+        'deleted' => '0',
+      ),
+    ),
+    'field_date_de_creation' => array(
+      0 => array(
+        'label' => 'Date de réalisation',
+        'widget' => array(
+          'weight' => '4',
+          'type' => 'date_popup',
+          'module' => 'date',
+          'active' => 1,
+          'settings' => array(
+            'input_format' => 'd/m/Y - H:i:s',
+            'input_format_custom' => '',
+            'year_range' => '-3:+3',
+            'increment' => '15',
+            'label_position' => 'above',
+            'text_parts' => array(),
+            'no_fieldset' => 0,
+          ),
+        ),
+        'settings' => array(
+          'default_value' => 'now',
+          'default_value_code' => '',
+          'default_value2' => 'same',
+          'default_value_code2' => '',
+          'user_register_form' => FALSE,
+        ),
+        'display' => array(
+          'default' => array(
+            'label' => 'inline',
+            'type' => 'date_default',
+            'weight' => '5',
+            'settings' => array(
+              'format_type' => 'date_seulement',
+              'fromto' => 'both',
+              'multiple_number' => '',
+              'multiple_from' => '',
+              'multiple_to' => '',
+              'show_remaining_days' => 0,
+            ),
+            'module' => 'date',
+          ),
+          'teaser' => array(
+            'type' => 'hidden',
+            'label' => 'above',
+            'settings' => array(),
+            'weight' => 0,
+          ),
+        ),
+        'required' => 1,
+        'description' => '',
+        'field_name' => 'field_date_de_creation',
+        'entity_type' => 'node',
+        'bundle' => 'carte',
+        'deleted' => '0',
+      ),
+    ),
+    'field_date_de_mise_jour' => array(
+      0 => array(
+        'label' => 'Date de mise à jour',
+        'widget' => array(
+          'weight' => '5',
+          'type' => 'date_popup',
+          'module' => 'date',
+          'active' => 1,
+          'settings' => array(
+            'input_format' => 'd/m/Y - H:i:s',
+            'input_format_custom' => '',
+            'year_range' => '-3:+3',
+            'increment' => '15',
+            'label_position' => 'above',
+            'text_parts' => array(),
+            'no_fieldset' => 0,
+          ),
+        ),
+        'settings' => array(
+          'default_value' => 'now',
+          'default_value_code' => '',
+          'default_value2' => 'same',
+          'default_value_code2' => '',
+          'user_register_form' => FALSE,
+        ),
+        'display' => array(
+          'default' => array(
+            'label' => 'inline',
+            'type' => 'date_default',
+            'weight' => '6',
+            'settings' => array(
+              'format_type' => 'date_seulement',
+              'fromto' => 'both',
+              'multiple_number' => '',
+              'multiple_from' => '',
+              'multiple_to' => '',
+              'show_remaining_days' => 0,
+            ),
+            'module' => 'date',
+          ),
+          'teaser' => array(
+            'type' => 'hidden',
+            'label' => 'above',
+            'settings' => array(),
+            'weight' => 0,
+          ),
+        ),
+        'required' => 0,
+        'description' => '',
+        'field_name' => 'field_date_de_mise_jour',
+        'entity_type' => 'node',
+        'bundle' => 'carte',
+        'deleted' => '0',
+      ),
+    ),
+    'field_description' => array(
+      0 => array(
+        'label' => 'Description',
+        'widget' => array(
+          'weight' => '3',
+          'type' => 'text_textarea_with_summary',
+          'module' => 'text',
+          'active' => 1,
+          'settings' => array(
+            'rows' => '20',
+            'summary_rows' => 5,
+          ),
+        ),
+        'settings' => array(
+          'text_processing' => '1',
+          'display_summary' => 0,
+          'user_register_form' => FALSE,
+        ),
+        'display' => array(
+          'default' => array(
+            'label' => 'hidden',
+            'type' => 'text_default',
+            'weight' => '2',
+            'settings' => array(),
+            'module' => 'text',
+          ),
+          'teaser' => array(
+            'type' => 'hidden',
+            'label' => 'above',
+            'settings' => array(),
+            'weight' => 0,
+          ),
+        ),
+        'required' => 1,
+        'description' => 'Résumé de la ressource',
+        'default_value' => NULL,
+        'field_name' => 'field_description',
+        'entity_type' => 'node',
+        'bundle' => 'carte',
+        'deleted' => '0',
+      ),
+    ),
+    'field_echelle' => array(
+      0 => array(
+        'label' => 'Echelle de réalisation',
+        'widget' => array(
+          'weight' => '7',
+          'type' => 'options_select',
+          'module' => 'options',
+          'active' => 1,
+          'settings' => array(),
+        ),
+        'settings' => array(
+          'user_register_form' => FALSE,
+        ),
+        'display' => array(
+          'default' => array(
+            'label' => 'inline',
+            'type' => 'list_default',
+            'weight' => '9',
+            'settings' => array(),
+            'module' => 'list',
+          ),
+          'teaser' => array(
+            'type' => 'hidden',
+            'label' => 'above',
+            'settings' => array(),
+            'weight' => 0,
+          ),
+        ),
+        'required' => 1,
+        'description' => '',
+        'default_value' => array(
+          0 => array(
+            'value' => '1050000',
+          ),
+        ),
+        'field_name' => 'field_echelle',
+        'entity_type' => 'node',
+        'bundle' => 'carte',
+        'deleted' => '0',
+      ),
+    ),
+    'field_emprise_geographique' => array(
+      0 => array(
+        'label' => 'Emprise géographique',
+        'widget' => array(
+          'weight' => '6',
+          'type' => 'options_select',
+          'module' => 'options',
+          'active' => 1,
+          'settings' => array(),
+        ),
+        'settings' => array(
+          'user_register_form' => FALSE,
+        ),
+        'display' => array(
+          'default' => array(
+            'label' => 'inline',
+            'type' => 'list_default',
+            'weight' => '8',
+            'settings' => array(),
+            'module' => 'list',
+          ),
+          'teaser' => array(
+            'type' => 'hidden',
+            'label' => 'above',
+            'settings' => array(),
+            'weight' => 0,
+          ),
+        ),
+        'required' => 1,
+        'description' => '',
+        'default_value' => array(
+          0 => array(
+            'value' => 'Région',
+          ),
+        ),
+        'field_name' => 'field_emprise_geographique',
+        'entity_type' => 'node',
+        'bundle' => 'carte',
+        'deleted' => '0',
+      ),
+    ),
+    'field_fichier_carte' => array(
+      0 => array(
+        'label' => 'Fichier carte',
+        'widget' => array(
+          'weight' => '14',
+          'type' => 'file_generic',
+          'module' => 'file',
+          'active' => 1,
+          'settings' => array(
+            'progress_indicator' => 'throbber',
+          ),
+        ),
+        'settings' => array(
+          'file_directory' => '',
+          'file_extensions' => 'pdf',
+          'max_filesize' => '',
+          'description_field' => 0,
+          'user_register_form' => FALSE,
+        ),
+        'display' => array(
+          'default' => array(
+            'label' => 'above',
+            'type' => 'file_default',
+            'weight' => '10',
+            'settings' => array(),
+            'module' => 'file',
+          ),
+          'teaser' => array(
+            'type' => 'hidden',
+            'label' => 'above',
+            'settings' => array(),
+            'weight' => 0,
+          ),
+        ),
+        'required' => 0,
+        'description' => '',
+        'field_name' => 'field_fichier_carte',
+        'entity_type' => 'node',
+        'bundle' => 'carte',
+        'deleted' => '0',
+      ),
+    ),
+    'field_image' => array(
+      0 => array(
+        'label' => 'Image',
+        'description' => 'Transférer une image pour accompagner cet article.',
+        'required' => FALSE,
+        'settings' => array(
+          'file_directory' => 'field/image',
+          'file_extensions' => 'png gif jpg jpeg',
+          'max_filesize' => '',
+          'max_resolution' => '',
+          'min_resolution' => '',
+          'alt_field' => TRUE,
+          'title_field' => '',
+          'default_image' => 0,
+          'user_register_form' => FALSE,
+        ),
+        'widget' => array(
+          'type' => 'image_image',
+          'settings' => array(
+            'progress_indicator' => 'throbber',
+            'preview_image_style' => 'thumbnail',
+          ),
+          'weight' => -1,
+          'module' => 'image',
+        ),
+        'display' => array(
+          'default' => array(
+            'label' => 'hidden',
+            'type' => 'image',
+            'settings' => array(
+              'image_style' => 'large',
+              'image_link' => '',
+            ),
+            'weight' => -1,
+            'module' => 'image',
+          ),
+          'teaser' => array(
+            'label' => 'hidden',
+            'type' => 'image',
+            'settings' => array(
+              'image_style' => 'medium',
+              'image_link' => 'content',
+            ),
+            'weight' => -1,
+            'module' => 'image',
+          ),
+        ),
+        'field_name' => 'field_image',
+        'entity_type' => 'node',
+        'bundle' => 'article',
+        'deleted' => '0',
+      ),
+    ),
+    'field_image_carte' => array(
+      0 => array(
+        'label' => 'Image carte',
+        'widget' => array(
+          'weight' => '15',
+          'type' => 'image_image',
+          'module' => 'image',
+          'active' => 1,
+          'settings' => array(
+            'progress_indicator' => 'throbber',
+            'preview_image_style' => 'thumbnail',
+          ),
+        ),
+        'settings' => array(
+          'file_directory' => '',
+          'file_extensions' => 'png',
+          'max_filesize' => '',
+          'max_resolution' => '',
+          'min_resolution' => '',
+          'alt_field' => 0,
+          'title_field' => 0,
+          'default_image' => 0,
+          'user_register_form' => FALSE,
+        ),
+        'display' => array(
+          'default' => array(
+            'label' => 'hidden',
+            'type' => 'image_url',
+            'weight' => '3',
+            'settings' => array(
+              'image_style' => 'apercu_fiche_carte',
+              'image_link' => 'file',
+              'url_type' => '',
+            ),
+            'module' => 'image_url_formatter',
+          ),
+          'teaser' => array(
+            'type' => 'hidden',
+            'label' => 'above',
+            'settings' => array(),
+            'weight' => 0,
+          ),
+        ),
+        'required' => 1,
+        'description' => '',
+        'field_name' => 'field_image_carte',
+        'entity_type' => 'node',
+        'bundle' => 'carte',
+        'deleted' => '0',
+      ),
+    ),
+    'field_imagette' => array(
+      0 => array(
+        'label' => 'Imagette',
+        'widget' => array(
+          'weight' => '16',
+          'type' => 'image_image',
+          'module' => 'image',
+          'active' => 1,
+          'settings' => array(
+            'progress_indicator' => 'throbber',
+            'preview_image_style' => 'thumbnail',
+          ),
+        ),
+        'settings' => array(
+          'file_directory' => '',
+          'file_extensions' => 'png gif jpg jpeg',
+          'max_filesize' => '',
+          'max_resolution' => '',
+          'min_resolution' => '',
+          'alt_field' => 0,
+          'title_field' => 0,
+          'default_image' => 0,
+          'user_register_form' => FALSE,
+        ),
+        'display' => array(
+          'default' => array(
+            'label' => 'hidden',
+            'type' => 'image',
+            'weight' => '1',
+            'settings' => array(
+              'image_style' => 'apercu_fiche_carte',
+              'image_link' => '',
+            ),
+            'module' => 'image',
+          ),
+          'teaser' => array(
+            'type' => 'hidden',
+            'label' => 'above',
+            'settings' => array(),
+            'weight' => 0,
+          ),
+        ),
+        'required' => 0,
+        'description' => '',
+        'field_name' => 'field_imagette',
+        'entity_type' => 'node',
+        'bundle' => 'carte',
+        'deleted' => '0',
+      ),
+    ),
+    'field_isharvested' => array(
+      0 => array(
+        'label' => 'isHarvested',
+        'widget' => array(
+          'weight' => '19',
+          'type' => 'options_onoff',
+          'module' => 'options',
+          'active' => 1,
+          'settings' => array(
+            'display_label' => 0,
+          ),
+        ),
+        'settings' => array(
+          'user_register_form' => FALSE,
+        ),
+        'display' => array(
+          'default' => array(
+            'label' => 'hidden',
+            'type' => 'hidden',
+            'weight' => '20',
+            'settings' => array(),
+          ),
+          'teaser' => array(
+            'type' => 'hidden',
+            'label' => 'above',
+            'settings' => array(),
+            'weight' => 0,
+          ),
+        ),
+        'required' => 0,
+        'description' => '',
+        'default_value' => array(
+          0 => array(
+            'value' => 0,
+          ),
+        ),
+        'field_name' => 'field_isharvested',
+        'entity_type' => 'node',
+        'bundle' => 'carte',
+        'deleted' => '0',
+      ),
+    ),
+    'field_mots_cles' => array(
+      0 => array(
+        'label' => 'Mots clés',
+        'widget' => array(
+          'weight' => '9',
+          'type' => 'autocomplete_deluxe_taxonomy',
+          'module' => 'autocomplete_deluxe',
+          'active' => 1,
+          'settings' => array(
+            'size' => '60',
+            'limit' => '10',
+            'min_length' => '0',
+            'delimiter' => '',
+            'not_found_message' => 'The term \'@term\' will be added.',
+            'autocomplete_deluxe_path' => 'autocomplete_deluxe/taxonomy',
+          ),
+        ),
+        'settings' => array(
+          'user_register_form' => FALSE,
+        ),
+        'display' => array(
+          'default' => array(
+            'label' => 'inline',
+            'type' => 'taxonomy_term_reference_link',
+            'weight' => '11',
+            'settings' => array(),
+            'module' => 'taxonomy',
+          ),
+          'teaser' => array(
+            'type' => 'hidden',
+            'label' => 'above',
+            'settings' => array(),
+            'weight' => 0,
+          ),
+        ),
+        'required' => 0,
+        'description' => 'Raccourci : Taper un mot, puis avec le clavier, utiliser les Flèches pour sélectionner puis la touche Entrée pour valider.',
+        'default_value' => NULL,
+        'field_name' => 'field_mots_cles',
+        'entity_type' => 'node',
+        'bundle' => 'carte',
+        'deleted' => '0',
+      ),
+    ),
+    'field_mots_cles_thesaurus' => array(
+      0 => array(
+        'label' => 'Mots clés Inspire',
+        'widget' => array(
+          'weight' => '25',
+          'type' => 'options_select',
+          'module' => 'options',
+          'active' => 1,
+          'settings' => array(),
+        ),
+        'settings' => array(
+          'user_register_form' => FALSE,
+        ),
+        'display' => array(
+          'default' => array(
+            'label' => 'above',
+            'type' => 'taxonomy_term_reference_link',
+            'settings' => array(),
+            'module' => 'taxonomy',
+            'weight' => 22,
+          ),
+          'teaser' => array(
+            'type' => 'hidden',
+            'label' => 'above',
+            'settings' => array(),
+            'weight' => 0,
+          ),
+        ),
+        'required' => 1,
+        'description' => '',
+        'default_value' => NULL,
+        'field_name' => 'field_mots_cles_thesaurus',
+        'entity_type' => 'node',
+        'bundle' => 'carte',
+        'deleted' => '0',
+      ),
+    ),
+    'field_numero_de_carte' => array(
+      0 => array(
+        'label' => 'Numéro de carte',
+        'required' => TRUE,
+        'settings' => array(
+          'carte_form' => 1,
+          'text_processing' => 0,
+          'user_register_form' => FALSE,
+        ),
+        'widget' => array(
+          'type' => 'text_textfield',
+          'weight' => '0',
+          'settings' => array(
+            'size' => 60,
+          ),
+          'module' => 'text',
+        ),
+        'display' => array(
+          'default' => array(
+            'label' => 'above',
+            'type' => 'text_default',
+            'settings' => array(),
+            'module' => 'text',
+            'weight' => 26,
+          ),
+          'teaser' => array(
+            'type' => 'hidden',
+            'label' => 'above',
+            'settings' => array(),
+            'weight' => 0,
+          ),
+        ),
+        'description' => '',
+        'field_name' => 'field_numero_de_carte',
+        'entity_type' => 'node',
+        'bundle' => 'carte',
+        'deleted' => '0',
+        'default_value' => NULL,
+      ),
+    ),
+    'field_ressources_associes' => array(
+      0 => array(
+        'label' => 'Ressources associées',
+        'widget' => array(
+          'weight' => '22',
+          'type' => 'url_external',
+          'module' => 'url',
+          'active' => 1,
+          'settings' => array(
+            'size' => '60',
+          ),
+        ),
+        'settings' => array(
+          'title_field' => 0,
+          'title_fetch' => 0,
+          'user_register_form' => FALSE,
+        ),
+        'display' => array(
+          'default' => array(
+            'label' => 'above',
+            'type' => 'url_default',
+            'settings' => array(
+              'trim_length' => 80,
+              'nofollow' => FALSE,
+            ),
+            'module' => 'url',
+            'weight' => 24,
+          ),
+          'teaser' => array(
+            'type' => 'hidden',
+            'label' => 'above',
+            'settings' => array(),
+            'weight' => 0,
+          ),
+        ),
+        'required' => 0,
+        'description' => '',
+        'default_value' => NULL,
+        'field_name' => 'field_ressources_associes',
+        'entity_type' => 'node',
+        'bundle' => 'carte',
+        'deleted' => '0',
+      ),
+    ),
+    'field_source_des_donnees' => array(
+      0 => array(
+        'label' => 'Source et date des données',
+        'widget' => array(
+          'weight' => '10',
+          'type' => 'text_textarea',
+          'module' => 'text',
+          'active' => 1,
+          'settings' => array(
+            'rows' => '5',
+          ),
+        ),
+        'settings' => array(
+          'text_processing' => '1',
+          'user_register_form' => FALSE,
+        ),
+        'display' => array(
+          'default' => array(
+            'label' => 'hidden',
+            'type' => 'text_default',
+            'weight' => '13',
+            'settings' => array(),
+            'module' => 'text',
+          ),
+          'teaser' => array(
+            'type' => 'hidden',
+            'label' => 'above',
+            'settings' => array(),
+            'weight' => 0,
+          ),
+        ),
+        'required' => 0,
+        'description' => 'Une ligne par source au format: Nom de la source - Date',
+        'default_value' => NULL,
+        'field_name' => 'field_source_des_donnees',
+        'entity_type' => 'node',
+        'bundle' => 'carte',
+        'deleted' => '0',
+      ),
+    ),
+    'field_statut' => array(
+      0 => array(
+        'label' => 'Publication',
+        'widget' => array(
+          'weight' => '20',
+          'type' => 'options_select',
+          'module' => 'options',
+          'active' => 1,
+          'settings' => array(),
+        ),
+        'settings' => array(
+          'user_register_form' => FALSE,
+        ),
+        'display' => array(
+          'default' => array(
+            'label' => 'hidden',
+            'type' => 'hidden',
+            'weight' => '21',
+            'settings' => array(),
+          ),
+          'teaser' => array(
+            'type' => 'hidden',
+            'label' => 'above',
+            'settings' => array(),
+            'weight' => 0,
+          ),
+        ),
+        'required' => 1,
+        'description' => '',
+        'default_value' => array(
+          0 => array(
+            'value' => 'externe',
+          ),
+        ),
+        'field_name' => 'field_statut',
+        'entity_type' => 'node',
+        'bundle' => 'carte',
+        'deleted' => '0',
+      ),
+    ),
+    'field_tags' => array(
+      0 => array(
+        'label' => 'Tags',
+        'description' => 'Saisissez une liste de mots séparés par des virgules pour décrire votre contenu.',
+        'widget' => array(
+          'type' => 'taxonomy_autocomplete',
+          'weight' => -4,
+          'settings' => array(
+            'size' => 60,
+            'autocomplete_path' => 'taxonomy/autocomplete',
+          ),
+          'module' => 'taxonomy',
+        ),
+        'display' => array(
+          'default' => array(
+            'type' => 'taxonomy_term_reference_link',
+            'weight' => 10,
+            'label' => 'above',
+            'settings' => array(),
+            'module' => 'taxonomy',
+          ),
+          'teaser' => array(
+            'type' => 'taxonomy_term_reference_link',
+            'weight' => 10,
+            'label' => 'above',
+            'settings' => array(),
+            'module' => 'taxonomy',
+          ),
+        ),
+        'settings' => array(
+          'user_register_form' => FALSE,
+        ),
+        'required' => FALSE,
+        'field_name' => 'field_tags',
+        'entity_type' => 'node',
+        'bundle' => 'article',
+        'deleted' => '0',
+        'default_value' => NULL,
+      ),
+    ),
+    'field_thematique' => array(
+      0 => array(
+        'label' => 'Thématique',
+        'widget' => array(
+          'weight' => '24',
+          'type' => 'options_select',
+          'module' => 'options',
+          'active' => 1,
+          'settings' => array(),
+        ),
+        'settings' => array(
+          'user_register_form' => FALSE,
+        ),
+        'display' => array(
+          'default' => array(
+            'label' => 'inline',
+            'type' => 'taxonomy_term_reference_link',
+            'weight' => '16',
+            'settings' => array(),
+            'module' => 'taxonomy',
+          ),
+          'teaser' => array(
+            'type' => 'hidden',
+            'label' => 'above',
+            'settings' => array(),
+            'weight' => 0,
+          ),
+        ),
+        'required' => 1,
+        'description' => '',
+        'default_value' => NULL,
+        'field_name' => 'field_thematique',
+        'entity_type' => 'node',
+        'bundle' => 'carte',
+        'deleted' => '0',
+      ),
+    ),
+    'field_thematique_hdf' => array(
+      0 => array(
+        'label' => 'Thématique HdF',
+        'widget' => array(
+          'weight' => '8',
+          'type' => 'options_select',
+          'module' => 'options',
+          'active' => 1,
+          'settings' => array(),
+        ),
+        'settings' => array(
+          'user_register_form' => FALSE,
+        ),
+        'display' => array(
+          'default' => array(
+            'label' => 'above',
+            'type' => 'taxonomy_term_reference_link',
+            'settings' => array(),
+            'module' => 'taxonomy',
+            'weight' => 27,
+          ),
+          'teaser' => array(
+            'type' => 'hidden',
+            'label' => 'above',
+            'settings' => array(),
+            'weight' => 0,
+          ),
+        ),
+        'required' => 1,
+        'description' => 'Thématiques Hauts De France',
+        'default_value' => NULL,
+        'field_name' => 'field_thematique_hdf',
+        'entity_type' => 'node',
+        'bundle' => 'carte',
+        'deleted' => '0',
+      ),
+    ),
+    'field_type_de_carte' => array(
+      0 => array(
+        'label' => 'Type de carte',
+        'widget' => array(
+          'weight' => '2',
+          'type' => 'options_select',
+          'module' => 'options',
+          'active' => 1,
+          'settings' => array(),
+        ),
+        'settings' => array(
+          'user_register_form' => FALSE,
+        ),
+        'display' => array(
+          'default' => array(
+            'label' => 'hidden',
+            'type' => 'list_default',
+            'weight' => '0',
+            'settings' => array(),
+            'module' => 'list',
+          ),
+          'teaser' => array(
+            'type' => 'hidden',
+            'label' => 'above',
+            'settings' => array(),
+            'weight' => 0,
+          ),
+        ),
+        'required' => 1,
+        'description' => '',
+        'default_value' => array(
+          0 => array(
+            'value' => 'Statique',
+          ),
+        ),
+        'field_name' => 'field_type_de_carte',
+        'entity_type' => 'node',
+        'bundle' => 'carte',
+        'deleted' => '0',
+      ),
+    ),
+    'field_url_carte' => array(
+      0 => array(
+        'label' => 'URL carte',
+        'widget' => array(
+          'weight' => '17',
+          'type' => 'url_external',
+          'module' => 'url',
+          'active' => 1,
+          'settings' => array(
+            'size' => '60',
+          ),
+        ),
+        'settings' => array(
+          'title_field' => 0,
+          'title_fetch' => 0,
+          'user_register_form' => FALSE,
+        ),
+        'display' => array(
+          'default' => array(
+            'label' => 'above',
+            'type' => 'url_default',
+            'weight' => '12',
+            'settings' => array(
+              'trim_length' => 80,
+              'nofollow' => FALSE,
+            ),
+            'module' => 'url',
+          ),
+          'teaser' => array(
+            'type' => 'hidden',
+            'label' => 'above',
+            'settings' => array(),
+            'weight' => 0,
+          ),
+        ),
+        'required' => 0,
+        'description' => '',
+        'default_value' => NULL,
+        'field_name' => 'field_url_carte',
+        'entity_type' => 'node',
+        'bundle' => 'carte',
+        'deleted' => '0',
+      ),
+    ),
+    'field_url_source_des_donnees' => array(
+      0 => array(
+        'label' => 'URL Source des données',
+        'widget' => array(
+          'weight' => '11',
+          'type' => 'url_external',
+          'module' => 'url',
+          'active' => 1,
+          'settings' => array(
+            'size' => '60',
+          ),
+        ),
+        'settings' => array(
+          'title_field' => 0,
+          'title_fetch' => 0,
+          'user_register_form' => FALSE,
+        ),
+        'display' => array(
+          'default' => array(
+            'label' => 'hidden',
+            'type' => 'url_default',
+            'weight' => '14',
+            'settings' => array(
+              'trim_length' => 80,
+              'nofollow' => FALSE,
+            ),
+            'module' => 'url',
+          ),
+          'teaser' => array(
+            'type' => 'hidden',
+            'label' => 'above',
+            'settings' => array(),
+            'weight' => 0,
+          ),
+        ),
+        'required' => 0,
+        'description' => '',
+        'default_value' => NULL,
+        'field_name' => 'field_url_source_des_donnees',
+        'entity_type' => 'node',
+        'bundle' => 'carte',
+        'deleted' => '0',
+      ),
+    ),
+    'field_uuid' => array(
+      0 => array(
+        'label' => 'uuid',
+        'widget' => array(
+          'weight' => '18',
+          'type' => 'text_textfield',
+          'module' => 'text',
+          'active' => 1,
+          'settings' => array(
+            'size' => '250',
+          ),
+        ),
+        'settings' => array(
+          'text_processing' => '0',
+          'user_register_form' => FALSE,
+        ),
+        'display' => array(
+          'default' => array(
+            'label' => 'hidden',
+            'type' => 'hidden',
+            'weight' => '18',
+            'settings' => array(),
+          ),
+          'teaser' => array(
+            'type' => 'hidden',
+            'label' => 'above',
+            'settings' => array(),
+            'weight' => 0,
+          ),
+        ),
+        'required' => 0,
+        'description' => '',
+        'default_value' => NULL,
+        'field_name' => 'field_uuid',
+        'entity_type' => 'node',
+        'bundle' => 'carte',
+        'deleted' => '0',
+      ),
+    ),
+  ),
+);
