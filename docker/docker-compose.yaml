@@ -1,0 +1,127 @@
+### Définition de la configuration de base des conteneurs...
+### - soit surchargé par défaut  en mode dev  par le fichier 'docker-compose.override.yml'
+### - soit surchargé sur demande en mode prod par le fichier 'docker-compose.production.yml'
+###
+### Références :
+### - https://docs.docker.com/compose/compose-file/
+###
+version: '3.7'
+services:
+
+    ###
+    ### Instance Drupal (Apache HTTPd + PHP + NodeJS)
+    ### https://hub.docker.com/_/php
+    ### - stretch = 5.6, 7.0, 7.1, 7.2, 7.3
+    ### - buster  = 7.1, 7.2, 7.3, 7.4, 8.0
+    ###
+    drupal:
+#       image: "php:${VER_PHP:-5.6}-apache-stretch"
+        build:
+            context: "./build"
+            dockerfile: "Dockerfile.drupal"
+            args:
+                - VER_DRUPAL
+                - VER_DRUSH
+                - VER_PHP
+                - VER_NODEJS
+                - SYS_TIMEZONE
+                - SYS_LOCALE
+                - HTTP_PROXY
+                - HTTPS_PROXY
+                - UID_WORKER=${UID_LOCAL:-1000}
+                - GID_WORKER=${GID_LOCAL:-1000}
+        depends_on:
+            - drupaldb
+            - geosource
+        expose:
+            - "1080"
+        ports:
+            - "${PORT_WEB:-1080}:1080"
+        volumes:
+            - "../themes:/var/www/html/sites/all/themes/custom:rw"
+            - "../modules:/var/www/html/sites/all/modules/custom:rw"
+            - "../imports:/var/www/html/sites/default/fixtures:ro"
+            - "./files/public:/var/www/html/sites/default/files:rw"
+            - "./files/private:/var/www/private:rw"
+        environment:
+            DB_HOST:                    drupaldb
+            DB_PORT:                    5432
+            DB_BASE:                    ${DB_BASENAME:-drupalcartes}
+            DB_USER:                    ${DB_USERNAME:-drupalcartes}
+            DB_PASS:                    ${DB_USERPASS}
+            ADMIN_PASS:                 ${PWD_DRUPAL}
+            ADMIN_MAIL:                 ${MEL_DRUPAL:-root@localhost}
+            SMTP_HOST:                  ${SMTP_HOST:-maildev}
+            SMTP_PORT:                  ${SMTP_PORT:-25}
+            SMTP_USER:                  ${SMTP_USER:-}
+            SMTP_PASS:                  ${SMTP_PASS:-}
+            GEO_HOST:                   http://geosource:8080/geosource
+            GEO_PASS:                   ${PWD_GEOSOURCE}
+            RED_URL:                    ${REDMINE_URL:-}
+            RED_KEY:                    ${REDMINE_KEY:-}
+            PHP_DEBUG:                  2
+        hostname: "${COMPOSE_PROJECT_NAME:-hdf-carto}-drupal7"
+
+
+    ###
+    ### Instance GeoSource (webapp déployée sur serveur tomcat)
+    ###
+    geosource:
+#       image: tomcat:${VER_TOMCAT:-9.0}-jre${VER_JRE:-8}
+        build:
+            context: "./build"
+            dockerfile: "Dockerfile.geosource"
+            args:
+                - VER_TOMCAT
+                - VER_JRE
+                - VER_GEOSOURCE
+                - HTTP_PROXY
+                - HTTPS_PROXY
+        depends_on:
+            - geodb
+        expose:
+            - "8080"
+        environment:
+            DB_HOST:                    geodb
+            DB_PORT:                    5432
+            DB_BASE:                    ${GEODB_BASENAME:-geosource}
+            DB_USER:                    ${GEODB_USERNAME:-geosource}
+            DB_PASS:                    ${GEODB_USERPASS}
+        hostname: "${COMPOSE_PROJECT_NAME:-hdf-carto}-geo"
+
+
+    ###
+    ### Base de données SQL Postgres + Postgis
+    ### https://hub.docker.com/_/postgres
+    ### https://hub.docker.com/r/postgis/postgis
+    ###
+    drupaldb:
+        image: "postgis/postgis:${VER_POSTGRES:-9.5}-${VER_POSTGIS:-2.5}"
+        expose:
+            - "5432"
+        volumes:
+            - "drupaldb_data:/var/lib/postgresql/data:rw"
+        hostname: "${COMPOSE_PROJECT_NAME:-hdf-carto}-drupaldb"
+
+
+    ###
+    ### Base de données SQL Postgres pour GeoSource
+    ### https://hub.docker.com/_/postgres
+    ### https://hub.docker.com/r/postgis/postgis
+    ###
+    geodb:
+        image: "postgis/postgis:${VER_POSTGRES:-9.5}-${VER_POSTGIS:-2.5}"
+        expose:
+            - "5432"
+        volumes:
+            - "geodb_data:/var/lib/postgresql/data:rw"
+        hostname: "${COMPOSE_PROJECT_NAME:-hdf-carto}-geodb"
+
+
+volumes:
+    drupaldb_data: {}
+    geodb_data: {}
+
+networks:
+    default: {}
+

@@ -1,0 +1,116 @@
+### Surcharges de la configuration de 'docker-compose.yml' utilisées par défaut (mode dev).
+###
+### Références :
+### - https://docs.docker.com/compose/extends/#adding-and-overriding-configuration
+###
+version: '3.7'
+services:
+
+
+    ###
+    ### Instance Drupal (Apache HTTPd + PHP + NodeJS)
+    ### https://hub.docker.com/_/php
+    ###
+    drupal:
+        depends_on:
+            - pgadmin
+            - maildev
+        volumes:
+            - "./confs/httpd-pgadmin.inc:/etc/apache2/conf-enabled/proxy-pgadmin.conf:ro"
+            - "./confs/httpd-maildev.inc:/etc/apache2/conf-enabled/proxy-maildev.conf:ro"
+            - "./dumps/drush:/var/www/drush-backups:rw"
+        environment:
+            SMTP_HOST:  maildev
+            SMTP_PORT:  25
+            SMTP_USER:  ""
+            SMTP_PASS:  ""
+            PHP_DEBUG:  2
+
+
+    ###
+    ### Instance GeoSource (webapp déployée sur serveur tomcat)
+    ###
+    geosource:
+        ports:
+            - "${PORT_GEO:-1081}:8080"
+        volumes:
+            - "./dumps:/var/dump:rw"
+
+
+    ###
+    ### Base de données SQL Postgres + Postgis
+    ### https://hub.docker.com/_/postgres
+    ### https://hub.docker.com/r/postgis/postgis
+    ###
+    drupaldb:
+#       ports:
+#           - "${PORT_DB}:5432"
+        volumes:
+            - "./dumps:/var/dump:rw"
+#           - "./confs/db-initscript.sh:/docker-entrypoint-initdb.d/11_import.sh:ro"
+        environment:
+            POSTGRES_DB:                ${DB_BASENAME:-drupalcartes}
+            POSTGRES_USER:              ${DB_USERNAME:-drupalcartes}
+            POSTGRES_PASSWORD:          ${DB_USERPASS}
+            PGPASSWORD:                 ${DB_USERPASS}
+
+
+    ###
+    ### Base de données SQL Postgres pour GeoSource
+    ### https://hub.docker.com/_/postgres
+    ### https://hub.docker.com/r/postgis/postgis
+    ###
+    geodb:
+#       ports:
+#           - "${PORT_GEODB}:5432"
+        volumes:
+            - "./dumps:/var/dump:rw"
+#           - "./confs/db-initscript.sh:/docker-entrypoint-initdb.d/11_import.sh:ro"
+        environment:
+            POSTGRES_DB:                ${GEODB_BASENAME:-geosource}
+            POSTGRES_USER:              ${GEODB_USERNAME:-geosource}
+            POSTGRES_PASSWORD:          ${GEODB_USERPASS}
+            PGPASSWORD:                 ${GEODB_USERPASS}
+
+
+    ###
+    ### Gestionnaire BdD pgAdmin
+    ### https://hub.docker.com/r/dpage/pgadmin4
+    ### (accès via container 'drupal' avec proxypass /pgadmin/)
+    ###
+    pgadmin:
+        image: "dpage/pgadmin4:${VER_PGADMIN:-4}"
+        depends_on:
+            - drupaldb
+            - geodb
+        expose:
+            - "5050"
+#       ports:
+#           - "${PORT_PGADMIN}:5050"
+        volumes:
+            - "./confs/pgadmin-servers.json:/pgadmin4/servers.json:ro"
+            - "./dumps/pgadmin:/var/lib/pgadmin/storage:rw"
+        environment:
+            PGADMIN_LISTEN_PORT:        5050
+#           PGADMIN_ENABLE_TLS:         "enabled"
+            PGADMIN_DEFAULT_EMAIL:      ${USR_PGADMIN:-admin@docker}
+            PGADMIN_DEFAULT_PASSWORD:   ${PWD_PGADMIN}
+#           PGADMIN_DISABLE_POSTFIX:    "disabled"
+            PGADMIN_SERVER_JSON_FILE:   "/pgadmin4/servers.json"
+        hostname: "${COMPOSE_PROJECT_NAME:-hdf-carto}-pgadmin"
+
+
+    ###
+    ### Serveur mail de développement (maildev)
+    ### https://hub.docker.com/r/maildev/maildev
+    ### (accès via container 'drupal' avec proxypass /maildev/)
+    ###
+    maildev:
+        image: "maildev/maildev:${VER_MAILDEV:-1.1.0}"
+        expose:
+            - "25"
+            - "80"
+#       ports:
+#           - "${PORT_MAILDEV}:80"
+        hostname: "${COMPOSE_PROJECT_NAME:-hdf-carto}-maildev"
+

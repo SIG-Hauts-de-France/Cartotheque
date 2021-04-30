@@ -1,0 +1,91 @@
+ARG VER_TOMCAT=9.0
+ARG VER_JRE=8
+FROM tomcat:${VER_TOMCAT}-jre${VER_JRE}
+
+
+##### PROXY SETTINGS (predefined ARGs)
+ENV HTTP_PROXY=${HTTP_PROXY} HTTPS_PROXY=${HTTPS_PROXY} \
+    http_proxy=${HTTP_PROXY} https_proxy=${HTTPS_PROXY}
+
+
+##### GEOSOURCE INSTALL
+ARG VER_GEOSOURCE=3.0.1
+ARG DIR_GEOSOURCE=/usr/local/tomcat/webapps/geosource
+RUN set -xe \
+  ; curl "https://master.dl.sourceforge.net/project/geonetwork/GeoSource%20-%20french%20only/GeoSource${VER_GEOSOURCE}/geosource.war?viasf=1" --output "${DIR_GEOSOURCE}.war" \
+  ; mkdir "${DIR_GEOSOURCE}" \
+  ; unzip "${DIR_GEOSOURCE}.war" -d "${DIR_GEOSOURCE}/" \
+  ; rm "${DIR_GEOSOURCE}.war" \
+  ; du -sh "${DIR_GEOSOURCE}"
+ENV DIR_GEOSOURCE="${DIR_GEOSOURCE}"
+
+
+##### UTILS PACKAGES (client mysql/psql requis pour drush)
+RUN [ -d /usr/share/man/man1 ] || mkdir -p /usr/share/man/man1 \
+  ; [ -d /usr/share/man/man7 ] || mkdir -p /usr/share/man/man7 \
+  ; printf "Acquire::http::Proxy \"${HTTP_PROXY}\";\n" > /etc/apt/apt.conf.d/99HttpProxy \
+ && DEBIAN_FRONTEND=noninteractive apt-get -o Acquire::Check-Valid-Until=false update \
+ && apt-get install --no-install-recommends --yes \
+    apt-transport-https apt-utils gnupg locales \
+    less nano vim mc curl wget links unzip zip git subversion patch pwgen jq \
+#   iputils-ping telnet openssh-client net-tools dnsutils whois procps rsync \
+    postgresql-client \
+ && apt-get clean
+
+
+##### GEOSOURCE CONFIG
+COPY ./geosource-config.xml.inc   /tmp/config.xml.inc
+RUN set -xe \
+  ; cp "${DIR_GEOSOURCE}/WEB-INF/config.xml"                          "/usr/src/config.xml" \
+  ; cp "${DIR_GEOSOURCE}/WEB-INF/config-node/srv.xml"                 "/usr/src/srv.xml" \
+  ; cp "${DIR_GEOSOURCE}/WEB-INF/config-db/jdbc.properties"           "/usr/src/jdbc.properties" \
+  ; sed -i '/<import resource=.*h2\.xml/ s/\s*</ \t<!--</'            "${DIR_GEOSOURCE}/WEB-INF/config-node/srv.xml" \
+  ; sed -i '/<import resource=.*h2\.xml/ s/>/> -->/'                  "${DIR_GEOSOURCE}/WEB-INF/config-node/srv.xml" \
+  ; sed -i '/<import resource=.*postgres\.xml/ s/<!--\|-->//g'        "${DIR_GEOSOURCE}/WEB-INF/config-node/srv.xml" \
+# ; sed -i '/<import resource=.*postgis\.xml/  s/<!--\|-->//g'        "${DIR_GEOSOURCE}/WEB-INF/config-node/srv.xml" \
+  ; sed '/<\/geonet>/ d' "/usr/src/config.xml"                      > "${DIR_GEOSOURCE}/WEB-INF/config.xml" \
+  ; cat /tmp/config.xml.inc                                        >> "${DIR_GEOSOURCE}/WEB-INF/config.xml" \
+  ; echo '</geonet>'                                               >> "${DIR_GEOSOURCE}/WEB-INF/config.xml" \
+  ; rm  /tmp/config.xml.inc
+
+
+##### SYSTEM TIMEZONE
+ARG SYS_TIMEZONE=Europe/Paris
+RUN if [ -n "${SYS_TIMEZONE}" ]; then set -xe \
+  ; echo "${SYS_TIMEZONE}" > "/etc/timezone" \
+  ; rm -f "/etc/localtime" \
+# ; ln -snf "/usr/share/zoneinfo/${SYS_TIMEZONE}" "/etc/localtime" \
+  ; dpkg-reconfigure -f noninteractive tzdata \
+# ; printf '[PHP]\ndate.timezone = "%s"\n', ${SYS_TIMEZONE} > "${PHP_INI_DIR}/conf.d/zz_timezone.ini" \
+  ; date \
+  ; fi
+
+##### SYSTEM LOCALE
+ARG SYS_LOCALE=fr_FR.UTF-8
+ENV LC_ALL=${SYS_LOCALE} \
+    LANG=${SYS_LOCALE}
+RUN if [ -n "${SYS_LOCALE}" ]; then set -xe \
+  ; sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/'     "/etc/locale.gen" \
+  ; sed -i -e "s/# ${SYS_LOCALE} UTF-8/${SYS_LOCALE} UTF-8/" "/etc/locale.gen" \
+# ; locale-gen \
+  ; dpkg-reconfigure --frontend=noninteractive locales \
+  ; update-locale LANG=${SYS_LOCALE} \
+  ; fi
+
+##### BASH ENVIRONMENT
+COPY "./mc.ini" "/usr/share/mc/mc.ini"
+RUN echo "alias ll='ls --color=auto -lah'"                > "/etc/profile.d/zz_alias.sh" \
+  ; echo ". /etc/profile"  >> ~/.bashrc
+
+
+##### INIT SCRIPT
+WORKDIR "${DIR_GEOSOURCE}"
+COPY "./docker-geosource-entrypoint.sh" "/usr/local/bin/"
+ENTRYPOINT [ "docker-geosource-entrypoint.sh" ]
+CMD [ "catalina.sh", "run" ]
+
+
+LABEL description="Conteneur Tomcat pour webapp GeoSource" \
+      maintainer="Grégory MARIGOT <support@teicee.com>" \
+      vendor="téïcée" \
+      version="2.0"
