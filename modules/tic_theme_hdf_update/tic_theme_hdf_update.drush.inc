@@ -78,34 +78,25 @@ function tic_theme_hdf_update_import($path) {
 		$terms = taxonomy_get_tree($vocab->vid);
 		// contruction tableau nomTerme = tid
 		$termsByTaxo = array();
-		foreach($terms as $term) {
-			
-			$termsByTaxo[$term->tid] = strtolower($term->name);
-		}
+		foreach($terms as $term) $termsByTaxo[$term->tid] = strtolower($term->name);
 
 		if(is_array($result)) {
 			$countImportMap = 0;
-			foreach($result as $value) {
-				foreach($value as $map) {
-					
+			foreach($result as $sheet) foreach($sheet as $map) {
 					// On parcourt le tableau $termsByTaxo pour récupérer le tid du terme de taxo
 					$tid = array_search(strtolower($map['theme_HdF']), $termsByTaxo);
-
+					
 					// sur chaque ligne on update la bdd (table jointure field_data_field_thematique_hdf)
-					if($map['nid'] && !empty($map['nid']) && !empty($tid) ) {
+					if($map['nid'] && !empty($map['nid'])) {
 						$node = node_load($map['nid']);
-						//dump($map['nid']);
-						
 						if($node) {
-							$node->field_thematique_hdf['und'][0]['tid'] = $tid;
+							$node->field_thematique_hdf['und'][0]['tid'] = empty($tid) ? null : $tid;
 							node_save($node);
 							$countImportMap++;
-							}
+						}
 					}
-				}
-
 			}
-			drupal_set_message(t('Success: @count updated map(s).', array('@count' => $countImportMap)));	
+			drupal_set_message(t('Success: @count updated map(s).', array('@count' => $countImportMap)));
 		}
 
 	}

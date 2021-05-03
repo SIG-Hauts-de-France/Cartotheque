@@ -62,24 +62,12 @@ if [ -z "${DBSTATUS}" ]; then
 	## initialisation de la base de données
 	printf "\n=== Drupal site : installation...\n"
 	"${BIN_DRUSH}" site-install standard --yes -v \
-		--locale='fr' install_configure_form.site_default_country='FR' \
 		--account-pass="${ADMIN_PASS}" \
-		--site-name="Cartothèque" --site-mail="${ADMIN_MAIL:-root@localhost}"
-#		--site-name="$(hostname -s | sed 's/-\(engine\|drupal[0-9]*\)//')"
+		--site-name="Cartothèque" --site-mail="${ADMIN_MAIL:-root@localhost}" \
+		--locale='fr' install_configure_form.site_default_country='FR'
 	
-	## téléchargement d'extensions
-	printf "\n=== Drupal extensions : téléchargement...\n"
-	"${BIN_DRUSH}" dl -y \
-	  admin_menu module_filter ctools devel smtp xautoload libraries \
-	  views admin_views views_bulk_operations better_exposed_filters \
-	  configuration node_clone bundle_copy override_node_options ldap \
-	  rules term_merge tagadelic taxonomy_csv facetapi search_api search_api_db \
-	  email url entity references autocomplete_deluxe date views_between_dates_filter \
-	  jquery_update phpexcel redmine_rest_api image_url_formatter lightbox2
-	wget -q "https://www.drupal.org/files/pgsql_combine_filter_views.tar__1.gz" -O - \
-	| tar xz -C "${DIR_DRUPAL}/sites/all/modules/contrib/"
 	
-	## activation d'extensions
+	## activation des extensions contrib
 	printf "\n=== Postgres extensions : activation...\n"
 	echo 'CREATE EXTENSION IF NOT EXISTS unaccent;' | "${BIN_DRUSH}" --yes sql-cli 2>/dev/null
 	printf "\n=== Drupal extensions : activation...\n"
@@ -94,9 +82,6 @@ if [ -z "${DBSTATUS}" ]; then
 	  date date_api date_popup date_views views_between_dates_filter \
 	  jquery_update phpexcel redmine_rest_api image_url_formatter lightbox2 \
 	  admin_menu_toolbar views_ui
-	"${BIN_DRUSH}" en -y \
-	  cartotheque tic_hdf tic_theme_hdf_update tic_geosource \
-	  tic_carto_count tic_customsearch tic_redmine_data_importer tic_filedownload
 	"${BIN_DRUSH}" dis -y toolbar
 	
 	## configuration initiale du module SMTP de Drupal
@@ -134,7 +119,22 @@ if [ -z "${DBSTATUS}" ]; then
 	
 	## configuration du dossier de stockage privé
 	printf "\n=== Drupal configuration : Storage...\n"
+	"${BIN_DRUSH}" vset -y --exact file_public_path      "sites/default/files"
 	"${BIN_DRUSH}" vset -y --exact file_private_path     "../private"
+	"${BIN_DRUSH}" vset -y --exact file_default_scheme   "private"
+	
+	
+	## activation des extensions custom
+	"${BIN_DRUSH}" en -y \
+	  cartotheque tic_hdf tic_theme_hdf_update tic_geosource \
+	  tic_carto_count tic_customsearch tic_redmine_data_importer tic_filedownload
+	
+	## import des termes des vocabulaires de taxonomie
+	for SRC_TAXO in "${DIR_DRUPAL}/sites/default/fixtures"/taxonomy-*.csv; do
+		REF_TAXO="$(echo "${SRC_TAXO}" | sed 's|^.*/taxonomy-\(.*\)\.csv$|\1|')"
+		printf "\n=== Drupal import : vocabulaire '${REF_TAXO}'...\n"
+		"${BIN_DRUSH}" taxocsv-import -y --keep_order --vocabulary_target=existing --vocabulary_id="${REF_TAXO}" "${SRC_TAXO}" fields
+	done
 	
 	## configuration du thème personnalisé
 	printf "\n=== Drupal configuration : Theme Cartotheque...\n"
@@ -172,6 +172,7 @@ if [ -z "${DBSTATUS}" ]; then
 	"${BIN_DRUSH}" vset -y --exact tic_carto_count_view_page_header --format=json '{"format": "filtered_html", "value": ""}'
 	"${BIN_DRUSH}" vset -y --exact tic_carto_count_view_page_footer --format=json '{"format": "filtered_html", "value": ""}'
 	
+	
 	## configuration des commentaires
 	printf "\n=== Drupal configuration : Commentaires...\n"
 	"${BIN_DRUSH}" vset -y --exact comment_default_mode_carte         1
@@ -198,8 +199,29 @@ if [ -z "${DBSTATUS}" ]; then
 	
 	## configuration des messages
 	printf "\n=== Drupal configuration : Messages...\n"
-	"${BIN_DRUSH}" vset -y --exact maintenance_mode_message  "Cartothèque est en cours de maintenance. Nous serons de retour très bientôt. Merci de votre patience."
+	"${BIN_DRUSH}" vset -y --exact maintenance_mode_message                     "Cartothèque est en cours de maintenance. Nous serons de retour très bientôt. Merci de votre patience."
+	"${BIN_DRUSH}" vset -y --exact user_mail_cancel_confirm_body                "[user:name],\r\n\r\nUne demande d'annulation de votre compte a été faite sur [site:name].\r\n\r\nVous pouvez maintenant annuler votre compte sur [site:url-brief] en cliquant sur ce lien ou en le copiant dans votre navigateur :\r\n\r\n[user:cancel-url]\r\n\r\nREMARQUE : L'annulation de votre compte n'est pas reversible.\r\n\r\nCe lien expirera après un jour et rien ne se passera s'il n'est pas utilisé.\r\n\r\n--  L'équipe [site:name]"
+	"${BIN_DRUSH}" vset -y --exact user_mail_cancel_confirm_subject             "Demande d'annulation de compte pour [user:name] sur [site:name]"
+	"${BIN_DRUSH}" vset -y --exact user_mail_password_reset_body                "[user:name],\r\n\r\nUne demande de renouvellement de mot de passe a été faite pour votre compte sur [site:name].\r\n\r\nVous pouvez désormais vous identifier en cliquant sur ce lien ou en le copiant dans votre navigateur :\r\n\r\n[user:one-time-login-url]\r\n\r\nCe lien ne peut être utilisé pour s'identifier qu'une seule fois et il vous conduira à une page où vous pourrez paramétrer votre mot de passe. Il expirera après un jour et rien ne se passera s'il n'est pas utilisé.\r\n\r\n--  L'équipe [site:name]"
+	"${BIN_DRUSH}" vset -y --exact user_mail_password_reset_subject             "Informations de remplacement de connexion pour [user:name] sur [site:name]"
+	"${BIN_DRUSH}" vset -y --exact user_mail_register_admin_created_body        "[user:name],\r\n\r\nUn administrateur du site [site:name] vous a créé un compte. Vous pouvez désormais vous identifier en cliquant sur ce lien ou en le copiant dans votre navigateur :\r\n\r\n[user:one-time-login-url]\r\n\r\nCe lien ne peut être utilisé pour s'identifier qu'une seule fois et il vous conduira à une page où vous pourrez paramétrer votre mot de passe.\r\n\r\nAprès avoir paramétré votre mot de passe, vous pourrez vous identifier à l'adresse [site:login-url] lors de vos prochaines connexions :\r\n\r\nidentifiant : [user:name]\r\nmot de passe : Votre mot de passe\r\n\r\n--  L'équipe [site:name]"
+	"${BIN_DRUSH}" vset -y --exact user_mail_register_admin_created_subject     "Un administrateur a créé un compte pour vous sur [site:name]"
+	"${BIN_DRUSH}" vset -y --exact user_mail_register_no_approval_required_body "[user:name],\r\n\r\nMerci de vous être enregistré sur [site:name]. Vous pouvez désormais vous identifier en cliquant sur ce lien ou en le copiant dans votre navigateur :\r\n\r\n[user:one-time-login-url]\r\n\r\nCe lien ne peut être utilisé pour s'identifier qu'une seule fois et il vous conduira à une page où vous pourrez paramétrer votre mot de passe.\r\n\r\nAprès avoir paramétré votre mot de passe, vous pourrez vous identifier à l'adresse [site:login-url] lors de vos prochaines connexions :\r\n\r\nidentifiant : [user:name]\r\nmot de passe : Votre mot de passe\r\n\r\n--  L'équipe [site:name]"
+	"${BIN_DRUSH}" vset -y --exact user_mail_register_no_approval_required_subject "Détails du compte [user:name] sur [site:name]"
+	"${BIN_DRUSH}" vset -y --exact user_mail_register_pending_approval_body     "[user:name],\r\n\r\nMerci pour votre inscription sur [site:name]. Votre demande de compte est actuellement en attente d'approbation. Quand elle aura été acceptée, vous recevrez un autre courriel contenant les informations pour vous connecter, définir votre mot de passe et d'autres détails.\r\n\r\n\r\n--  L'équipe [site:name]"
+	"${BIN_DRUSH}" vset -y --exact user_mail_register_pending_approval_subject  "Détails du compte [user:name] sur [site:name] (en attente d'approbation)"
+	"${BIN_DRUSH}" vset -y --exact user_mail_status_activated_body              "[user:name],\r\n\r\nVotre compte sur [site:name] a été activé.\r\n\r\nVous pouvez désormais vous identifier en cliquant sur ce lien ou en le copiant dans votre navigateur :\r\n\r\n[user:one-time-login-url]\r\n\r\nCe lien ne peut être utilisé pour s'identifier qu'une seule fois et il vous conduira à une page où vous pourrez paramétrer votre mot de passe.\r\n\r\nAprès avoir paramétré votre mot de passe, vous pourrez vous identifier à l'adresse [site:login-url] lors de vos prochaines connexions :\r\n\r\nidentifiant : [user:name]\r\nmot de passe : Votre mot de passe\r\n\r\n--  L'équipe [site:name]"
+	"${BIN_DRUSH}" vset -y --exact user_mail_status_activated_notify            1
+	"${BIN_DRUSH}" vset -y --exact user_mail_status_activated_subject           "Détails du compte [user:name] sur [site:name] (approuvé)"
+	"${BIN_DRUSH}" vset -y --exact user_mail_status_blocked_body                "[user:name],\r\n\r\nVotre compte sur [site:name] a été bloqué.\r\n\r\n--  L'équipe de [site:name]"
+	"${BIN_DRUSH}" vset -y --exact user_mail_status_blocked_notify              0
+	"${BIN_DRUSH}" vset -y --exact user_mail_status_blocked_subject             "Détails du compte [user:name] sur [site:name] (bloqué)"
+	"${BIN_DRUSH}" vset -y --exact user_mail_status_canceled_body               "[user:name],\r\n\r\nVotre compte sur [site:name] a été annulé.\r\n\r\n--  L'équipe [site:name]"
+	"${BIN_DRUSH}" vset -y --exact user_mail_status_canceled_notify             0
+	"${BIN_DRUSH}" vset -y --exact user_mail_status_canceled_subject            "Détails du compte [user:name] sur [site:name] (annulé)"
 	
+	
+	"${BIN_DRUSH}" php-eval 'node_access_rebuild();'
 fi
 
 
@@ -230,9 +252,19 @@ if [ -n "${RED_URL}" ]; then
 	"${BIN_DRUSH}" vset -y --exact cors_domains --format=json         "{\"*\": \"${RED_URL}\"}"
 fi
 
+### Mise à jour des thèmes HdF des cartes
+if [ -f "${DIR_DRUPAL}/sites/default/fixtures/Cartes_production_200228_V2.xlsx" ]; then
+	printf "\n=== Drupal import : màj thèmes HdF...\n"
+	"${BIN_DRUSH}" import-update-theme-hdf -y "${DIR_DRUPAL}/sites/default/fixtures/Cartes_production_200228_V2.xlsx"
+fi
 
-### Démarrage du serveur Apache/PHP
+
+### Finalisation des paramétrages
+printf "\n=== Drupal database upgrades...\n"
+cd "${DIR_DRUPAL}" && "${BIN_DRUSH}" updatedb -y
 printf "\n=== Drupal cache reinitialisation...\n"
 cd "${DIR_DRUPAL}" && "${BIN_DRUSH}" cache-clear -y all
+
+### Démarrage du serveur Apache/PHP
 printf "\n=== Initialisation OK\n\n"
 exec /usr/local/bin/docker-php-entrypoint "$@"

@@ -133,21 +133,37 @@ RUN if [ -n "${VER_DRUSH}" -a "x${VER_DRUSH}" != "xno" ]; then set -xe \
 
 ##### DRUPAL INSTALL (via drush)
 ARG VER_DRUPAL=7
-COPY "./settings.docker.php" "/usr/src/settings.instance.php"
 RUN if [ -n "${VER_DRUPAL}" -a "x${VER_DRUPAL}" != "xno" ]; then set -xe \
   ; drush pm-download drupal-${VER_DRUPAL} --destination="/var/www" --drupal-project-rename="html" -y \
-  ; wget "https://ftp.drupal.org/files/translations/7.x/drupal/drupal-7.78.fr.po" -O "/var/www/html/profiles/standard/translations/drupal.fr.po" -q \
+  ; mkdir -p "/var/www/html/sites/all/modules/contrib" \
+  ; mkdir -p "/var/www/html/sites/all/themes/contrib" \
   ; cd "/var/www/html" && rm -f CHANGELOG.txt COPYRIGHT.txt INSTALL*.txt LICENSE.txt MAINTAINERS.txt README.txt UPGRADE.txt \
-  \
+  ; fi
+RUN if [ -d "/var/www/html/sites/all/modules/contrib" ]; then set -xe \
+  ; cd "/var/www/html" && drush dl -y \
+    admin_menu module_filter ctools devel smtp xautoload libraries \
+    views admin_views views_bulk_operations better_exposed_filters \
+    configuration node_clone bundle_copy override_node_options ldap \
+    rules term_merge tagadelic taxonomy_csv facetapi search_api search_api_db \
+    email url entity references autocomplete_deluxe date views_between_dates_filter \
+    jquery_update phpexcel redmine_rest_api image_url_formatter lightbox2 \
+  ; wget -q "https://www.drupal.org/files/pgsql_combine_filter_views.tar__1.gz" \
+    -O - | tar xz -C "/var/www/html/sites/all/modules/contrib/" \
+  ; wget -q "https://ftp.drupal.org/files/translations/7.x/drupal/drupal-7.80.fr.po" \
+    -O "/var/www/html/profiles/standard/translations/drupal.fr.po" \
+  ; wget -q "https://github.com/PHPOffice/PHPExcel/archive/refs/tags/1.8.2.tar.gz" \
+    -O - | tar xz -C "/var/www/html/sites/all/libraries/" \
+  ; mv "/var/www/html/sites/all/libraries/PHPExcel-1.8.2" "/var/www/html/sites/all/libraries/PHPExcel" \
+  ; fi
+
+##### DRUPAL CONFIG
+COPY "./settings.docker.php" "/usr/src/settings.instance.php"
+RUN if [ -d "/var/www/html/sites/default" ]; then set -xe \
   ; cp "/var/www/html/sites/default/default.settings.php" "/var/www/html/sites/default/settings.php" \
   ; mv "/usr/src/settings.instance.php" "/var/www/html/sites/default/settings.instance.php" \
   ; printf "\n### Chargement des configurations spécifiques de l'instance (non versionnées)\n"                     >> "/var/www/html/sites/default/settings.php" \
   ; printf "if (file_exists(__DIR__.'/settings.instance.php')) include_once __DIR__.'/settings.instance.php';\n\n" >> "/var/www/html/sites/default/settings.php" \
   ; head -c74 /dev/urandom | base64 -w0 > "/var/www/drupal-salt.txt" \
-  \
-  ; mkdir -p "/var/www/html/sites/all/modules/contrib" \
-  ; mkdir -p "/var/www/html/sites/all/themes/contrib" \
-  ; mkdir -p "/var/www/html/sites/all/libraries/contrib" \
   ; cd "/var/www/html" && drush core-status \
   ; fi
 
