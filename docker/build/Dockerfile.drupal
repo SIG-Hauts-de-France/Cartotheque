@@ -131,6 +131,7 @@ RUN if [ -n "${VER_DRUSH}" -a "x${VER_DRUSH}" != "xno" ]; then set -xe \
   ; drush --version \
   ; fi
 
+
 ##### DRUPAL INSTALL (via drush)
 ARG VER_DRUPAL=7
 RUN if [ -n "${VER_DRUPAL}" -a "x${VER_DRUPAL}" != "xno" ]; then set -xe \

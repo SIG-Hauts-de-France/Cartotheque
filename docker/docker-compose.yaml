@@ -16,6 +16,7 @@ services:
     ###
     drupal:
 #       image: "php:${VER_PHP:-5.6}-apache-stretch"
+        image: "hdf-cartotheque-drupal:${VER_DRUPAL}-php${VER_PHP:-5.6}-apache-stretch"
         build:
             context: "./build"
             dockerfile: "Dockerfile.drupal"
@@ -59,7 +60,6 @@ services:
             GEO_PASS:                   ${PWD_GEOSOURCE}
             RED_URL:                    ${REDMINE_URL:-}
             RED_KEY:                    ${REDMINE_KEY:-}
-            PHP_DEBUG:                  2
         hostname: "${COMPOSE_PROJECT_NAME:-hdf-carto}-drupal7"
 
 
@@ -68,6 +68,7 @@ services:
     ###
     geosource:
 #       image: tomcat:${VER_TOMCAT:-9.0}-jre${VER_JRE:-8}
+        image: "hdf-cartotheque-geosource:${VER_GEOSOURCE}-tomcat${VER_TOMCAT:-9.0}-jre${VER_JRE:-8}"
         build:
             context: "./build"
             dockerfile: "Dockerfile.geosource"

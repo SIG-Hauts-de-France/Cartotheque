@@ -1,0 +1,25 @@
+### Définition de la configuration de base des conteneurs...
+### - soit surchargé par défaut  en mode dev  par le fichier 'docker-compose.override.yml'
+### - soit surchargé sur demande en mode prod par le fichier 'docker-compose.production.yml'
+###
+### Références :
+### - https://docs.docker.com/compose/compose-file/
+###
+version: '3.7'
+services:
+
+    ###
+    ### Instance Drupal pour la cartothèque HdF (avec theme et modules customs)
+    ###
+    drupal-dist:
+        image: "hdf-cartotheque-drupal-dist:${VER_DRUPAL}-php${VER_PHP:-5.6}-apache-stretch"
+        build:
+            context: ".."
+            dockerfile: "./docker/build/Dockerfile.drupal-dist"
+            args:
+                - VER_DRUPAL
+                - VER_PHP
+                - USE_THEMES=./themes
+                - USE_MODULES=./modules
+                - USE_IMPORTS=./imports
+
