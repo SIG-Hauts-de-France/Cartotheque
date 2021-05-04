@@ -48,6 +48,7 @@ function tagadelic_taxonomy_get_cloud($max_amount) {
 		case 'categorie'          : $tag->set_link("?q=map-list&field_categorie_tid={$term->tid}");  break;
 		case 'mots_cles'          : $tag->set_link("?q=map-list&field_mots_cles_tid={$term->tid}");  break;
 		case 'thematique_gemet'   : $tag->set_link("?q=map-list&field_thematique_tid={$term->tid}"); break;
+		case 'collections'        : $tag->set_link("?q=map-list&field_collections_tid[]={$term->tid}"); break;
 		default                   : continue;  // $tag->set_link("taxonomy/term/{$term->tid}");
 	}
 
@@ -160,7 +161,7 @@ function tagadelic_taxonomy_block_info() {
  */
 function tagadelic_taxonomy_block_view($delta = '') {
   $body = theme("tagadelic_taxonomy_cloud", array("tags" => tagadelic_taxonomy_get_cloud(12)));
-  $body .= l(t("More tags"), "tagadelic_taxonomy", array("attributes" => array("class" => array("more"))));
+# $body .= l(t("More tags"), "tagadelic_taxonomy", array("attributes" => array("class" => array("more"))));
   return array(
     'subject' => t('Tag cloud'),
     'content' => array(
