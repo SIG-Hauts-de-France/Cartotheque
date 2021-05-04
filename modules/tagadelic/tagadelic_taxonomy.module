@@ -42,7 +42,14 @@ function tagadelic_taxonomy_get_cloud($max_amount) {
 
   foreach (tagadelic_taxonomy_tags_from_db($max_amount) as $term) {
     $tag = new TagadelicTag($term->tid, $term->name, $term->count);
-    $tag->set_link("taxonomy/term/{$term->tid}");
+
+	switch ($term->machine_name) {
+		case 'categorie'          : $tag->set_link("?q=map-list&field_categorie_tid={$term->tid}");  break;
+		case 'mots_cles'          : $tag->set_link("?q=map-list&field_mots_cles_tid={$term->tid}");  break;
+		case 'thematique_gemet'   : $tag->set_link("?q=map-list&field_thematique_tid={$term->tid}"); break;
+		default                   : $tag->set_link("taxonomy/term/{$term->tid}");
+	}
+	$tag->force_clean();
 
     $cloud->add_tag($tag);
   }
@@ -71,11 +78,13 @@ function tagadelic_taxonomy_tags_from_db($max_amount) {
   $query = db_select('taxonomy_index', 'i');
 
   $alias = $query->leftjoin('taxonomy_term_data', 't', '%alias.tid = i.tid');
+  $vocAlias = $query->leftjoin('taxonomy_vocabulary', 'a', 'a.vid = t.vid');
 
   $query->addExpression('COUNT(i.nid)', 'count');
   $query->addField($alias, 'tid');
   $query->addField($alias, 'name');
   $query->addField($alias, 'description');
+  $query->addField($vocAlias, 'machine_name');
   $query->orderBy('count', 'DESC');
 
   foreach(variable_get("tagadelic_taxonomy_vocabularies", array()) as $vid => $state) {
@@ -85,7 +94,8 @@ function tagadelic_taxonomy_tags_from_db($max_amount) {
   }
 
   $query->range(0, $max_amount)
-    ->groupBy("i.tid");
+    ->groupBy("t.tid")
+    ->groupBy('a.vid');
 
   return $query->execute();
 }
