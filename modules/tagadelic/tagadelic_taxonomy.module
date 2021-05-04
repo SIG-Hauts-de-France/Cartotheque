@@ -43,16 +43,17 @@ function tagadelic_taxonomy_get_cloud($max_amount) {
   foreach (tagadelic_taxonomy_tags_from_db($max_amount) as $term) {
     $tag = new TagadelicTag($term->tid, $term->name, $term->count);
 
+	$tag->force_clean();
 	switch ($term->machine_name) {
 		case 'categorie'          : $tag->set_link("?q=map-list&field_categorie_tid={$term->tid}");  break;
 		case 'mots_cles'          : $tag->set_link("?q=map-list&field_mots_cles_tid={$term->tid}");  break;
 		case 'thematique_gemet'   : $tag->set_link("?q=map-list&field_thematique_tid={$term->tid}"); break;
-		default                   : $tag->set_link("taxonomy/term/{$term->tid}");
+		default                   : continue;  // $tag->set_link("taxonomy/term/{$term->tid}");
 	}
-	$tag->force_clean();
 
     $cloud->add_tag($tag);
   }
+  $cloud->sort('random');
 
   # Because now here wer're returning an array, not HTML.
   return $cloud->get_tags();
