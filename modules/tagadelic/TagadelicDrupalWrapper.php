@@ -46,7 +46,14 @@ class TagadelicDrupalWrapper {
    * http://api.drupal.org/api/drupal/includes!common.inc/function/l/7
    */
   public function l($text, $path, $options = array()) {
-    return l($text, $path, $options);
+#		return l($text, $path, $options);
+		$classes = "";
+		if (isset($options['attributes']['class'])) {
+			$classes = $options['attributes']['class'];
+			if (is_array($classes)) $classes = implode(' ', $classes);
+			$classes = trim($classes)
+		}
+		return '<a class="'.$classes.'" href="'.$path.'">'.$text.'</a>';
   }
 
   /**
