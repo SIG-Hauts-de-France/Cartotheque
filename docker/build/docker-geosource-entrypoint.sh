@@ -1,8 +1,8 @@
 #!/bin/sh
 set -e
 
-[ -z "${MAX_TIMEOUT}"   ] && MAX_TIMEOUT=300
-[ -z "${STP_TIMEOUT}"   ] && STP_TIMEOUT=10
+[ -z "${MAX_TIMEOUT}" ] && MAX_TIMEOUT=300  ## 5mn max
+[ -z "${STP_TIMEOUT}" ] && STP_TIMEOUT=10   ## sleep 10s
 [ -z "${DIR_GEOSOURCE}" ] && DIR_GEOSOURCE="/usr/local/tomcat/webapps/geosource"
 [ ! -d "${DIR_GEOSOURCE}" ] && printf "\n*** Dossier webapp inexistant !\n\n" && exit 1
 

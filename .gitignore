@@ -1,0 +1,23 @@
+### Instance local configuration
+.env
+
+### Shell environment
+.bash_history
+
+### Dev files
+*.diff
+
+### Editors/IDE (vim, Intellij)
+*.swp
+*.swo
+.idea*
+.project
+*~
+
+### MAC OS files
+.DS_Store
+
+### Dumps
+/imports/dump-*
+/imports/files-*
+

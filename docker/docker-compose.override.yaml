@@ -47,12 +47,13 @@ services:
 #           - "${PORT_DB}:5432"
         volumes:
             - "./dumps:/var/dump:rw"
-#           - "./confs/db-initscript.sh:/docker-entrypoint-initdb.d/11_import.sh:ro"
+            - "./confs/db-initscript.sh:/docker-entrypoint-initdb.d/11_import.sh:ro"
         environment:
             POSTGRES_DB:                ${DB_BASENAME:-drupalcartes}
             POSTGRES_USER:              ${DB_USERNAME:-drupalcartes}
             POSTGRES_PASSWORD:          ${DB_USERPASS}
             PGPASSWORD:                 ${DB_USERPASS}
+            IMPORT_FOLDER:              /var/dump/init_drupaldb
 
 
     ###
@@ -65,12 +66,13 @@ services:
 #           - "${PORT_GEODB}:5432"
         volumes:
             - "./dumps:/var/dump:rw"
-#           - "./confs/db-initscript.sh:/docker-entrypoint-initdb.d/11_import.sh:ro"
+            - "./confs/db-initscript.sh:/docker-entrypoint-initdb.d/11_import.sh:ro"
         environment:
             POSTGRES_DB:                ${GEODB_BASENAME:-geosource}
             POSTGRES_USER:              ${GEODB_USERNAME:-geosource}
             POSTGRES_PASSWORD:          ${GEODB_USERPASS}
             PGPASSWORD:                 ${GEODB_USERPASS}
+            IMPORT_FOLDER:              /var/dump/init_geodb
 
 
     ###

@@ -148,6 +148,7 @@ RUN if [ -d "/var/www/html/sites/all/modules/contrib" ]; then set -xe \
     rules term_merge tagadelic taxonomy_csv facetapi search_api search_api_db \
     email url entity references autocomplete_deluxe date views_between_dates_filter \
     jquery_update phpexcel redmine_rest_api image_url_formatter lightbox2 \
+    imagecache_actions \
   ; wget -q "https://www.drupal.org/files/pgsql_combine_filter_views.tar__1.gz" \
     -O - | tar xz -C "/var/www/html/sites/all/modules/contrib/" \
   ; wget -q "https://ftp.drupal.org/files/translations/7.x/drupal/drupal-7.80.fr.po" \

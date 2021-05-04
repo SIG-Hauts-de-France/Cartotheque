@@ -1,10 +1,15 @@
 #!/bin/sh
 set -e
 
-[ -z "${MAX_TIMEOUT}" ] && MAX_TIMEOUT=1800  ## 30mn max
-[ -z "${STP_TIMEOUT}" ] && STP_TIMEOUT=30    ## sleep 30s
+
+################################################################################ VARS
+
+
+[ -z "${MAX_TIMEOUT}" ] && MAX_TIMEOUT=300  ## 5mn max
+[ -z "${STP_TIMEOUT}" ] && STP_TIMEOUT=10   ## sleep 10s
 SQL_DBLIST='\l'  ## PostgreSQL
 DIR_DRUPAL="/var/www/html"
+BIN_DRUSH="$(which drush 2>/dev/null || true)"
 
 
 ### Définition du compte utilisé pour le serveur web
@@ -12,6 +17,9 @@ DIR_DRUPAL="/var/www/html"
 [ -n "${GRP_WORKER}" -a "${GRP_WORKER}" -ne 0 ] || GRP_WORKER='www-data'
 export APACHE_RUN_USER="$(id -n -u ${USR_WORKER})"
 export APACHE_RUN_GROUP="$(id -n -g ${GRP_WORKER})"
+
+
+################################################################################ SUBS
 
 
 ### Réglage des permissions sur les fichiers et dossiers
@@ -24,53 +32,58 @@ fixPermissions() {
 	[ -n "${FP_FMOD}" ] && find "${FP_PATH}" -type f -print0 | xargs -0 --no-run-if-empty chmod "${FP_FMOD}"
 }
 
-fixPermissions "/var/www/drush-backups"            "${GRP_WORKER}" 'g+rwxs' 'g+rw'
-fixPermissions "/var/www/private"                  "${GRP_WORKER}" 'g+rwxs' 'g+rw'
-fixPermissions "${DIR_DRUPAL}/sites/default/files" "${GRP_WORKER}" '0775'   '0664'
-fixPermissions "${DIR_DRUPAL}/sites/all"           "${GRP_WORKER}" '0775'   '0664'
-chmod 0440 "${DIR_DRUPAL}/sites/default/"settings*.php || echo "*** WARNING: chown failed!"  # non-critical
-chmod 2555 "${DIR_DRUPAL}/sites/default"
-
-
-### Fin du script d'init si la commande drush n'est pas disponible
-BIN_DRUSH="$(which drush 2>/dev/null || true)"
-[ -z "${BIN_DRUSH}" ] && printf "\n*** Commande Drush non disponible (aucune configuration Drupal effectuée) !\n\n" && exit 1
-
-### Afficher l'état de l'instance Drupal
-cd "${DIR_DRUPAL}"
-"${BIN_DRUSH}" core-status
 
 ### Boucle d'attente de disponibilité de la base de données
-if [ -n "${DB_BASE}" ]; then
+is_database_ready() {
+	[ -z "${DB_BASE}" ] && return 1
 	printf "\n=== Attente de disponibilité de la base de données... (%ss max)\n" "${MAX_TIMEOUT}"
 	while true; do
-		echo "${SQL_DBLIST}" | "${BIN_DRUSH}" --yes sql-cli 2>/dev/null | grep "${DB_BASE}" -q && break
-		[ "${MAX_TIMEOUT}" -le 0 ] && printf "\n*** Base de données indisponible !\n\n" && exit 2
+		echo "${SQL_DBLIST}" | "${BIN_DRUSH}" --yes sql-cli 2>/dev/null | grep "${DB_BASE}" -q && return 0
+		[ "${MAX_TIMEOUT}" -le 0 ] && break
 		printf "... sleep waiting for db (${STP_TIMEOUT}/${MAX_TIMEOUT})\n"
 		sleep "${STP_TIMEOUT}"
 		MAX_TIMEOUT=`expr ${MAX_TIMEOUT} - ${STP_TIMEOUT}`
 	done
-fi
+	return 2
+}
 
 
-### Script d'installation du site de Drupal
-DBSTATUS="$("${BIN_DRUSH}" --yes core-status --fields=db-status)"
-printf "\n=== Drupal status : '${DBSTATUS}'\n"
-
-if [ -z "${DBSTATUS}" ]; then
+### Etat de la base de données (get/set NONE|POST|DONE)
+do_database_state() {
+	NEWSTATE="${1}"
+	cd "${DIR_DRUPAL}"
 	
-	## initialisation de la base de données
+	DBSTATUS="$("${BIN_DRUSH}" --yes core-status --fields=db-status)"
+	if [ -z "${DBSTATUS}" ]; then
+		DBSTATUS='NONE'
+		return 1
+	fi
+	CFSTATUS='tic_db_status'
+	if [ -n "${NEWSTATE}" ]; then
+		"${BIN_DRUSH}" sqlq "DELETE FROM variable WHERE name='${CFSTATUS}';"
+		"${BIN_DRUSH}" sqlq "INSERT INTO variable (name, value) VALUES ('${CFSTATUS}', '${NEWSTATE}');"
+	fi
+	SQLQUERY="SELECT encode(value, 'escape') FROM variable WHERE name='${CFSTATUS}';"
+	DBSTATUS="$("${BIN_DRUSH}" sqlq "${SQLQUERY}")"; [ -z "${DBSTATUS}" ] && DBSTATUS='POST'
+	return 0
+}
+
+
+### Installation de l'instance Drupal (initialisation BdD)
+do_install_drupal() {
 	printf "\n=== Drupal site : installation...\n"
+	cd "${DIR_DRUPAL}"
 	"${BIN_DRUSH}" site-install standard --yes -v \
 		--account-pass="${ADMIN_PASS}" \
 		--site-name="Cartothèque" --site-mail="${ADMIN_MAIL:-root@localhost}" \
 		--locale='fr' install_configure_form.site_default_country='FR'
-	
-	
-	## activation des extensions contrib
-	printf "\n=== Postgres extensions : activation...\n"
-	echo 'CREATE EXTENSION IF NOT EXISTS unaccent;' | "${BIN_DRUSH}" --yes sql-cli 2>/dev/null
-	printf "\n=== Drupal extensions : activation...\n"
+}
+
+
+### Activation des extensions contrib
+do_install_contrib() {
+	printf "\n=== Drupal extensions : activation contrib...\n"
+	cd "${DIR_DRUPAL}"
 	"${BIN_DRUSH}" en -y \
 	  admin_menu admin_views module_filter ctools devel smtp xautoload libraries \
 	  views views_bulk_operations better_exposed_filters pgsql_combine_filter_views \
@@ -81,11 +94,36 @@ if [ -z "${DBSTATUS}" ]; then
 	  email url entity entity_token references node_reference autocomplete_deluxe \
 	  date date_api date_popup date_views views_between_dates_filter \
 	  jquery_update phpexcel redmine_rest_api image_url_formatter lightbox2 \
-	  admin_menu_toolbar views_ui
+	  admin_menu_toolbar views_ui imagecache_actions imagecache_canvasactions
 	"${BIN_DRUSH}" dis -y toolbar
-	
-	## configuration initiale du module SMTP de Drupal
+}
+
+
+### Activation des extensions custom
+### NOTE: install tic_geosource effectue un load de fixtures (import taxonomy préalable requis)
+do_install_custom() {
+	printf "\n=== Drupal extensions : activation custom...\n"
+	cd "${DIR_DRUPAL}"
+	"${BIN_DRUSH}" en -y \
+	  cartotheque tic_hdf tic_theme_hdf_update tic_geosource \
+	  tic_carto_count tic_customsearch tic_redmine_data_importer tic_filedownload
+}
+
+
+### Configuration du dossier de stockage privé
+do_config_storage() {
+	printf "\n=== Drupal configuration : Storage...\n"
+	cd "${DIR_DRUPAL}"
+	"${BIN_DRUSH}" vset -y --exact file_public_path      "sites/default/files"
+	"${BIN_DRUSH}" vset -y --exact file_private_path     "../private"
+	"${BIN_DRUSH}" vset -y --exact file_default_scheme   "private"
+}
+
+
+### Configuration du module SMTP de Drupal
+do_config_smtp() {
 	printf "\n=== Drupal configuration : Module SMTP...\n"
+	cd "${DIR_DRUPAL}"
 	"${BIN_DRUSH}" vset -y --exact smtp_on               1
 	"${BIN_DRUSH}" vset -y --exact smtp_deliver          1
 	"${BIN_DRUSH}" vset -y --exact smtp_queue            0
@@ -101,9 +139,25 @@ if [ -z "${DBSTATUS}" ]; then
 	"${BIN_DRUSH}" vset -y --exact smtp_debugging        2
 	"${BIN_DRUSH}" vset -y --exact mail_system           --format=json '{"default-system": "SmtpMailSystem"}'
 	"${BIN_DRUSH}" vset -y --exact smtp_previous_mail_system "DefaultMailSystem"
-	
-	## configuration de l'API Date
+}
+
+
+### Paramétrage du module SMTP de Drupal
+do_params_smtp() {
+	[ -z "${SMTP_HOST}" ] && return 0
+	printf "\n=== Drupal paramétrage : SMTP server...\n"
+	cd "${DIR_DRUPAL}"
+	"${BIN_DRUSH}" vset -y --exact smtp_host            --format=json "\"${SMTP_HOST}\""
+	"${BIN_DRUSH}" vset -y --exact smtp_port            --format=json "\"${SMTP_PORT}\""
+	"${BIN_DRUSH}" vset -y --exact smtp_username        --format=json "\"${SMTP_USER}\""
+	"${BIN_DRUSH}" vset -y --exact smtp_password        --format=json "\"${SMTP_PASS}\""
+}
+
+
+### Configuration de l'API Date
+do_config_date() {
 	printf "\n=== Drupal configuration : Date API...\n"
+	cd "${DIR_DRUPAL}"
 	"${BIN_DRUSH}" vset -y --exact date_api_use_iso8601  0
 	"${BIN_DRUSH}" vset -y --exact date_first_day        1
 	"${BIN_DRUSH}" vset -y --exact date_format_long      "l, j. F Y - G:i"
@@ -116,65 +170,13 @@ if [ -z "${DBSTATUS}" ]; then
 #	"${BIN_DRUSH}" vset -y --exact date_format_search_api_facetapi_HOUR    "H:__"
 #	"${BIN_DRUSH}" vset -y --exact date_format_search_api_facetapi_MINUTE  "H:i"
 #	"${BIN_DRUSH}" vset -y --exact date_format_search_api_facetapi_SECOND  "H:i:S"
-	
-	## configuration du dossier de stockage privé
-	printf "\n=== Drupal configuration : Storage...\n"
-	"${BIN_DRUSH}" vset -y --exact file_public_path      "sites/default/files"
-	"${BIN_DRUSH}" vset -y --exact file_private_path     "../private"
-	"${BIN_DRUSH}" vset -y --exact file_default_scheme   "private"
-	
-	
-	## activation des extensions custom
-	"${BIN_DRUSH}" en -y \
-	  cartotheque tic_hdf tic_theme_hdf_update tic_geosource \
-	  tic_carto_count tic_customsearch tic_redmine_data_importer tic_filedownload
-	
-	## import des termes des vocabulaires de taxonomie
-	for SRC_TAXO in "${DIR_DRUPAL}/sites/default/fixtures"/taxonomy-*.csv; do
-		REF_TAXO="$(echo "${SRC_TAXO}" | sed 's|^.*/taxonomy-\(.*\)\.csv$|\1|')"
-		printf "\n=== Drupal import : vocabulaire '${REF_TAXO}'...\n"
-		"${BIN_DRUSH}" taxocsv-import -y --keep_order --vocabulary_target=existing --vocabulary_id="${REF_TAXO}" "${SRC_TAXO}" fields
-	done
-	
-	## configuration du thème personnalisé
-	printf "\n=== Drupal configuration : Theme Cartotheque...\n"
-	"${BIN_DRUSH}" vset -y --exact theme_default         "cartotheque"
-	"${BIN_DRUSH}" vset -y --exact theme_cartotheque_settings --format=json '{
-        "cartotheque_map_list_url": "?q=map-list-new",
-        "default_favicon":      1,
-        "default_logo":         1,
-        "favicon_path":         "",
-        "favicon_upload":       "",
-        "logo_path":            "",
-        "logo_upload":          "",
-        "toggle_favicon":       1,
-        "toggle_logo":          1,
-        "toggle_name":          1,
-        "toggle_slogan":        1,
-        "jquery_update_jquery_version": "2.2"
-    }'
-	
-	## configuration des modules de la cartothèque
-	printf "\n=== Drupal configuration : Module Geosource...\n"
-#	"${BIN_DRUSH}" vset -y --exact geosource_public_group_id          1
-	"${BIN_DRUSH}" vset -y --exact geosource_public_group_id          2
-	"${BIN_DRUSH}" vset -y --exact geosource_private_group_id         2
-	"${BIN_DRUSH}" vset -y --exact geosource_server_timeout           180
-	"${BIN_DRUSH}" vset -y --exact geosource_sync_delay               3600
-	"${BIN_DRUSH}" vset -y --exact geosource_drupal_to_geosource      1
-	"${BIN_DRUSH}" vset -y --exact geosource_geosource_to_drupal      0
-	printf "\n=== Drupal configuration : Module CartoCount...\n"
-	"${BIN_DRUSH}" vset -y --exact tic_carto_count_view_page_title    "Carto Download Counts"
-	"${BIN_DRUSH}" vset -y --exact tic_carto_count_view_page_items    25
-	"${BIN_DRUSH}" vset -y --exact tic_carto_count_view_page_limit    0
-	"${BIN_DRUSH}" vset -y --exact tic_carto_count_flood_limit        0
-	"${BIN_DRUSH}" vset -y --exact tic_carto_count_flood_window       5
-	"${BIN_DRUSH}" vset -y --exact tic_carto_count_view_page_header --format=json '{"format": "filtered_html", "value": ""}'
-	"${BIN_DRUSH}" vset -y --exact tic_carto_count_view_page_footer --format=json '{"format": "filtered_html", "value": ""}'
-	
-	
-	## configuration des commentaires
+}
+
+
+### Configuration des commentaires
+do_config_comments() {
 	printf "\n=== Drupal configuration : Commentaires...\n"
+	cd "${DIR_DRUPAL}"
 	"${BIN_DRUSH}" vset -y --exact comment_default_mode_carte         1
 	"${BIN_DRUSH}" vset -y --exact comment_default_mode_contact       1
 	"${BIN_DRUSH}" vset -y --exact comment_default_mode_page          1
@@ -196,9 +198,13 @@ if [ -z "${DBSTATUS}" ]; then
 	"${BIN_DRUSH}" vset -y --exact comment_subject_field_carte        1
 	"${BIN_DRUSH}" vset -y --exact comment_subject_field_contact      1
 	"${BIN_DRUSH}" vset -y --exact comment_subject_field_page         1
-	
-	## configuration des messages
+}
+
+
+### Configuration des messages
+do_config_messages() {
 	printf "\n=== Drupal configuration : Messages...\n"
+	cd "${DIR_DRUPAL}"
 	"${BIN_DRUSH}" vset -y --exact maintenance_mode_message                     "Cartothèque est en cours de maintenance. Nous serons de retour très bientôt. Merci de votre patience."
 	"${BIN_DRUSH}" vset -y --exact user_mail_cancel_confirm_body                "[user:name],\r\n\r\nUne demande d'annulation de votre compte a été faite sur [site:name].\r\n\r\nVous pouvez maintenant annuler votre compte sur [site:url-brief] en cliquant sur ce lien ou en le copiant dans votre navigateur :\r\n\r\n[user:cancel-url]\r\n\r\nREMARQUE : L'annulation de votre compte n'est pas reversible.\r\n\r\nCe lien expirera après un jour et rien ne se passera s'il n'est pas utilisé.\r\n\r\n--  L'équipe [site:name]"
 	"${BIN_DRUSH}" vset -y --exact user_mail_cancel_confirm_subject             "Demande d'annulation de compte pour [user:name] sur [site:name]"
@@ -219,51 +225,186 @@ if [ -z "${DBSTATUS}" ]; then
 	"${BIN_DRUSH}" vset -y --exact user_mail_status_canceled_body               "[user:name],\r\n\r\nVotre compte sur [site:name] a été annulé.\r\n\r\n--  L'équipe [site:name]"
 	"${BIN_DRUSH}" vset -y --exact user_mail_status_canceled_notify             0
 	"${BIN_DRUSH}" vset -y --exact user_mail_status_canceled_subject            "Détails du compte [user:name] sur [site:name] (annulé)"
+}
+
+
+### Configuration des modules de la cartothèque
+do_config_custom() {
+	printf "\n=== Drupal configuration : Module Geosource...\n"
+	cd "${DIR_DRUPAL}"
+#	"${BIN_DRUSH}" vset -y --exact geosource_public_group_id          1
+	"${BIN_DRUSH}" vset -y --exact geosource_public_group_id          2
+	"${BIN_DRUSH}" vset -y --exact geosource_private_group_id         2
+	"${BIN_DRUSH}" vset -y --exact geosource_server_timeout           180
+	"${BIN_DRUSH}" vset -y --exact geosource_sync_delay               3600
+	"${BIN_DRUSH}" vset -y --exact geosource_drupal_to_geosource      1
+	"${BIN_DRUSH}" vset -y --exact geosource_geosource_to_drupal      0
 	
-	
-	"${BIN_DRUSH}" php-eval 'node_access_rebuild();'
-fi
+	printf "\n=== Drupal configuration : Module CartoCount...\n"
+	cd "${DIR_DRUPAL}"
+	"${BIN_DRUSH}" vset -y --exact tic_carto_count_view_page_title    "Carto Download Counts"
+	"${BIN_DRUSH}" vset -y --exact tic_carto_count_view_page_items    25
+	"${BIN_DRUSH}" vset -y --exact tic_carto_count_view_page_limit    0
+	"${BIN_DRUSH}" vset -y --exact tic_carto_count_flood_limit        0
+	"${BIN_DRUSH}" vset -y --exact tic_carto_count_flood_window       5
+	"${BIN_DRUSH}" vset -y --exact tic_carto_count_view_page_header --format=json '{"format": "filtered_html", "value": ""}'
+	"${BIN_DRUSH}" vset -y --exact tic_carto_count_view_page_footer --format=json '{"format": "filtered_html", "value": ""}'
+}
 
 
-### Reparamétrage du module SMTP de Drupal
-if [ -n "${SMTP_HOST}" ]; then
-	printf "\n=== Drupal paramétrage : SMTP...\n"
-	"${BIN_DRUSH}" vset -y --exact smtp_host            --format=json "\"${SMTP_HOST}\""
-	"${BIN_DRUSH}" vset -y --exact smtp_port            --format=json "\"${SMTP_PORT}\""
-	"${BIN_DRUSH}" vset -y --exact smtp_username        --format=json "\"${SMTP_USER}\""
-	"${BIN_DRUSH}" vset -y --exact smtp_password        --format=json "\"${SMTP_PASS}\""
-fi
-
-### Reparamétrage de l'interconnexion Geosource
-if [ -n "${GEO_HOST}" ]; then
+### Paramétrage de l'interconnexion Geosource
+do_params_geosource() {
+	[ -z "${GEO_HOST}" ] && return 0
 	printf "\n=== Drupal paramétrage : Geosource...\n"
+	cd "${DIR_DRUPAL}"
 	"${BIN_DRUSH}" vset -y --exact geosource_server_url               "${GEO_HOST}/srv/fre/csw-publication"
 	"${BIN_DRUSH}" vset -y --exact geosource_server_auth_address      "${GEO_HOST}"
 	"${BIN_DRUSH}" vset -y --exact geosource_server_user              "${GEO_USER:-admin}"
 	"${BIN_DRUSH}" vset -y --exact geosource_server_password          "${GEO_PASS:-p4ssw0rd}"
-fi
+}
 
-### Reparamétrage de l'interconnexion Redmine
-if [ -n "${RED_URL}" ]; then
+
+### Paramétrage de l'interconnexion Redmine
+do_params_redmine() {
+	[ -z "${RED_URL}" ] && return 0
 	printf "\n=== Drupal paramétrage : Redmine...\n"
+	cd "${DIR_DRUPAL}"
 	"${BIN_DRUSH}" vset -y --exact redmine_rest_api_redmine_version   "${RED_VER:-2.5}"
 	"${BIN_DRUSH}" vset -y --exact redmine_rest_api_redmine_base_url  "${RED_URL}"
 	"${BIN_DRUSH}" vset -y --exact redmine_rest_api_api_key           "${RED_KEY}"
 	"${BIN_DRUSH}" vset -y --exact cors_domains --format=json         "{\"*\": \"${RED_URL}\"}"
-fi
+}
+
+
+### Configuration du thème personnalisé
+do_config_theme() {
+	printf "\n=== Drupal configuration : Theme Cartotheque...\n"
+	cd "${DIR_DRUPAL}"
+	"${BIN_DRUSH}" vset -y --exact theme_default         "cartotheque"
+	"${BIN_DRUSH}" vset -y --exact theme_cartotheque_settings --format=json '{
+        "cartotheque_map_list_url": "?q=map-list-new",
+        "default_favicon":      1,
+        "default_logo":         1,
+        "favicon_path":         "",
+        "favicon_upload":       "",
+        "logo_path":            "",
+        "logo_upload":          "",
+        "toggle_favicon":       1,
+        "toggle_logo":          1,
+        "toggle_name":          1,
+        "toggle_slogan":        1,
+        "jquery_update_jquery_version": "2.2"
+    }'
+}
+
+
+### Import des termes des vocabulaires de taxonomie
+do_import_taxonomy() {
+	cd "${DIR_DRUPAL}"
+	for SRC_TAXO in "./sites/default/fixtures"/taxonomy-*.csv; do
+		REF_TAXO="$(echo "${SRC_TAXO}" | sed 's|^.*/taxonomy-\(.*\)\.csv$|\1|')"
+		printf "\n=== Drupal import : vocabulaire '${REF_TAXO}'...\n"
+		"${BIN_DRUSH}" taxocsv-import -y --keep_order --vocabulary_target=existing --vocabulary_id="${REF_TAXO}" "${SRC_TAXO}" fields
+	done
+}
+
 
 ### Mise à jour des thèmes HdF des cartes
-if [ -f "${DIR_DRUPAL}/sites/default/fixtures/Cartes_production_200228_V2.xlsx" ]; then
+do_import_themeshdf() {
+	cd "${DIR_DRUPAL}"
+	XLS_SOURCE="./sites/default/fixtures/Cartes_production_200228_V2.xlsx"
+	[ -f "${XLS_SOURCE}" ] || return 0
 	printf "\n=== Drupal import : màj thèmes HdF...\n"
-	"${BIN_DRUSH}" import-update-theme-hdf -y "${DIR_DRUPAL}/sites/default/fixtures/Cartes_production_200228_V2.xlsx"
+	"${BIN_DRUSH}" import-update-theme-hdf -y "${XLS_SOURCE}"
+}
+
+
+### Purge des modules disparus dans la base de données
+do_clean_modules() {
+	LST_MODULES="'tic_taxonomy_relational_dictionary','taxonomy_manager','views_bootstrap','cmf'"
+	printf "\n=== Drupal clean : purge modules disparus...\n"
+	cd "${DIR_DRUPAL}"
+	"${BIN_DRUSH}" sqlq "DELETE FROM system WHERE type = 'module' AND name IN (${LST_MODULES});"
+}
+
+
+################################################################################ MAIN
+
+
+### Réglage des permissions sur les fichiers et dossiers
+fixPermissions "/var/www/drush-backups"            "${GRP_WORKER}" 'g+rwxs' 'g+rw'
+fixPermissions "/var/www/private"                  "${GRP_WORKER}" 'g+rwxs' 'g+rw'
+fixPermissions "${DIR_DRUPAL}/sites/default/files" "${GRP_WORKER}" '0775'   '0664'
+fixPermissions "${DIR_DRUPAL}/sites/all"           "${GRP_WORKER}" '0775'   '0664'
+chmod 0440 "${DIR_DRUPAL}/sites/default/"settings*.php || echo "*** WARNING: chown failed!"  # non-critical
+chmod 2555 "${DIR_DRUPAL}/sites/default"
+
+### Fin du script d'init si la commande drush n'est pas disponible
+[ -z "${BIN_DRUSH}" ] && printf "\n*** Commande Drush non disponible (aucune configuration Drupal effectuée) !\n\n" && exit 1
+
+
+
+### Afficher l'état de l'instance Drupal (cc requis en cas de déplacement de modules par rapport à un import db)
+printf "\n=== Drupal Core status...\n"
+cd "${DIR_DRUPAL}"
+"${BIN_DRUSH}" cache-clear -y all 2>/dev/null
+"${BIN_DRUSH}" core-status
+
+### Boucle d'attente de disponibilité de la base de données
+is_database_ready ; [ $? -ne 0 ] && printf "\n*** Base de données indisponible !\n\n" && exit 2
+do_database_state ; printf "\n=== Drupal DB status : '${DBSTATUS}'\n"
+
+### Activation d'extension Postgres (requis pour pgsql_combine_filter_views)
+printf "\n=== Postgres extensions : activation...\n"
+echo 'CREATE EXTENSION IF NOT EXISTS unaccent;' | "${BIN_DRUSH}" --yes sql-cli 2>/dev/null
+
+### Initialisation de la base de données (création initiale ou suite à import)
+if [ "x${DBSTATUS}" = 'xNONE' ]; then
+	do_install_drupal
+	do_config_storage
+	do_install_contrib
+	do_config_smtp
+	do_config_date
+	do_import_taxonomy
+	do_install_custom
+	do_config_custom
+	do_config_theme
+	do_config_comments
+	do_config_messages
+#	do_import_themeshdf
+elif [ "x${DBSTATUS}" = 'xPOST' ]; then
+#	do_install_drupal
+	do_config_storage
+	do_install_contrib
+	do_config_smtp
+	do_config_date
+#	do_import_taxonomy
+	do_install_custom
+	do_config_custom
+	do_config_theme
+#	do_config_comments
+#	do_config_messages
+#	do_import_themeshdf       ## TODO ?
+	do_clean_modules
+fi
+if [ "x${DBSTATUS}" != 'xDONE' ]; then
+	do_database_state 'DONE'
+	"${BIN_DRUSH}" cache-clear -y all
 fi
 
-
 ### Finalisation des paramétrages
+	do_params_smtp
+	do_params_geosource
+	do_params_redmine
+
+cd "${DIR_DRUPAL}"
 printf "\n=== Drupal database upgrades...\n"
-cd "${DIR_DRUPAL}" && "${BIN_DRUSH}" updatedb -y
-printf "\n=== Drupal cache reinitialisation...\n"
-cd "${DIR_DRUPAL}" && "${BIN_DRUSH}" cache-clear -y all
+"${BIN_DRUSH}" updatedb -y
+printf "\n=== Drupal réinitialisation du cache...\n"
+"${BIN_DRUSH}" cache-clear -y all
+printf "\n=== Drupal reconstruction des perms...\n"
+"${BIN_DRUSH}" php-eval 'node_access_rebuild();'
+
 
 ### Démarrage du serveur Apache/PHP
 printf "\n=== Initialisation OK\n\n"
