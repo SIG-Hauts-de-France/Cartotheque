@@ -45,11 +45,12 @@ function tagadelic_taxonomy_get_cloud($max_amount) {
 
 	$tag->force_clean();
 	switch ($term->machine_name) {
-		case 'categorie'          : $tag->set_link("?q=map-list&field_categorie_tid={$term->tid}");  break;
-		case 'mots_cles'          : $tag->set_link("?q=map-list&field_mots_cles_tid={$term->tid}");  break;
-		case 'thematique_gemet'   : $tag->set_link("?q=map-list&field_thematique_tid={$term->tid}"); break;
+		case 'categorie'          : $tag->set_link("?q=map-list&field_categorie_tid[]={$term->tid}");   break;
+		case 'mots_cles'          : $tag->set_link("?q=map-list&field_mots_cles_tid[]={$term->tid}");   break;
+		case 'mots_cles_thesaurus_gemet' : $tag->set_link("?q=map-list&field_mots_cles_thesaurus_tid[]={$term->tid}");  break;
+		case 'thematique_gemet'   : $tag->set_link("?q=map-list&field_thematique_tid[]={$term->tid}");  break;
 		case 'collections'        : $tag->set_link("?q=map-list&field_collections_tid[]={$term->tid}"); break;
-		default                   : continue;  // $tag->set_link("taxonomy/term/{$term->tid}");
+		default                   : continue 2;  // $tag->set_link("taxonomy/term/{$term->tid}");
 	}
 
     $cloud->add_tag($tag);
