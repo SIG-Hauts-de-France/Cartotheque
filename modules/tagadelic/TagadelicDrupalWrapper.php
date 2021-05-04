@@ -51,7 +51,7 @@ class TagadelicDrupalWrapper {
 		if (isset($options['attributes']['class'])) {
 			$classes = $options['attributes']['class'];
 			if (is_array($classes)) $classes = implode(' ', $classes);
-			$classes = trim($classes)
+			$classes = trim($classes);
 		}
 		return '<a class="'.$classes.'" href="'.$path.'">'.$text.'</a>';
   }

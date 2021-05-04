@@ -145,7 +145,7 @@ RUN if [ -d "/var/www/html/sites/all/modules/contrib" ]; then set -xe \
     admin_menu module_filter ctools devel smtp xautoload libraries \
     views admin_views views_bulk_operations better_exposed_filters \
     configuration node_clone bundle_copy override_node_options ldap \
-    rules term_merge tagadelic taxonomy_csv facetapi search_api search_api_db \
+    rules term_merge taxonomy_csv facetapi search_api search_api_db \
     email url entity references autocomplete_deluxe date views_between_dates_filter \
     jquery_update phpexcel redmine_rest_api image_url_formatter lightbox2 \
     imagecache_actions \

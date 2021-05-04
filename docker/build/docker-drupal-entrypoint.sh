@@ -89,7 +89,7 @@ do_install_contrib() {
 	  views views_bulk_operations better_exposed_filters pgsql_combine_filter_views \
 	  configuration clone bundle_copy override_node_options \
 	  ldap_authentication ldap_authorization ldap_authorization_drupal_role ldap_servers ldap_user \
-	  rules rules_admin term_merge tagadelic tagadelic_taxonomy taxonomy_csv \
+	  rules rules_admin term_merge taxonomy_csv \
 	  facetapi search_api search_api_db search_api_views search_api_facetapi \
 	  email url entity entity_token references node_reference autocomplete_deluxe \
 	  date date_api date_popup date_views views_between_dates_filter \
@@ -106,7 +106,8 @@ do_install_custom() {
 	cd "${DIR_DRUPAL}"
 	"${BIN_DRUSH}" en -y \
 	  cartotheque tic_hdf tic_theme_hdf_update tic_geosource \
-	  tic_carto_count tic_customsearch tic_redmine_data_importer tic_filedownload
+	  tic_carto_count tic_customsearch tic_redmine_data_importer tic_filedownload \
+	  tagadelic tagadelic_taxonomy
 }
 
 
