@@ -16,8 +16,6 @@ services:
             - pgadmin
             - maildev
         volumes:
-            - "./confs/httpd-pgadmin.inc:/etc/apache2/conf-enabled/proxy-pgadmin.conf:ro"
-            - "./confs/httpd-maildev.inc:/etc/apache2/conf-enabled/proxy-maildev.conf:ro"
             - "./dumps/drush:/var/www/drush-backups:rw"
         environment:
             SMTP_HOST:  maildev

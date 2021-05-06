@@ -67,24 +67,6 @@ RUN docker-php-source delete \
  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 
-##### WEBSERVER CONFIG
-ARG PORT_HTTP=1080
-ARG PORT_HTTPS=1443
-EXPOSE ${PORT_HTTP}/tcp
-#EXPOSE ${PORT_HTTPS}/tcp
-COPY "./drupal-vhost.conf" "/etc/apache2/sites-available/001-drupal.conf"
-RUN set -xe \
-  ; a2ensite    001-drupal \
-  ; a2dissite   000-default \
-  ; a2disconf   serve-cgi-bin \
-  ; a2dismod    access_compat \
-  ; a2enmod     env setenvif headers rewrite proxy proxy_http \
-  ; sed -i "s/80/${PORT_HTTP}/"   "/etc/apache2/ports.conf" \
-  ; sed -i "s/443/${PORT_HTTPS}/" "/etc/apache2/ports.conf" \
-  ; cp "${PHP_INI_DIR}/php.ini-production" "${PHP_INI_DIR}/php.ini"
-COPY "./php.ini" "${PHP_INI_DIR}/conf.d/zz_custom.ini"
-
-
 ##### UTILS PACKAGES (client mysql/psql requis pour drush)
 RUN [ -d /usr/share/man/man1 ] || mkdir -p /usr/share/man/man1 \
   ; [ -d /usr/share/man/man7 ] || mkdir -p /usr/share/man/man7 \
@@ -169,6 +151,27 @@ RUN if [ -d "/var/www/html/sites/default" ]; then set -xe \
   ; head -c74 /dev/urandom | base64 -w0 > "/var/www/drupal-salt.txt" \
   ; cd "/var/www/html" && drush core-status \
   ; fi
+
+
+##### WEBSERVER CONFIG
+ARG PORT_HTTP=1080
+ARG PORT_HTTPS=1443
+EXPOSE ${PORT_HTTP}/tcp
+#EXPOSE ${PORT_HTTPS}/tcp
+COPY "./drupal-vhost.conf" "/etc/apache2/sites-available/001-drupal.conf"
+COPY "./httpd-pgadmin.inc" "/etc/apache2/conf-available/proxy-pgadmin.conf"
+COPY "./httpd-maildev.inc" "/etc/apache2/conf-available/proxy-maildev.conf"
+RUN set -xe \
+  ; a2ensite    001-drupal \
+  ; a2dissite   000-default \
+  ; a2disconf   serve-cgi-bin \
+  ; a2dismod    access_compat \
+  ; a2enmod     env setenvif headers rewrite proxy proxy_http \
+  ; a2enconf    proxy-pgadmin proxy-maildev \
+  ; sed -i "s/80/${PORT_HTTP}/"   "/etc/apache2/ports.conf" \
+  ; sed -i "s/443/${PORT_HTTPS}/" "/etc/apache2/ports.conf" \
+  ; cp "${PHP_INI_DIR}/php.ini-production" "${PHP_INI_DIR}/php.ini"
+COPY "./php.ini" "${PHP_INI_DIR}/conf.d/zz_custom.ini"
 
 
 ##### SYSTEM TIMEZONE
