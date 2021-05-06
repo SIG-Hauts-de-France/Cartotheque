@@ -32,9 +32,12 @@ services:
     ###
     geosource:
         ports:
-            - "${PORT_GEO:-1081}:8080"
+            - "${PORT_TOMCAT:-1083}:8080"
         volumes:
             - "./dumps:/var/dump:rw"
+        environment:
+            - WITH_ADMIN_TC
+            - WITH_ADMIN_JK
 
 
     ###

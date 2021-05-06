@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tomcat-users xmlns="http://tomcat.apache.org/xml"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://tomcat.apache.org/xml tomcat-users.xsd"
+              version="1.0">
+
+<role rolename="manager-gui"/>     <!-- Access to the HTML interface -->
+<role rolename="manager-script"/>  <!-- Access to the tools-friendly plain text interface and to the "Server Status" page -->
+<role rolename="manager-jmx"/>     <!-- Access to JMX proxy interface and to the "Server Status" page -->
+<role rolename="manager-status"/>  <!-- Access to the "Server Status" page only -->
+<role rolename="admin-gui"/>       <!-- -->
+<role rolename="admin-script"/>    <!-- -->
+
+<!-- It is recommended to never grant the manager-script or manager-jmx roles to users that have the manager-gui role -->
+<user username="admin"   password="" roles="manager-gui,admin-gui"/>
+<user username="manager" password="" roles="manager-gui"/>
+<user username="admjmx"  password="" roles="manager-jmx"/>
+<user username="agent"   password="" roles="manager-script,admin-script"/>
+<user username="monit"   password="" roles="manager-status"/>
+
+</tomcat-users>

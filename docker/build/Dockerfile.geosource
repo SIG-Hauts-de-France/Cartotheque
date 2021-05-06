@@ -29,24 +29,51 @@ RUN [ -d /usr/share/man/man1 ] || mkdir -p /usr/share/man/man1 \
     apt-transport-https apt-utils gnupg locales \
     less nano vim mc curl wget links unzip zip git subversion patch pwgen jq \
 #   iputils-ping telnet openssh-client net-tools dnsutils whois procps rsync \
-    postgresql-client \
- && apt-get clean
+    apache2 libapache2-mod-jk postgresql-client \
+ && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+
+##### WEBSERVER CONFIG
+ARG PORT_HTTP=80
+ARG PORT_HTTPS=443
+EXPOSE ${PORT_HTTP}/tcp
+EXPOSE ${PORT_HTTPS}/tcp
+COPY "./geosource-vhost.conf"                                         "/etc/apache2/sites-available/001-geosource.conf"
+COPY "./geosource-workers.properties"                                 "/etc/libapache2-mod-jk/workers.properties"
+RUN set -xe \
+  ; . /etc/apache2/envvars \
+  ; [ ! -d "${APACHE_RUN_DIR}"  ] && mkdir -p "${APACHE_RUN_DIR}" \
+  ; [ ! -d "${APACHE_LOCK_DIR}" ] && mkdir -p "${APACHE_LOCK_DIR}" && chown "${APACHE_RUN_USER:-www-data}" "${APACHE_LOCK_DIR}" \
+  ; rm "${APACHE_LOG_DIR}/error.log" "${APACHE_LOG_DIR}/access.log" "${APACHE_LOG_DIR}/other_vhosts_access.log" \
+  ; ln -s "/proc/1/fd/2"                                              "${APACHE_LOG_DIR}/error.log" \
+  ; ln -s "/proc/1/fd/1"                                              "${APACHE_LOG_DIR}/access.log" \
+  ; ln -s "/proc/1/fd/1"                                              "${APACHE_LOG_DIR}/other_vhosts_access.log" \
+  ; sed -i "s/80/${PORT_HTTP}/"                                       "/etc/apache2/ports.conf" \
+  ; sed -i "s/443/${PORT_HTTPS}/"                                     "/etc/apache2/ports.conf" \
+  ; a2ensite    001-geosource \
+  ; a2dissite   000-default \
+  ; a2disconf   serve-cgi-bin \
+  ; a2dismod    access_compat \
+  ; a2enmod     env setenvif headers rewrite jk
 
 
 ##### GEOSOURCE CONFIG
-COPY ./geosource-config.xml.inc   /tmp/config.xml.inc
+COPY "./tomcat-users.xml"                                             "${CATALINA_HOME}/conf/tomcat-users.xml"
+COPY "./geosource-config.xml.inc"                                     "/tmp/config.xml.inc"
 RUN set -xe \
   ; cp "${DIR_GEOSOURCE}/WEB-INF/config.xml"                          "/usr/src/config.xml" \
   ; cp "${DIR_GEOSOURCE}/WEB-INF/config-node/srv.xml"                 "/usr/src/srv.xml" \
   ; cp "${DIR_GEOSOURCE}/WEB-INF/config-db/jdbc.properties"           "/usr/src/jdbc.properties" \
+  \
   ; sed -i '/<import resource=.*h2\.xml/ s/\s*</ \t<!--</'            "${DIR_GEOSOURCE}/WEB-INF/config-node/srv.xml" \
   ; sed -i '/<import resource=.*h2\.xml/ s/>/> -->/'                  "${DIR_GEOSOURCE}/WEB-INF/config-node/srv.xml" \
   ; sed -i '/<import resource=.*postgres\.xml/ s/<!--\|-->//g'        "${DIR_GEOSOURCE}/WEB-INF/config-node/srv.xml" \
 # ; sed -i '/<import resource=.*postgis\.xml/  s/<!--\|-->//g'        "${DIR_GEOSOURCE}/WEB-INF/config-node/srv.xml" \
+  \
   ; sed '/<\/geonet>/ d' "/usr/src/config.xml"                      > "${DIR_GEOSOURCE}/WEB-INF/config.xml" \
-  ; cat /tmp/config.xml.inc                                        >> "${DIR_GEOSOURCE}/WEB-INF/config.xml" \
+  ; cat "/tmp/config.xml.inc"                                      >> "${DIR_GEOSOURCE}/WEB-INF/config.xml" \
   ; echo '</geonet>'                                               >> "${DIR_GEOSOURCE}/WEB-INF/config.xml" \
-  ; rm  /tmp/config.xml.inc
+  ; rm  "/tmp/config.xml.inc"
 
 
 ##### SYSTEM TIMEZONE
@@ -71,6 +98,7 @@ RUN if [ -n "${SYS_LOCALE}" ]; then set -xe \
   ; dpkg-reconfigure --frontend=noninteractive locales \
   ; update-locale LANG=${SYS_LOCALE} \
   ; fi
+
 
 ##### BASH ENVIRONMENT
 COPY "./mc.ini" "/usr/share/mc/mc.ini"

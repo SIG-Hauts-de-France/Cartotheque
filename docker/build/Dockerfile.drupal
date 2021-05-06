@@ -23,7 +23,8 @@ RUN printf "Acquire::http::Proxy \"${HTTP_PROXY}\";\n" > /etc/apt/apt.conf.d/99H
     libicu-dev libkrb5-dev libbz2-dev libzip-dev libxml2-dev libxslt1-dev \
 #   libc-client2007e-dev libsnmp-dev libpspell-dev libtidy-dev \
     libpq-dev libldap2-dev \
- && apt-get clean
+ && apt-get clean && rm -rf /var/lib/apt/lists/*
+
 
 ##### PHP EXTENSIONS
 RUN set -xe ; php -v \
@@ -55,15 +56,15 @@ RUN set -xe ; php -v \
   ; php -m
 
 ##### CLEANUP build tools
-RUN apt-get remove --yes \
+RUN docker-php-source delete \
+ && apt-get remove --yes \
     libfreetype6-dev libjpeg62-turbo-dev libpng-dev libwebp-dev libxpm-dev \
     libicu-dev libkrb5-dev libbz2-dev libzip-dev libxml2-dev libxslt1-dev \
 #   libc-client2007e-dev libsnmp-dev libpspell-dev libtidy-dev libsensors4-dev \
     libpq-dev libldap2-dev \
     comerr-dev icu-devtools krb5-multidev zlib1g-dev \
 #   autoconf cpp cpp-8 gcc gcc-8 g++ g++-8 make \
- && apt-get clean \
- && docker-php-source delete
+ && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 
 ##### WEBSERVER CONFIG
@@ -71,7 +72,7 @@ ARG PORT_HTTP=1080
 ARG PORT_HTTPS=1443
 EXPOSE ${PORT_HTTP}/tcp
 #EXPOSE ${PORT_HTTPS}/tcp
-COPY "./httpd-vhosts.conf" "/etc/apache2/sites-available/001-drupal.conf"
+COPY "./drupal-vhost.conf" "/etc/apache2/sites-available/001-drupal.conf"
 RUN set -xe \
   ; a2ensite    001-drupal \
   ; a2dissite   000-default \
@@ -93,7 +94,7 @@ RUN [ -d /usr/share/man/man1 ] || mkdir -p /usr/share/man/man1 \
     iputils-ping telnet openssh-client net-tools dnsutils whois procps rsync \
 #   mariadb-client \
     postgresql-client \
- && apt-get clean
+ && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ##### NODE UTILS (global via npm)
 ENV NODE_ENV=production \

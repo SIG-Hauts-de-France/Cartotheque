@@ -34,8 +34,6 @@ services:
         depends_on:
             - drupaldb
             - geosource
-        expose:
-            - "1080"
         ports:
             - "${PORT_WEB:-1080}:1080"
         volumes:
@@ -73,21 +71,22 @@ services:
             context: "./build"
             dockerfile: "Dockerfile.geosource"
             args:
+                - VER_GEOSOURCE
                 - VER_TOMCAT
                 - VER_JRE
-                - VER_GEOSOURCE
                 - HTTP_PROXY
                 - HTTPS_PROXY
         depends_on:
             - geodb
-        expose:
-            - "8080"
+        ports:
+            - "${PORT_GEO:-1082}:80"
         environment:
             DB_HOST:                    geodb
             DB_PORT:                    5432
             DB_BASE:                    ${GEODB_BASENAME:-geosource}
             DB_USER:                    ${GEODB_USERNAME:-geosource}
             DB_PASS:                    ${GEODB_USERPASS}
+            TC_PASS:                    ${PWD_TOMCAT}
         hostname: "${COMPOSE_PROJECT_NAME:-hdf-carto}-geo"
 
 
