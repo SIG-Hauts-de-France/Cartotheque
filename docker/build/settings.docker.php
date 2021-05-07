@@ -42,6 +42,7 @@ if (is_file("/var/www/drupal-salt.txt")) $drupal_hash_salt = file_get_contents("
 ### Access control for update.php script
 $update_free_access = FALSE;
 
+### Configuration
 $conf['drupal_http_request_fails'] = FALSE;
-
+$conf['clean_url'] = TRUE;
 

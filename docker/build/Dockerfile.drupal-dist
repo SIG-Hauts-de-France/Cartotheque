@@ -12,7 +12,7 @@ ARG USE_IMPORTS
 COPY "${USE_IMPORTS:-./imports}"  "/var/www/html/sites/default/fixtures"
 
 
-LABEL description="Conteneur Drupal pour la cartothèque HdF (custom intégré)" \
+LABEL description="Conteneur Drupal7 pour la cartothèque HdF (custom intégré)" \
       maintainer="Grégory MARIGOT <support@teicee.com>" \
       vendor="téïcée" \
-      version="2.0"
+      version="2.2"

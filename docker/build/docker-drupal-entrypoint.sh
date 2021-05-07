@@ -336,13 +336,11 @@ do_clean_modules() {
 fixPermissions "/var/www/drush-backups"            "${GRP_WORKER}" 'g+rwxs' 'g+rw'
 fixPermissions "/var/www/private"                  "${GRP_WORKER}" 'g+rwxs' 'g+rw'
 fixPermissions "${DIR_DRUPAL}/sites/default/files" "${GRP_WORKER}" '0775'   '0664'
-fixPermissions "${DIR_DRUPAL}/sites/all"           "${GRP_WORKER}" '0775'   '0664'
-chmod 0440 "${DIR_DRUPAL}/sites/default/"settings*.php || echo "*** WARNING: chown failed!"  # non-critical
-chmod 2555 "${DIR_DRUPAL}/sites/default"
+chmod 0440 "${DIR_DRUPAL}/sites/default/"settings*.php || true  # non-critical
+chmod 2555 "${DIR_DRUPAL}/sites/default"               || true  # non-critical
 
 ### Fin du script d'init si la commande drush n'est pas disponible
 [ -z "${BIN_DRUSH}" ] && printf "\n*** Commande Drush non disponible (aucune configuration Drupal effectuée) !\n\n" && exit 1
-
 
 
 ### Afficher l'état de l'instance Drupal (cc requis en cas de déplacement de modules par rapport à un import db)

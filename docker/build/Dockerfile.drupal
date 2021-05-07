@@ -53,6 +53,8 @@ RUN set -xe ; php -v \
 #   xmlrpc \
     xsl \
     zip \
+  ; pecl channel-update pecl.php.net && pecl install uploadprogress \
+  ; docker-php-ext-enable uploadprogress \
   ; php -m
 
 ##### CLEANUP build tools
@@ -236,17 +238,17 @@ ENV USR_WORKER="${UID_WORKER:-www-data}" \
 
 ##### DRUPAL STORAGES (si pas de volume monté)
 RUN set -xe \
-  ; [ -d "/var/www/html/sites"    ] || mkdir -p "/var/www/html/sites" \
-  ; [ -d "/var/www/private"       ] || mkdir -p "/var/www/private" \
-  ; [ -d "/var/www/drush-backups" ] || mkdir -p "/var/www/drush-backups" \
-  ; chown "${USR_WORKER}:${GRP_WORKER}" -R "/var/www/html/sites"    && chmod g+srw -R "/var/www/html/sites" \
-  ; chown "${USR_WORKER}:${GRP_WORKER}" -R "/var/www/private"       && chmod g+srw -R "/var/www/private" \
-  ; chown "${USR_WORKER}:${GRP_WORKER}" -R "/var/www/drush-backups" && chmod g+srw -R "/var/www/drush-backups" \
+  ; [ -d "/var/www/html/sites/default/files" ] || mkdir -p "/var/www/html/sites/default/files" \
+  ; [ -d "/var/www/private"                  ] || mkdir -p "/var/www/private" \
+  ; [ -d "/var/www/drush-backups"            ] || mkdir -p "/var/www/drush-backups" \
+  ; chown "${USR_WORKER}:${GRP_WORKER}" -R "/var/www/html/sites/default/files" && chmod g+srw -R "/var/www/html/sites/default/files" \
+  ; chown "${USR_WORKER}:${GRP_WORKER}" -R "/var/www/private"                  && chmod g+srw -R "/var/www/private" \
+  ; chown "${USR_WORKER}:${GRP_WORKER}" -R "/var/www/drush-backups"            && chmod g+srw -R "/var/www/drush-backups" \
   ; echo "Storages owned by '${USR_WORKER}:${GRP_WORKER}'"
 
 
 ##### INIT SCRIPT
-#VOLUME [ "/var/www/private", "/var/www/drush-backups" ]
+#VOLUME [ "/var/www/sites/default/files", "/var/www/private", "/var/www/drush-backups" ]
 WORKDIR "/var/www/html"
 USER "${UID_WORKER:-root}"
 COPY "./docker-drupal-entrypoint.sh" "/usr/local/bin/"
@@ -254,7 +256,7 @@ ENTRYPOINT [ "docker-drupal-entrypoint.sh" ]
 CMD [ "apache2-foreground" ]
 
 
-LABEL description="Conteneur PHP-HTTPd pour Drupal 7 (avec Drush)" \
+LABEL description="Conteneur Drupal7 pour la cartothèque HdF (dev sans custom)" \
       maintainer="Grégory MARIGOT <support@teicee.com>" \
       vendor="téïcée" \
-      version="2.0"
+      version="2.2"

@@ -54,7 +54,7 @@ services:
             SMTP_PORT:                  ${SMTP_PORT:-25}
             SMTP_USER:                  ${SMTP_USER:-}
             SMTP_PASS:                  ${SMTP_PASS:-}
-            GEO_HOST:                   http://geosource:8080/geosource
+            GEO_HOST:                   http://geosource:${PORT_GEOSOURCE:-8080}/geosource
             GEO_PASS:                   ${PWD_GEOSOURCE}
             RED_URL:                    ${REDMINE_URL:-}
             RED_KEY:                    ${REDMINE_KEY:-}
