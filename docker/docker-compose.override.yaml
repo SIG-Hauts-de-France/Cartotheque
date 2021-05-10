@@ -100,7 +100,7 @@ services:
             PGADMIN_DEFAULT_PASSWORD:   ${PWD_PGADMIN}
 #           PGADMIN_DISABLE_POSTFIX:    "disabled"
             PGADMIN_SERVER_JSON_FILE:   "/pgadmin4/servers.json"
-        hostname: "${COMPOSE_PROJECT_NAME:-hdf-carto}-pgadmin"
+        hostname: "${COMPOSE_PROJECT_NAME:-hdf-cartotheque-dev}-pgadmin"
 
 
     ###
@@ -115,5 +115,5 @@ services:
             - "80"
 #       ports:
 #           - "${PORT_MAILDEV}:80"
-        hostname: "${COMPOSE_PROJECT_NAME:-hdf-carto}-maildev"
+        hostname: "${COMPOSE_PROJECT_NAME:-hdf-cartotheque-dev}-maildev"
 

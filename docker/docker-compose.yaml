@@ -16,7 +16,7 @@ services:
     ###
     drupal:
 #       image: "php:${VER_PHP:-5.6}-apache-stretch"
-        image: "hdf-cartotheque-drupal:${VER_DRUPAL}-php${VER_PHP:-5.6}-apache-stretch"
+        image: "hdf-cartotheque-drupal-dev:${VER_DRUPAL}-php${VER_PHP:-5.6}-apache-stretch"
         build:
             context: "./build"
             dockerfile: "Dockerfile.drupal"
@@ -54,11 +54,12 @@ services:
             SMTP_PORT:                  ${SMTP_PORT:-25}
             SMTP_USER:                  ${SMTP_USER:-}
             SMTP_PASS:                  ${SMTP_PASS:-}
-            GEO_HOST:                   http://geosource:${PORT_GEOSOURCE:-8080}/geosource
-            GEO_PASS:                   ${PWD_GEOSOURCE}
+#           GEO_HOST:                   http://geosource:8080/geosource
+            GEO_HOST:                   http://geosource:80/geosource
+            GEO_PASS:                   ${PWD_GEOADMIN}
             RED_URL:                    ${REDMINE_URL:-}
             RED_KEY:                    ${REDMINE_KEY:-}
-        hostname: "${COMPOSE_PROJECT_NAME:-hdf-carto}-drupal7"
+        hostname: "${COMPOSE_PROJECT_NAME:-hdf-cartotheque-dev}-drupal7"
 
 
     ###
@@ -66,7 +67,7 @@ services:
     ###
     geosource:
 #       image: tomcat:${VER_TOMCAT:-9.0}-jre${VER_JRE:-8}
-        image: "hdf-cartotheque-geosource:${VER_GEOSOURCE}-tomcat${VER_TOMCAT:-9.0}-jre${VER_JRE:-8}"
+        image: "hdf-cartotheque-geosource-dev:${VER_GEOSOURCE}-tomcat${VER_TOMCAT:-9.0}-jre${VER_JRE:-8}"
         build:
             context: "./build"
             dockerfile: "Dockerfile.geosource"
@@ -87,7 +88,7 @@ services:
             DB_USER:                    ${GEODB_USERNAME:-geosource}
             DB_PASS:                    ${GEODB_USERPASS}
             TC_PASS:                    ${PWD_TOMCAT}
-        hostname: "${COMPOSE_PROJECT_NAME:-hdf-carto}-geo"
+        hostname: "${COMPOSE_PROJECT_NAME:-hdf-cartotheque-dev}-geosource"
 
 
     ###
@@ -101,7 +102,7 @@ services:
             - "5432"
         volumes:
             - "drupaldb_data:/var/lib/postgresql/data:rw"
-        hostname: "${COMPOSE_PROJECT_NAME:-hdf-carto}-drupaldb"
+        hostname: "${COMPOSE_PROJECT_NAME:-hdf-cartotheque-dev}-drupaldb"
 
 
     ###
@@ -115,7 +116,7 @@ services:
             - "5432"
         volumes:
             - "geodb_data:/var/lib/postgresql/data:rw"
-        hostname: "${COMPOSE_PROJECT_NAME:-hdf-carto}-geodb"
+        hostname: "${COMPOSE_PROJECT_NAME:-hdf-cartotheque-dev}-geodb"
 
 
 volumes:

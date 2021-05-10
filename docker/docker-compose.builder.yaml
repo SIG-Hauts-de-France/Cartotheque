@@ -14,12 +14,12 @@ services:
     drupal-dist:
         image: "hdf-cartotheque-drupal-dist:${VER_DRUPAL}-php${VER_PHP:-5.6}-apache-stretch"
         build:
-            context: ".."
-            dockerfile: "./docker/build/Dockerfile.drupal-dist"
+            context: "./build"
+            dockerfile: "Dockerfile.drupal-dist"
             args:
                 - VER_DRUPAL
                 - VER_PHP
-                - USE_THEMES=./themes
-                - USE_MODULES=./modules
-                - USE_IMPORTS=./imports
+                - USE_THEMES=./custom/themes
+                - USE_MODULES=./custom/modules
+                - USE_IMPORTS=./custom/imports
 

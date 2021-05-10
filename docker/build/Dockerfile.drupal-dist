@@ -1,18 +1,18 @@
 ARG VER_DRUPAL=7
 ARG VER_PHP=5.6
-FROM hdf-cartotheque-drupal:${VER_DRUPAL}-php${VER_PHP:-5.6}-apache-stretch
+FROM hdf-cartotheque-drupal-dev:${VER_DRUPAL}-php${VER_PHP:-5.6}-apache-stretch
 
 
 ##### DRUPAL CUSTOM
 ARG USE_THEMES
-COPY "${USE_THEMES:-./themes}"    "/var/www/html/sites/all/themes/custom"
+COPY "${USE_THEMES:-./custom/themes}"    "/var/www/html/sites/all/themes/custom"
 ARG USE_MODULES
-COPY "${USE_MODULES:-./modules}"  "/var/www/html/sites/all/modules/custom"
+COPY "${USE_MODULES:-./custom/modules}"  "/var/www/html/sites/all/modules/custom"
 ARG USE_IMPORTS
-COPY "${USE_IMPORTS:-./imports}"  "/var/www/html/sites/default/fixtures"
+COPY "${USE_IMPORTS:-./custom/imports}"  "/var/www/html/sites/default/fixtures"
 
 
-LABEL description="Conteneur Drupal7 pour la cartothèque HdF (custom intégré)" \
+LABEL description="Conteneur Drupal7 pour la cartothèque HdF (custom intégré via copy)" \
       maintainer="Grégory MARIGOT <support@teicee.com>" \
       vendor="téïcée" \
       version="2.2"

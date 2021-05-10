@@ -17,7 +17,3 @@
 ### MAC OS files
 .DS_Store
 
-### Dumps
-/imports/dump-*
-/imports/files-*
-

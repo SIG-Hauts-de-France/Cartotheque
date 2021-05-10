@@ -48,17 +48,16 @@ is_database_ready() {
 }
 
 
-### Etat de la base de données (get/set NONE|POST|DONE)
+### Etat de la base de données (get/set)
+###  - NONE : base vide (1er lancement => setup de l'instance drupal)
+###  - POST : base importée (via script docker => upgrade à vérifier)
+###  - DONE : base en cours (données persistées => quelques config forcées)
 do_database_state() {
 	NEWSTATE="${1}"
 	cd "${DIR_DRUPAL}"
-	
-	DBSTATUS="$("${BIN_DRUSH}" --yes core-status --fields=db-status)"
-	if [ -z "${DBSTATUS}" ]; then
-		DBSTATUS='NONE'
-		return 1
-	fi
 	CFSTATUS='tic_db_status'
+	DBSTATUS="$("${BIN_DRUSH}" --yes core-status --fields=db-status)"
+	[ -z "${DBSTATUS}" ] && DBSTATUS='NONE' && return 0
 	if [ -n "${NEWSTATE}" ]; then
 		"${BIN_DRUSH}" sqlq "DELETE FROM variable WHERE name='${CFSTATUS}';"
 		"${BIN_DRUSH}" sqlq "INSERT INTO variable (name, value) VALUES ('${CFSTATUS}', '${NEWSTATE}');"
@@ -100,7 +99,7 @@ do_install_contrib() {
 
 
 ### Activation des extensions custom
-### NOTE: install tic_geosource effectue un load de fixtures (import taxonomy préalable requis)
+### NOTE: install tic_geosource effectue un load de fixtures (content-types & taxonomies)
 do_install_custom() {
 	printf "\n=== Drupal extensions : activation custom...\n"
 	cd "${DIR_DRUPAL}"
@@ -351,6 +350,7 @@ cd "${DIR_DRUPAL}"
 
 ### Boucle d'attente de disponibilité de la base de données
 is_database_ready ; [ $? -ne 0 ] && printf "\n*** Base de données indisponible !\n\n" && exit 2
+"${BIN_DRUSH}" cache-clear -y all 2>/dev/null
 do_database_state ; printf "\n=== Drupal DB status : '${DBSTATUS}'\n"
 
 ### Activation d'extension Postgres (requis pour pgsql_combine_filter_views)
@@ -364,12 +364,12 @@ if [ "x${DBSTATUS}" = 'xNONE' ]; then
 	do_install_contrib
 	do_config_smtp
 	do_config_date
-	do_import_taxonomy
 	do_install_custom
 	do_config_custom
 	do_config_theme
 	do_config_comments
 	do_config_messages
+	do_import_taxonomy
 #	do_import_themeshdf
 elif [ "x${DBSTATUS}" = 'xPOST' ]; then
 #	do_install_drupal
@@ -377,13 +377,13 @@ elif [ "x${DBSTATUS}" = 'xPOST' ]; then
 	do_install_contrib
 	do_config_smtp
 	do_config_date
-#	do_import_taxonomy
 	do_install_custom
 	do_config_custom
 	do_config_theme
 #	do_config_comments
 #	do_config_messages
-#	do_import_themeshdf       ## TODO ?
+#	do_import_taxonomy
+#	do_import_themeshdf  ## TODO ?
 	do_clean_modules
 fi
 if [ "x${DBSTATUS}" != 'xDONE' ]; then
