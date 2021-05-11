@@ -7,30 +7,32 @@ Description
 --------------------------------------------------------------------------------
 
 Liste des conteneurs déployés :
-*	Apache HTTPd      (2.4)    ->  ex: <http://localhost:11481/>
+
+	Apache HTTPd      (2.4)    ->  ex: <http://localhost:11481/>
 	-	PHP           (5.6)
 	-	NodeJS        (10)
 	-	Drush         (8.*)    ->  ex: ./docker/dkdrush.sh
 	-	Drupal        (7.x)
-*	PostgreSQL        (9.5)
+	PostgreSQL        (9.5)
 	-	PostGIS       (2.5)
-*	Apache Tomcat     (9.0)    ->  ex: <http://localhost:11483/>
+	Apache Tomcat     (9.0)    ->  ex: <http://localhost:11483/>
 	-	Java JRE      (8)
 	-	GeoSource     (3.0.1)
 	-	HTTPd+mod_jk  (2.4)    ->  ex: <http://localhost:11482/>
-*	PostgreSQL        (9.5)
+	PostgreSQL        (9.5)
 	-	PostGIS       (2.5)
-*	[pgAdmin]         (4)      ->  ex: <http://localhost:11481/pgadmin/>    [dev only]
-*	[MailDev]         (1.1.0)  ->  ex: <http://localhost:11481/maildev/>    [dev only]
+	[pgAdmin]         (4)      ->  ex: <http://localhost:11481/pgadmin/>    [dev only]
+	[MailDev]         (1.1.0)  ->  ex: <http://localhost:11481/maildev/>    [dev only]
 
 
 Liste des fichiers de configuration de docker-compose :
+
 *	`docker-compose.yml`            :  Configuration de base des conteneurs à déployer
 *	`docker-compose.override.yml`   :  Surcharges par défaut pour la configuration en mode dev
 *	`.env.dist`                     :  Variables d'environnement pour spécifier une instance (modèle)
 
 
-Utilisation
+Initialisation
 --------------------------------------------------------------------------------
 
 Aller dans le sous-dossier `docker`.
@@ -40,6 +42,19 @@ Configuration initiale d'une nouvelle instance du projet :
 
 Puis éditer le fichier `.env` pour spécifier les paramètres propre à cette instance.
 
+
+Des données existantes peuvent être fournies pour initialiser les instances :
+
+*	Fichiers publics de Drupal dans `./files/public/`
+*	Fichiers privés  de Drupal dans `./files/private/`
+*	Import Postgres pour Drupal    dans `./dumps/init_drupaldb/1_import.sql.gz`
+*	Import Postgres pour Geosource dans `./dumps/init_geodb/1_import.sql.gz`
+
+Note : voir à la fin du chapitre suivant "Mise en place des données"
+
+
+Utilisation
+--------------------------------------------------------------------------------
 
 Reconstruction des conteneurs (avec arrêt et redémarrage) :
 	docker-compose down ; docker-compose build && docker-compose up -d
@@ -72,7 +87,7 @@ Pour générer cette il suffit d'exécuter le script : `./docker/mkdist.sh`
 L'image obtenue est ensuite identifiable par le tag `hdf-cartotheque-dist_drupal`
 
 
-Liste des accès web disponibles
+Consultation
 --------------------------------------------------------------------------------
 
 Accès à l'instance du container `drupal` :
@@ -121,8 +136,11 @@ Le module impose le chargement de `fixtures` à partie des fichiers suivants :
 
 Ces données peuvent être générées par un export via le module Bundle Copy :
 
-*	Nodes (content types) : `/admin/structure/types`
-*	Taxonomy              : `/admin/structure/taxonomy`
+*	Nodes (content types) : `https://cartes.hautsdefrance.fr/admin/structure/types`
+*	Taxonomy              : `https://cartes.hautsdefrance.fr/admin/structure/taxonomy`
+
+Note : des données sont déjà inclues dans le dossier `/imports` de ce dépôt Git
+(permettant une initialisation lors du lancement d'une nouvelle instance Drupal)
 
 
 Import des termes des taxonomies
@@ -148,12 +166,13 @@ Exemple de commande pour importer tous les fichiers CSV :
 ```bash
 for SRC_TAXO in ./sites/default/fixtures/taxonomy-*.csv; do
   REF_TAXO="$(echo "${SRC_TAXO}" | sed 's|^.*/taxonomy-\(.*\)\.csv$|\1|')"
-  drush taxocsv-import --keep_order --vocabulary_target=existing --vocabulary_id="${REF_TAXO}" "${SRC_TAXO}" fields
+  drush taxocsv-import --keep_order --vocabulary_target=existing \
+                       --vocabulary_id="${REF_TAXO}" "${SRC_TAXO}" fields
 done
 ```
 
-Note : un import automatique est réalisé par le script d'init de la dockerisation
-(uniquement suite à l'installation d'une nouvelle instance Drupal).
+Note : des données sont déjà inclues dans le dossier `/imports` de ce dépôt Git
+(permettant un import automatique au lancement d'une nouvelle instance Drupal)
 
 
 Import Excel pour la mise à jour des thèmes HdF
@@ -161,13 +180,17 @@ Import Excel pour la mise à jour des thèmes HdF
 
 Fichier récupéré sur le serveur de PROD :
 ```bash
-scp root@91.230.1.143:/data/teicee/Cartes_production_200228.xlsx\\\ V2.xlsx .
+scp root@91.230.1.143:/data/teicee/Cartes_production_200228_V2.xlsx ./imports/
 ```
 
 Import réalisable via une commande Drush du module `tic_theme_hdf_update` :
 ```bash
-drush import-update-theme-hdf Cartes_production_200228_V2.xlsx
+drush import-update-theme-hdf ./sites/default/fixtures/Cartes_production_200228_V2.xlsx
 ```
+
+Note : des données sont déjà inclues dans le dossier `/imports` de ce dépôt Git
+(mais AUCUNE exécution n'est réalisée au lancement de l'instance Drupal,
+pour ne pas risquer un échec fatal pour le démarrage du container)
 
 
 Import des bases de données en production (drupal & geosource)
@@ -188,7 +211,7 @@ pg_dump --host=172.16.102.23 --dbname=geosource    --username=postgres \
 
 Récupération des fichiers des dumps SQL du serveur de PROD :
 ```bash
-cd ../docker/dumps
+cd ./docker/dumps
 
 scp root@91.230.1.143:/data/teicee/dump-drupalcartes-$(date +"%Y%m%d").sql.gz ./init_drupaldb/1_import.sql.gz
 scp root@91.230.1.143:/data/teicee/dump-geosource-$(date +"%Y%m%d").sql.gz    ./init_geodb/1_import.sql.gz
@@ -197,10 +220,13 @@ scp root@91.230.1.143:/data/teicee/dump-geosource-$(date +"%Y%m%d").sql.gz    ./
 Suppression des volumes pour recharger les dumps des bases de données :
 ```bash
 docker-compose down
-docker volume rm hdf-carto_drupaldb_data
-docker volume rm hdf-carto_geodb_data
+docker volume rm hdf-cartotheque-dev_drupaldb_data
+docker volume rm hdf-cartotheque-dev_geodb_data
 docker-compose up
 ```
+
+Note : des dumps réalisés le 04/05/2021 sont disponibles sur le serveur de PROD
+(`dump-drupalcartes-20210504.sql.gz` et `dump-geosource-20210504.sql.gz`)
 
 
 Récupération du dossier des fichiers de l'instance de production
@@ -216,9 +242,12 @@ Récupération de l'archive et mise en place pour l'instance Docker :
 ```bash
 scp root@91.230.1.143:/data/teicee/files-$(date +"%Y%m%d").tar .
 tar xf ./files-$(date +"%Y%m%d").tar
-mv ./var/www/html/cartes/sites/default/files/private/* ../docker/files/private/
+mv ./var/www/html/cartes/sites/default/files/private/* ./docker/files/private/
 rm -rf ./var/www/html/cartes/sites/default/files/private
-mv ./var/www/html/cartes/sites/default/files/*         ../docker/files/public/
+mv ./var/www/html/cartes/sites/default/files/*         ./docker/files/public/
 rm -rf ./var
 ```
+
+Note : une archive réalisée le 04/05/2021 est disponible sur le serveur de PROD
+(`/data/teicee/files-20210504.tar` attention elle pèse 3.9 Go)
 
