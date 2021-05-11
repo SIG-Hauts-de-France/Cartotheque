@@ -1,4 +1,115 @@
 
+Dockerisation du portail Drupal avec Geosource
+================================================================================
+
+
+Description
+--------------------------------------------------------------------------------
+
+Liste des conteneurs déployés :
+*	Apache HTTPd      (2.4)    ->  ex: <http://localhost:11481/>
+	-	PHP           (5.6)
+	-	NodeJS        (10)
+	-	Drush         (8.*)    ->  ex: ./docker/dkdrush.sh
+	-	Drupal        (7.x)
+*	PostgreSQL        (9.5)
+	-	PostGIS       (2.5)
+*	Apache Tomcat     (9.0)    ->  ex: <http://localhost:11483/>
+	-	Java JRE      (8)
+	-	GeoSource     (3.0.1)
+	-	HTTPd+mod_jk  (2.4)    ->  ex: <http://localhost:11482/>
+*	PostgreSQL        (9.5)
+	-	PostGIS       (2.5)
+*	[pgAdmin]         (4)      ->  ex: <http://localhost:11481/pgadmin/>    [dev only]
+*	[MailDev]         (1.1.0)  ->  ex: <http://localhost:11481/maildev/>    [dev only]
+
+
+Liste des fichiers de configuration de docker-compose :
+*	`docker-compose.yml`            :  Configuration de base des conteneurs à déployer
+*	`docker-compose.override.yml`   :  Surcharges par défaut pour la configuration en mode dev
+*	`.env.dist`                     :  Variables d'environnement pour spécifier une instance (modèle)
+
+
+Utilisation
+--------------------------------------------------------------------------------
+
+Aller dans le sous-dossier `docker`.
+
+Configuration initiale d'une nouvelle instance du projet :
+	[ -f '.env' ] || cp '.env.dist' '.env'
+
+Puis éditer le fichier `.env` pour spécifier les paramètres propre à cette instance.
+
+
+Reconstruction des conteneurs (avec arrêt et redémarrage) :
+	docker-compose down ; docker-compose build && docker-compose up -d
+
+Lancement des conteneurs (par défaut en mode dev) :
+	docker-compose up -d
+
+Lancement des conteneurs en activant le mode prod :
+	docker-compose -f docker-compose.yml up -d
+
+
+Environnement de developpement CLI disponible sur le conteneur 'drupal' :
+	./dkshell.sh
+ou	./dkshell.sh <commande>
+ou	./dkdrush.sh
+
+
+Distribution
+--------------------------------------------------------------------------------
+
+Les configurations docker présentes dans ce dépôt propose aussi un `Dockerfile`
+permettant de générer une image complète (distribuable) du container `drupal`
+en y intégrant les dossiers des thèmes et modules `custom`.
+
+Celle-ci est construite à partir de l'image par défaut du container `drupal`
+(qui n'intègre pas les dossiers qui sont seulement montés en volumes pour le dev)
+puis en y copiant les dossiers du dépôt.
+
+Pour générer cette il suffit d'exécuter le script : `./docker/mkdist.sh`
+L'image obtenue est ensuite identifiable par le tag `hdf-cartotheque-dist_drupal`
+
+
+Liste des accès web disponibles
+--------------------------------------------------------------------------------
+
+Accès à l'instance du container `drupal` :
+
+*	http://localhost:11481/
+
+Accès aux outils de dev `pgadmin` et `maildev` (via proxy sur `drupal`) :
+
+*	http://localhost:11481/pgadmin/
+*	http://localhost:11481/maildev/
+
+Accès à l'application `geosource` par frontal web (`httpd`/`mod_jk`/`ajp`) :
+
+*	http://localhost:11482/
+	-	http://localhost:11482/geosource/
+	-	http://localhost:11482/geosource/srv/fre/catalog.search#/home
+
+Accès aux consoles d'administration de `tomcat` et `mod_jk` :
+
+*	http://localhost:11482/manager/
+	-	http://localhost:11482/manager/html
+	-	http://localhost:11482/manager/status
+*	http://localhost:11482/jk-manager
+
+Accès direct au serveur `tomcat` du container `geosource` (dev only) :
+
+*	http://localhost:11483/
+*	http://localhost:11483/manager/
+	-	access denied (localhost only)
+*	http://localhost:11483/geosource/
+	-	http://localhost:11483/geosource/srv/fre/catalog.search#/home
+
+
+
+Mise en place des données
+================================================================================
+
 
 Fixtures requis à l'installation du module `tic_geosource`
 --------------------------------------------------------------------------------
@@ -40,6 +151,9 @@ for SRC_TAXO in ./sites/default/fixtures/taxonomy-*.csv; do
   drush taxocsv-import --keep_order --vocabulary_target=existing --vocabulary_id="${REF_TAXO}" "${SRC_TAXO}" fields
 done
 ```
+
+Note : un import automatique est réalisé par le script d'init de la dockerisation
+(uniquement suite à l'installation d'une nouvelle instance Drupal).
 
 
 Import Excel pour la mise à jour des thèmes HdF
