@@ -1013,7 +1013,7 @@ function tic_geosource_queue_worker($uuid) {
 		tic_geosource_process_record_json($uuid);
 	}
 	else {
-		watchdog('Ressource '.$uuid.' ignoree car synchro Geosource => Drupal desactivee');
+		watchdog('tic_geosource','Ressource '.$uuid.' ignoree car synchro Geosource => Drupal desactivee');
 	}
 }
 
@@ -1181,6 +1181,8 @@ function tic_geosource_push_worker($nid) {
 	
 	$uuid = tic_geosource_insert_record($node);
 	if ($uuid) {
+		// On ne doit garder que les 255 premiers caractères de la str récupérée pour ne pas avoir d'erreur SQL (le champ est un varchar(255))
+		$uuid = substr($uuid, 0, 255);
 		$node->field_uuid['und'][0]['value'] = $uuid;
 		node_save($node);
 		watchdog('tic_geosource', 'Carte '.$nid.' synchronisée vers Geosource');

@@ -986,7 +986,7 @@ function tic_geosource_record_to_node($record) {
  * @return stdClass Drupal node or false
  */
 function tic_geosource_get_node_by_uuid($uuid) {
-	$uuid = trim($uuid);
+	$uuid = substr(trim($uuid), 0, 255);
 	
 	$query = new EntityFieldQuery();
 	

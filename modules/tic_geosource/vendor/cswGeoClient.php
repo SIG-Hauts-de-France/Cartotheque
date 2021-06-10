@@ -25,8 +25,9 @@ class cswGeoClient {
     private $_cswLogin;
     private $_cswPassword;
     private $_bAuthent;
-	private $_sessionID;
-	private $_timeout;
+    private $_sessionID;
+    private $_timeout;
+    private $_xsrfToken;
 
    
     private $_response;
@@ -46,8 +47,8 @@ class cswGeoClient {
             $this->_cswLogin=$cswLogin;
             $this->_cswPassword=$cswPassword;
             $this->_authentAddress=$authentAddress;
-            $this->_bAuthent=true;
-		}
+	    $this->_bAuthent=true;
+	}
 
 		if (is_null($timeout)) {
 			$this->_timeout = 60;
@@ -55,6 +56,29 @@ class cswGeoClient {
 		else {
 			$this->_timeout = $timeout;
 		}
+	
+    }
+
+    /**
+     * Initialize xsrfToken
+     * @return bool success / error
+     */
+    private function _initXsrfToken() {
+	try {    
+	    $req = new HTTP_Request2($this->_authentAddress.'/srv/fre/info', HTTP_Request2::METHOD_POST);
+	    $req->addPostParameter('type', "me");
+	    $req->setConfig('timeout', $this->_timeout);
+	    $resp = $req->send();
+	    $cookies = $resp->getCookies();
+	    foreach($cookies as $cook) {
+                if ($cook['name']=='XSRF-TOKEN') $this->_xsrfToken = $cook['value'];
+	    }
+	    return true;
+	} catch (HTTP_REQUEST2_Exception $e) {
+		$this->_response = 'Error: ' . $e->getMessage();
+		return false;
+        }
+        	
     }
 
     /**
@@ -65,7 +89,8 @@ class cswGeoClient {
     	$request->setConfig('timeout', $this->_timeout);
         try {
 
-			$resp = $request->send();
+                $resp = $request->send();
+
             //watchdog('tic_geosource', "Body : ".$resp->getBody());
             //if (200 == $resp->getStatus()) {
 
@@ -95,7 +120,7 @@ class cswGeoClient {
 		$request->setConfig('timeout', $this->_timeout);
 		try {
 			$resp = $request->send();
-			if (301 == $resp->getStatus() or 302 == $resp->getStatus()) {
+			if (200 == $resp->getStatus() or 301 == $resp->getStatus() or 302 == $resp->getStatus()) {
 				//TODO: check for failed login
 				$cookies = $resp->getCookies();
 				foreach ($cookies as $cook) {
@@ -119,26 +144,46 @@ class cswGeoClient {
 	private function _authentication($request) {
         //only available for Geosource and Geonetwork
         //start by logout
-        if ($this->_bAuthent) {
+	if ($this->_bAuthent) {
+	    	$this->_initXsrfToken();
             //$req = new HTTP_Request2($this->_authentAddress.'/xml.user.logout', HTTP_Request2::METHOD_POST);
-			$req = new HTTP_Request2($this->_authentAddress.'/j_spring_security_logout', HTTP_Request2::METHOD_POST);
-			$req->setConfig('timeout', $this->_timeout);
+			//$req = new HTTP_Request2($this->_authentAddress.'/j_spring_security_logout', HTTP_Request2::METHOD_POST);
+			//$req->setConfig('timeout', $this->_timeout);
 
-            //if ($this->_callHTTPCSW($req)) {
-            if ($this->_callHTTPAuth($req)) {
+	    /*
+
+	    //if ($this->_callHTTPCSW($req)) {
+            //if ($this->_callHTTPAuth($req)) {
                 //success so next step
                 //start to login
-                //$req = new HTTP_Request2( $this->_authentAddress.'/xml.user.login');
-                $req = new HTTP_Request2( $this->_authentAddress.'/j_spring_security_check');
-                $req->setMethod(HTTP_Request2::METHOD_POST)
-                        ->setHeader("'Content-type': 'application/x-www-form-urlencoded', 'Accept': 'text/plain'")
-                        ->addPostParameter('username', $this->_cswLogin)
-                        ->addPostParameter('password', $this->_cswPassword);
-                if ($this->_callHTTPAuth($req)) {
-                    $request->addCookie('JSESSIONID', $this->_sessionID);
+		//$req = new HTTP_Request2( $this->_authentAddress.'/xml.user.login');
+		$req = new HTTP_Request2( $this->_authentAddress.'/j_spring_security_check');
+		//$req = new HTTP_Request2( $this->_authentAddress.'/admin');
+                $req->setMethod(HTTP_Request2::METHOD_POST);
+		$req->setAuth($this->_cswLogin, $this->_cswPassword, HTTP_Request2::AUTH_BASIC);
+		$req->setHeader(array(
+  			'X-XSRF-TOKEN' => $this->_xsrfToken,
+  			'Cookie' => 'XSRF-TOKEN='.$this->_xsrfToken.';'
+		)); 
+
+		*/
+
+		//$req = new HTTP_Request2();
+		//$req->setUrl('http://192.168.144.9:8080/geonetwork/j_spring_security_check?user='.$this->_cswLogin.'&password='.$this->_cswPassword);
+		//$req->setMethod(HTTP_Request2::METHOD_POST);
+		//$req->setHeader('X-XSRF-TOKEN', $this->_xsrfToken);
+		$request->setAuth($this->_cswLogin, $this->_cswPassword, HTTP_Request2::AUTH_BASIC);
+		//$req->addCookie('XSRF-TOKEN', $this->_xsrfToken);	
+
+		//if ($this->_callHTTPAuth($req)) {
+		    $request->setHeader(array(
+                        'X-XSRF-TOKEN' => 'b3f06f8f-ff77-4ad5-8fa7-33cbb4413598',
+                        'Cookie' => 'XSRF-TOKEN=b3f06f8f-ff77-4ad5-8fa7-33cbb4413598;'
+		    ));
+		    //$request->addCookie('JSESSIONID', $this->_sessionID);
                     return true;
-                }
-            }
+                //}
+            //}
             return false;
         }
         return true;
@@ -249,7 +294,9 @@ class cswGeoClient {
 			'to' => 10000,
 			'type' => $type,
 		));
-		
+
+		print_r($request);
+
 		if (! $this->_authentication($request) ) { throw new Exception($this->_response); }
 		
 		if ($this->_callHTTPCSW($request)) {
@@ -483,13 +530,14 @@ class cswGeoClient {
 						'</ows:AcceptFormats>'.
 					'</csw:GetCapabilities>')
 			;
-		$this->_authentication($getCapRequest);
+		//$this->_authentication($getCapRequest);
+		if(!$this->_authentication($getCapRequest)) throw new Exception($this->_response);
 		if($this->_callHTTPCSW($getCapRequest)) {
-			return $this->_response;
-		}
-		else {
-			throw new Exception($this->_response);
-		}
+                	return $this->_response;
+               	}
+                else {
+                        throw new Exception($this->_response);
+                }
 	}
 
     /**
