@@ -508,7 +508,7 @@ function tic_geosource_json_record_to_node($record) {
 	$disabled = false;
 	
 	if ($saved) {
-		watchdog('tic_geosource', 'Carte '.$node->title .' synchronisée depuis Geosource');
+		watchdog('tic_geosource', 'Carte '.$node->title .' synchronisée depuis GeoNetwork');
 	}
 }
 
@@ -522,12 +522,12 @@ function tic_geosource_check_record($uuid) {
 	$recordUuid = tic_geosource_get_single_element_value($dom, 'fileIdentifier', false);
 	
 	if ($recordUuid === false) {
-		// le node n'existe pas dans Geosource
+		// le node n'existe pas dans GeoNetwork
 		$node = tic_geosource_get_node_by_uuid($uuid);
 		if($node) {
 			// Suppression ou depublication ?
 			node_delete($node->nid);
-			watchdog('tic_geosource', 'Suppression du node '.$uuid.' supprimé dans Geosource');
+			watchdog('tic_geosource', 'Suppression du node '.$uuid.' supprimé dans GeoNetwork');
 		}
 	}
 }
@@ -592,7 +592,7 @@ function tic_geosource_get_multiple_elements_value($record, $tag) {
 /**
  * Recuperation de URL carte et des fichiers associés a la ressource
  *
- * @param DOMDocument Geosource ressource
+ * @param DOMDocument GeoNetwork ressource
  * @return array
  */
 function tic_geosource_get_record_files($record) {
@@ -695,7 +695,7 @@ function tic_geosource_get_record_thumbnail($record) {
 /**
  * OBSOLETE
  * Extraction des mots cles, mots cles thesaurus et themes
- * @param DOMDocument Geosource resource
+ * @param DOMDocument GeoNetwork resource
  * @return array Tableau associatif themes et mots cles
  */
 function tic_geosource_get_keywords_and_themes($record) {
@@ -735,7 +735,7 @@ function tic_geosource_get_keywords_and_themes($record) {
 
 /**
  * Extraction des mots cles et thématiques HdF
-  * @param DOMDocument Geosource resource
+  * @param DOMDocument GeoNetwork resource
    * @return array Tableau associatif thematiques_hdf et mots cles
     */
     function tic_geosource_get_keywords_and_thematique_hdf($record)
@@ -781,7 +781,7 @@ function tic_geosource_get_record_bbox_equivalent($record) {
 /**
  * Extraction des infos source de données
  *
- * @param DOMDocument Geosource Record
+ * @param DOMDocument GeoNetwork Record
  * @return array Tableau associatif url, description et date de source de données
  */
 function tic_geosource_get_source_info($record) {
@@ -825,7 +825,7 @@ function tic_geosource_record_to_node($record) {
 	
 	// If no uuid found, do not continue
 	if ($uuid === false) {
-		watchdog('tic_geosource', 'Aucun UUID trouvé pour une fiche lors de la synchronisation avec Geosource');
+		watchdog('tic_geosource', 'Aucun UUID trouvé pour une fiche lors de la synchronisation avec GeoNetwork');
 		return;
 	}
 	
@@ -884,7 +884,7 @@ function tic_geosource_record_to_node($record) {
 		$node->promote = 0;
 		$node->language = 'fr';
 		$node->field_uuid['und'][0]['value'] = $uuid;
-		$node->field_isharvested['und'][0]['value'] = 1; // Carte récupérée de Geosource
+		$node->field_isharvested['und'][0]['value'] = 1; // Carte récupérée de GeoNetwork
 		$node->field_statut['und'][0]['value'] = 'interne'; // Carte de geosource publiees en interne par defaut
 	}
 	

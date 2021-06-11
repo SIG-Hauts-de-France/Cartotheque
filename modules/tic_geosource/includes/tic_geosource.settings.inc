@@ -4,76 +4,76 @@ function tic_geosource_config($form, &$form_state) {
 	
 	$form['geosource server'] = array(
 		'#type' => 'fieldset',
-		'#title' => 'Configuration serveur Geosource',
+		'#title' => 'Configuration serveur GeoNetwork',
 		'#collapsible' => FALSE,
 	);
 	
 	$form['geosource server']['geosource_server_url'] = array(
 		'#type' => 'textfield',
-		'#title' => 'Adresse serveur CSW Geosource',
+		'#title' => 'Adresse serveur CSW GeoNetwork',
 		'#default_value' => variable_get('geosource_server_url', 'http://geosourcedemo.brgm.fr/geosource/srv/eng/csw'),
 		'#maxlength' => 255,
-		'#description' => 'Adresse du serveur Geosource a utiliser pour la synchronisation des cartes',
+		'#description' => 'Adresse du serveur GeoNetwork a utiliser pour la synchronisation des cartes',
 	);
 	$form['geosource server']['geosource_server_user'] = array(
 		'#type' => 'textfield',
-		'#title' => 'Nom d\'utilisateur Geosource',
+		'#title' => 'Nom d\'utilisateur GeoNetwork',
 		'#default_value' => variable_get('geosource_server_user', ''),
 		'#maxlength' => 255,
-		'#description' => 'Identifiant Geosource pour la synchronisation de cartes',
+		'#description' => 'Identifiant GeoNetwork pour la synchronisation de cartes',
 	);
 	$form['geosource server']['geosource_server_password'] = array(
 		'#type' => 'textfield',
-		'#title' => 'Mot de passe Geosource',
+		'#title' => 'Mot de passe GeoNetwork',
 		'#default_value' => variable_get('geosource_server_password', ''),
 		'#maxlength' => 255,
-		'#description' => 'Mot de passe du serveur Geosource pour la synchronisation de cartes',
+		'#description' => 'Mot de passe du serveur GeoNetwork pour la synchronisation de cartes',
 	);
 	$form['geosource server']['geosource_server_auth_address'] = array(
 		'#type' => 'textfield',
-		'#title' => 'Adresse Geosource',
+		'#title' => 'Adresse GeoNetwork',
 		'#default_value' => variable_get('geosource_server_auth_address', ''),
 		'#maxlength' => 255,
-		'#description' => 'Adresse de l\'authentification Geosource pour la synchronisation de cartes',
+		'#description' => 'Adresse de l\'authentification GeoNetwork pour la synchronisation de cartes',
 	);
 	$form['geosource server']['geosource_server_timeout'] = array(
 		'#type' => 'textfield',
 		'#title' => 'Timeout',
 		'#default_value' => variable_get('geosource_server_timeout', 60),
 		'#maxlength' => 3,
-		'#description' => 'Délai de timeout pour la connexion Geosource',
+		'#description' => 'Délai de timeout pour la connexion GeoNetwork',
 	);
 	$form['geosource server']['geosource_public_group_id'] = array(
 		'#type' => 'textfield',
 		'#title' => 'Id groupe publique',
 		'#default_value' => variable_get('geosource_public_group_id', ''),
-		'#description' => 'Identifiant du groupe publique dans Geosource',
+		'#description' => 'Identifiant du groupe publique dans GeoNetwork',
 	);
 	$form['geosource server']['geosource_private_group_id'] = array(
 		'#type' => 'textfield',
 		'#title' => 'Id groupe privé',
 		'#default_value' => variable_get('geosource_private_group_id', ''),
-		'#description' => 'Identifiant du groupe privé dans Geosource',
+		'#description' => 'Identifiant du groupe privé dans GeoNetwork',
 	);
 	$form['geosource sync'] = array(
 		'#type' => 'fieldset',
-		'#title' => 'Options de synchronisation Geosource',
+		'#title' => 'Options de synchronisation GeoNetwork',
 		'#collapsible' => false,
 	);
 	$form['geosource sync']['geosource_sync_delay'] = array(
 		'#type' => 'textfield',
 		'#title' => 'Intervalle de synchronisation',
 		'#default_value' => variable_get('geosource_sync_delay', ''),
-		'#description' => 'Délai entre deux synchronisations avec Geosource (en secondes)',
+		'#description' => 'Délai entre deux synchronisations avec GeoNetwork (en secondes)',
 	);
 	$form['geosource_sync']['geosource_drupal_to_geosource'] = array(
 		'#type' => 'checkbox',
-		'#title' => 'Synchronisation Drupal => Geosource',
+		'#title' => 'Synchronisation Drupal => GeoNetwork',
 		'#default_value' => variable_get('geosource_drupal_to_geosource', 0),
 	);
 	$form['geosource_sync']['geosource_geosource_to_drupal'] = array(
 		'#type' => 'checkbox',
-		'#title' => 'Synchronisation Geosource => Drupal',
+		'#title' => 'Synchronisation GeoNetwork => Drupal',
 		'#default_value' => variable_get('geosource_geosource_to_drupal', 0),
 	);
 	// TODO: utilisateur pour les cartes créées par la synchro
@@ -121,17 +121,17 @@ function tic_geosource_sync() {
 		}
 
 		if ($error == false) {
-			$pageContent['#markup'] = '<p>La synchronisation avec Geosource a été lancée ('.$queuedItems.' fiches ajoutées dans la file d\'attente)</p>';
+			$pageContent['#markup'] = '<p>La synchronisation avec GeoNetwork a été lancée ('.$queuedItems.' fiches ajoutées dans la file d\'attente)</p>';
 		}
 		else {
-			$pageContent['#markup'] = '<p>Une erreur est survenue lors du lancement de la synchronisation avec Geosource</p>';
+			$pageContent['#markup'] = '<p>Une erreur est survenue lors du lancement de la synchronisation avec GeoNetwork</p>';
 		}
 	}
 	else {
-		$pageContent['#markup'] = '<p>La synchronisation de Geosource vers Drupal doit être activée pour utiliser cette fonctionnalité</p>';
+		$pageContent['#markup'] = '<p>La synchronisation de GeoNetwork vers Drupal doit être activée pour utiliser cette fonctionnalité</p>';
 	}
 	
-	drupal_set_title('Synchronisation avec Geosource');
+	drupal_set_title('Synchronisation avec GeoNetwork');
 	
 	return drupal_render($pageContent);
 }
@@ -174,7 +174,7 @@ function tic_geosource_configtest() {
 		$errorStr = $e->getMessage();
 	}
 	
-	drupal_set_title('Test de la configuration Geosource');
+	drupal_set_title('Test de la configuration GeoNetwork');
 	$pageContent['#markup'] = '<h1>Paramètres de connexion</h1>';
 	$pageContent['#markup'] .= '<table><tr><td>Serveur</td><td>'.$server.'</td></tr>';
 	$pageContent['#markup'] .= '<tr><td>Utilisateur</td><td>'.$username.'</td></tr>';
@@ -188,10 +188,10 @@ function tic_geosource_configtest() {
 	$pageContent['#markup'] .= '<h1>Résultat du test de connexion: '.$statusStr.'</h1>';
 	
 	if(!$error) {
-		$pageContent['#markup'] .= '<p>Connexion à Geosource réussie. Liste des capabilities du serveur: ' . $capabilities . '</p>';
+		$pageContent['#markup'] .= '<p>Connexion à GeoNetwork réussie. Liste des capabilities du serveur: ' . $capabilities . '</p>';
 	}
 	else {
-		$pageContent['#markup'] .= '<p>Echec de la connexion à Geosource. Il semble que vos paramètres ne soient pas corrects...</p>';
+		$pageContent['#markup'] .= '<p>Echec de la connexion à GeoNetwork. Il semble que vos paramètres ne soient pas corrects...</p>';
 		$pageContent['#markup'] .= '<h2>Informations complémentaires: </h2>'.$errorStr;
 	}
 	

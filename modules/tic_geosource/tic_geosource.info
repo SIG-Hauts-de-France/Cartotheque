@@ -1,5 +1,5 @@
-name = Geosource Drupal Plugin
-description = Module d'interconnexion Geosource pour la gestion de cartothèques par Teicee
+name = GeoNetwork Drupal Plugin
+description = Module d'interconnexion GeoNetwork pour la gestion de cartothèques par Teicee
 core = 7.x
 dependencies[] = field
 dependencies[] = bundle_copy

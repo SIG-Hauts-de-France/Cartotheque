@@ -17,21 +17,21 @@ define('TIC_GEOSOURCE_GRANT_ID_ARCHIVE', 2);
 function tic_geosource_cron_queue_info() {
 	$time = variable_get('geosource_server_timeout', 60);
 	
-	// Synchro Geosource => Drupal
+	// Synchro GeoNetwork => Drupal
 	$queues['tic_geosource_sync'] = array(
 		'worker callback' => 'tic_geosource_queue_worker',
 		'skip on cron' => false,
 		'time' => $time*4,
 	);
 
-	// Synchro Geosource => Drupal (suppression)
+	// Synchro GeoNetwork => Drupal (suppression)
 	$queues['tic_geosource_check_exists'] = array(
 		'worker callback' => 'tic_geosource_check_worker',
 		'skip on cron' => false,
 		'time' => $time*4,
 	);
 
-	// Synchro Drupal => Geosource (ressources en attente)
+	// Synchro Drupal => GeoNetwork (ressources en attente)
 	$queues['tic_geosource_push_pending'] = array(
 		'worker callback' => 'tic_geosource_push_worker',
 		'skip on cron' => false,
@@ -70,8 +70,8 @@ function tic_geosource_menu() {
 	);
 	
 	$items['admin/config/services/geosource'] = array(
-		'title' => 'Publication Geosource',
-		'description' => 'Réglages de publication Geosource',
+		'title' => 'Publication GeoNetwork',
+		'description' => 'Réglages de publication GeoNetwork',
 		'page callback' => 'drupal_get_form',
 		'page arguments' => array('tic_geosource_config'),
 		'access arguments' => array('administer site configuration'),
@@ -79,16 +79,16 @@ function tic_geosource_menu() {
 	);
 	
 	$items['admin/config/services/geosource/test'] = array(
-		'title' => 'Test de la configuration Geosource',
-		'description' => 'Tester la configuration de Geosource',
+		'title' => 'Test de la configuration GeoNetwork',
+		'description' => 'Tester la configuration de GeoNetwork',
 		'page callback' => 'tic_geosource_configtest',
 		'access arguments' => array('administer site configuration'),
 		'file' => 'includes/tic_geosource.settings.inc',
 	);
 	
 	$items['admin/config/services/geosource/sync'] = array(
-		'title' => 'Synchroniser Drupal avec Geosource',
-		'description' => 'Lancer la synchronisation entre Drupal et Geosource',
+		'title' => 'Synchroniser Drupal avec GeoNetwork',
+		'description' => 'Lancer la synchronisation entre Drupal et GeoNetwork',
 		'page callback' => 'tic_geosource_sync',
 		'access arguments' => array('administer site configuration'),
 		'file' => 'includes/tic_geosource.settings.inc',
@@ -410,14 +410,14 @@ function tic_geosource_node_delete($node) {
 		return;
 	}
 	
-	// On ne supprime pas les cartes moissonées Geosource
+	// On ne supprime pas les cartes moissonées GeoNetwork
 	if (isset($node->field_isharvested['und'][0]['value'])) {
 		if ($node->field_isharvested['und'][0]['value'] == '1') {
 			return;
 		}
 	}
 	
-	//Supprimer la ressource de Geosource
+	//Supprimer la ressource de GeoNetwork
 	// a node can exists in drupal but not in geosource yet
 	if (isset($node->field_uuid['und'][0]['value'])) {
 		$uuid = tic_geosource_remove_record($node);
@@ -465,7 +465,7 @@ function tic_geosource_node_presave($node) {
 		unset($_SESSION['tic_geosource_mymap_id']);
 	}
 	
-	// Cette fiche n'est pas récupérée de Geosource
+	// Cette fiche n'est pas récupérée de GeoNetwork
 	$node->field_isharvested['und'][0]['value'] = 0;
 	// TODO: cartothèque pour le fiches entrées directement ?
 	$node->field_cartotheque['und'][0]['value'] = 'NPdCP';
@@ -625,7 +625,7 @@ function tic_geosource_is_static_map($node) {
 }
 
 /**
- * Filter les entrées texte avant envoi dans Geosource
+ * Filter les entrées texte avant envoi dans GeoNetwork
  *
  */
 function tic_geosource_format_text($text) {
@@ -760,7 +760,7 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
 
 	}
 
-	// UUID Geosource de la ressource (si existe)
+	// UUID GeoNetwork de la ressource (si existe)
 	if (isset($node->field_uuid['und'][0]['value'])) {
 		$uuid = $node->field_uuid['und'][0]['value'];
 	}
@@ -863,7 +863,7 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
  * Save metadata to geosource
  * 
  * @param stdClass Drupal node
- * @return string Geosource UUID
+ * @return string GeoNetwork UUID
  */
 function tic_geosource_insert_record($node) {
 	
@@ -893,8 +893,8 @@ function tic_geosource_insert_record($node) {
         watchdog('tic_geosource', 'UUID :'.json_encode($uuid));
 	}
 	catch (Exception $e) {
-		watchdog('tic_geosource', 'Erreur de sauvegarde de la ressource dans Geosource: '. $e->getMessage(), NULL, WATCHDOG_ERROR);
-		//drupal_set_message('La ressource n\'a pas été sauvée dans Geosource', 'error');
+		watchdog('tic_geosource', 'Erreur de sauvegarde de la ressource dans GeoNetwork: '. $e->getMessage(), NULL, WATCHDOG_ERROR);
+		//drupal_set_message('La ressource n\'a pas été sauvée dans GeoNetwork', 'error');
 		return false;
 	}
 	
@@ -943,8 +943,8 @@ function tic_geosource_update_record($node) {
         watchdog('tic_geosource', 'UPDATED :'.$updated);
 	}
 	catch (Exception $e) {
-		watchdog('tic_geosource', 'Erreur de mise a jour de la ressource sur Geosource: ' . $e->getMessage(), NULL, WATCHDOG_ERROR);
-		//drupal_set_message('La ressource n\'a pas été mise à jour dans Geosource', 'error');
+		watchdog('tic_geosource', 'Erreur de mise a jour de la ressource sur GeoNetwork: ' . $e->getMessage(), NULL, WATCHDOG_ERROR);
+		//drupal_set_message('La ressource n\'a pas été mise à jour dans GeoNetwork', 'error');
 		return false;
 	}
 	
@@ -965,7 +965,7 @@ function tic_geosource_update_record($node) {
 }
 
 /**
- * Suppression d'une ressource de Geosource
+ * Suppression d'une ressource de GeoNetwork
  *
  */
 function tic_geosource_remove_record($node) {
@@ -994,7 +994,7 @@ function tic_geosource_remove_record($node) {
 		$removed = $client->deleteMetadataFromUuid($node->field_uuid['und'][0]['value']);
 	}
 	catch (Exception $e) {
-		watchdog('tic_geosource', 'Erreur lors de la suppression de la ressource "'.$node->title.'" dans Geosource');
+		watchdog('tic_geosource', 'Erreur lors de la suppression de la ressource "'.$node->title.'" dans GeoNetwork');
 	}
 	
 	return $removed;
@@ -1003,7 +1003,7 @@ function tic_geosource_remove_record($node) {
 /*
  * Implements callback_queue_worker
  *
- * Synchro Geosource => Drupal 
+ * Synchro GeoNetwork => Drupal 
  */
 function tic_geosource_queue_worker($uuid) {
 	$geosourceToDrupal = variable_get('geosource_geosource_to_drupal', 0);
@@ -1013,7 +1013,7 @@ function tic_geosource_queue_worker($uuid) {
 		tic_geosource_process_record_json($uuid);
 	}
 	else {
-		watchdog('tic_geosource','Ressource '.$uuid.' ignoree car synchro Geosource => Drupal desactivee');
+		watchdog('tic_geosource','Ressource '.$uuid.' ignoree car synchro GeoNetwork => Drupal desactivee');
 	}
 }
 
@@ -1039,7 +1039,7 @@ function tic_geosource_cron() {
 	
 	$client = tic_geosource_load_csw_client();
 	
-	// Synchro Geosource => Drupal
+	// Synchro GeoNetwork => Drupal
 	$geosourceToDrupal = variable_get('geosource_geosource_to_drupal', 0);
 
 	if ($geosourceToDrupal != 0) {
@@ -1066,7 +1066,7 @@ function tic_geosource_cron() {
 			watchdog('tic_geosource', 'Erreur lors de la récupération des ressources modifiées: '.$e->getMessage());
 		}
 		
-		// Vérifier que les ressources Drupal ayant un UUID existent toujours dans Geosource
+		// Vérifier que les ressources Drupal ayant un UUID existent toujours dans GeoNetwork
 		$uuids = array();
 		$uuids = tic_geosource_get_all_records_uuids();
 		$checkQueue = DrupalQueue::get('tic_geosource_check_exists');
@@ -1075,15 +1075,15 @@ function tic_geosource_cron() {
 		}
 	}
 	
-	// Synchro Drupal => Geosource
+	// Synchro Drupal => GeoNetwork
 
-	$drupalToGeosource = variable_get('geosource_drupal_to_geosource', 0);
-	if ($drupalToGeosource != 0) {
-        watchdog('tic_geosource', 'Démarrage Synchro Drupal => Geosource');
-		// Push des fiches existant dans Drupal mais pas dans Geosource
+	$drupalToGeoNetwork = variable_get('geosource_drupal_to_geosource', 0);
+	if ($drupalToGeoNetwork != 0) {
+        watchdog('tic_geosource', 'Démarrage Synchro Drupal => GeoNetwork');
+		// Push des fiches existant dans Drupal mais pas dans GeoNetwork
 		$nids = tic_geosource_get_unpushed_maps();
 
-        watchdog('tic_geosource', sprintf('Synchro Drupal => Geosource %s cartes a envoyer', count($nids)));
+        watchdog('tic_geosource', sprintf('Synchro Drupal => GeoNetwork %s cartes a envoyer', count($nids)));
 
 		$pushQueue = DrupalQueue::get('tic_geosource_push_pending');
 		
@@ -1091,7 +1091,7 @@ function tic_geosource_cron() {
 			$pushQueue->createItem($nid);
 		}
 	} else {
-        watchdog('tic_geosource', 'Synchro Drupal => Geosource ignorée car non active');
+        watchdog('tic_geosource', 'Synchro Drupal => GeoNetwork ignorée car non active');
     }
 	
 	// Mettre a jour les droits d'accès pour prendre en compte les modifications du champ diffusion (interne / externe / archive)
@@ -1132,7 +1132,7 @@ function tic_geosource_get_unpushed_maps() {
 }
 
 /**
- * Worker de vérification de l'existence d'un node dans Geosource
+ * Worker de vérification de l'existence d'un node dans GeoNetwork
  *
  */
 function tic_geosource_check_worker($uuid) {
@@ -1150,16 +1150,16 @@ function tic_geosource_check_worker($uuid) {
 }
 
 /**
- * Synchro Drupal => Geosource
+ * Synchro Drupal => GeoNetwork
  *
  */
 function tic_geosource_push_worker($nid) {
 
-    watchdog('tic_geosource', sprintf('Synchro Drupal => Geosource traitement de %s', $nid));
+    watchdog('tic_geosource', sprintf('Synchro Drupal => GeoNetwork traitement de %s', $nid));
 
-	$drupalToGeosource = variable_get('geosource_drupal_to_geosource', 0);
-	if ($drupalToGeosource == 0) {
-		watchdog('tic_geosource', 'synchronisation du node '.$nid.' ignorée car synchronisation Drupal => Geosource désactivée');
+	$drupalToGeoNetwork = variable_get('geosource_drupal_to_geosource', 0);
+	if ($drupalToGeoNetwork == 0) {
+		watchdog('tic_geosource', 'synchronisation du node '.$nid.' ignorée car synchronisation Drupal => GeoNetwork désactivée');
 		return;
 	}
 
@@ -1169,7 +1169,7 @@ function tic_geosource_push_worker($nid) {
 
 	$node = node_load($nid);
 	if (!$node) {
-		watchdog('tic_geosource', 'Erreur lors du chargement du node '.$nid.' pour envoi vers Geosource');
+		watchdog('tic_geosource', 'Erreur lors du chargement du node '.$nid.' pour envoi vers GeoNetwork');
 		return false;
 	}
 
@@ -1185,10 +1185,10 @@ function tic_geosource_push_worker($nid) {
 		$uuid = substr($uuid, 0, 255);
 		$node->field_uuid['und'][0]['value'] = $uuid;
 		node_save($node);
-		watchdog('tic_geosource', 'Carte '.$nid.' synchronisée vers Geosource');
+		watchdog('tic_geosource', 'Carte '.$nid.' synchronisée vers GeoNetwork');
 	}
 	else {
-		watchdog('tic_geosource', 'Erreur lors de la synchronisation du node '.$nid.' vers Geosource');
+		watchdog('tic_geosource', 'Erreur lors de la synchronisation du node '.$nid.' vers GeoNetwork');
 	}
 }
 
@@ -1307,7 +1307,7 @@ function tic_geosource_node_access($node, $op, $account) {
 	// I'm the owner !
 	if ($node->uid == $user->uid) { return true; }
 	
-	// Les cartes récupérées de Geosource ne sont pas éditables
+	// Les cartes récupérées de GeoNetwork ne sont pas éditables
 	if ($op == 'update') {
 		if ($node->field_isharvested['und'][0]['value'] == "1") {
 			return NODE_ACCESS_DENY;
@@ -1624,7 +1624,7 @@ function tic_geosource_update_7001()
     // Changement adresse e-mail
     db_query("UPDATE field_data_field_adresse_email SET field_adresse_email_email = 'sig@hautsdefrance.fr'");
     db_query("DELETE FROM {cache};");
-    // Changement date MAJ node pour sync Geosource
+    // Changement date MAJ node pour sync GeoNetwork
     $result = db_query("SELECT * FROM node n WHERE n.type = :type", array(
         ':type' => "carte",
     ));
