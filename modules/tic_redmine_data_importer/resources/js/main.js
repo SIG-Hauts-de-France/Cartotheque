@@ -225,19 +225,25 @@ function tic_redmine_data_importer_auto_hydrate_fields(cardInfoObj)
 		 var initials = "";
 		 var name = value.split(" ");
 		 for (var v = 0; name[v]; v++)
-		 {i
+		 {
 		     name[v] = name[v].trim();
 		     initials += name[v][0].toUpperCase();
 		 }
 		 //then add the initials
 		 var prefix = "Région HdF / DPSR / SIG - ";
+ 		 if(initials === "JB") var prefix = "Région HdF / DTr / ";
+		 else if(initials === "SL" || initials === "HR") var prefix = "Région HdF / DPSR / SIG - ";
+		 else var prefix = "Région HdF / Agence HdF 2020-2040 / SIG - ";
+
 		 value = prefix + initials;
 	    break;
+
 	    case "emprise geographique":
 
 	         value = ("Régional" == value) ? "Région" : value;
 	    
 	    break;
+
 	    case "echelle":
 
 		 //récupération de l'échelle
