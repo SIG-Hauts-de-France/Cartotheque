@@ -53,7 +53,7 @@ RUN set -xe ; php -v \
 #   xmlrpc \
     xsl \
     zip \
-  ; pecl channel-update pecl.php.net && pecl install uploadprogress \
+  ; pecl channel-update pecl.php.net && pecl install uploadprogress-1.1.4 \
   ; docker-php-ext-enable uploadprogress \
   ; php -m
 

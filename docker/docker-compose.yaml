@@ -29,8 +29,8 @@ services:
                 - SYS_LOCALE
                 - HTTP_PROXY
                 - HTTPS_PROXY
-                - UID_WORKER=${UID_LOCAL:-1000}
-                - GID_WORKER=${GID_LOCAL:-1000}
+                - UID_WORKER=${UID_LOCAL:-0}
+                - GID_WORKER=${GID_LOCAL:-0}
         depends_on:
             - drupaldb
             - geosource
