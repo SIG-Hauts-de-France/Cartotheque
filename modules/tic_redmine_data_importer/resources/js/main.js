@@ -229,14 +229,55 @@ function tic_redmine_data_importer_auto_hydrate_fields(cardInfoObj)
 		     name[v] = name[v].trim();
 		     initials += name[v][0].toUpperCase();
 		 }
+
+		 /*
 		 //then add the initials
 		 var prefix = "Région HdF / DPSR / SIG - ";
  		 if(initials === "JB") var prefix = "Région HdF / DTr / ";
 		 else if(initials === "SL" || initials === "HR") var prefix = "Région HdF / DPSR / SIG - ";
 		 else var prefix = "Région HdF / Agence HdF 2020-2040 / SIG - ";
-
 		 value = prefix + initials;
-	    break;
+		  */
+
+		 // Correspondance entre les initials récupéré et les identifiants drupal (contenu de type contact)
+		 switch(initials){
+		 	case "JB":
+				value = 1037;
+				break;
+			case "SL":
+				value = 1018;
+				break;
+			case "FD":
+				value = 18;
+				break;
+			case "HR":
+				value = 19;
+				break;
+			case "JT":
+				value = 20;
+				break;
+			case "RM":
+				value = 21;
+				break;
+			case "CB":
+				value = 17;
+				break;
+			case "CA":
+				value = 23;
+				break;
+			case "CP":
+				value = 24;
+				break;
+			case "TD":
+				value = 1039;
+				break;
+			case "RVB":
+				value = 1040;
+				break;
+		 }
+
+
+		break;
 
 	    case "emprise geographique":
 
@@ -311,11 +352,22 @@ function tic_redmine_data_importer_auto_hydrate_fields(cardInfoObj)
 	    var select = document.getElementById(relations[i].div_id);
 	    if (select !== null)
 	    {
-		for (var n = 0; select.options[n]; n++)
-		{
-		    if (select.options[n].text.trim().localeCompare(value) == 0)
-			select.selectedIndex = n;
-		}
+			// Gestion particulière pour le select auteur correspondance avec la valeur de l'option du select
+			if(select.attributes[0].value === 'edit-field-auteur-und')
+			{
+				for (var n = 0; select.options[n]; n++)
+				{
+					if (select.options[n].value == value)
+						select.selectedIndex = n;
+				}
+			}
+			else{
+				for (var n = 0; select.options[n]; n++)
+				{
+					if (select.options[n].text.trim().localeCompare(value) == 0)
+						select.selectedIndex = n;
+				}
+			}
 	    }
 	}
 	else if (["special-autocomplete-deluxe"].indexOf(relations[i].input_type) !== -1)
