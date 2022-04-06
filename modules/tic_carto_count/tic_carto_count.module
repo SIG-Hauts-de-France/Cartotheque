@@ -84,6 +84,14 @@ function tic_carto_count_menu() {
     'type' => MENU_CALLBACK,
     'file' => 'includes/tic_carto_count.pages.inc',
   );
+  $items['admin/reports/download-count/export'] = array( //this creates a URL that will call this form
+    'title' => 'Download count export', //page title
+    'description' => '',
+    'page callback' => 'drupal_get_form', //this is the function that will be called when the page is accessed.  for a form, use drupal_get_form
+    'page arguments' => array('tic_carto_count_export_form'), //put the name of the form here
+    'access callback' => TRUE,
+    'file' => 'includes/tic_carto_count.export.inc',
+  );
 
   return $items;
 }

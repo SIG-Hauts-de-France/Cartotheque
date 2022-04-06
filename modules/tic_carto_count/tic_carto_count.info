@@ -5,3 +5,4 @@ dependencies[] = field
 dependencies[] = file
 dependencies[] = tic_geosource
 dependencies[] = statistics
+dependencies[] = phpexcel

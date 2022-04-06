@@ -8,7 +8,7 @@
 /**
  * tic_carto_count export form.
  */
-function tic_carto_count_export_form($form, $form_state, $dc_entry = NULL) {
+function tic_carto_count_export_form($form, $form_state, $dc_entry = 'all') {
   drupal_add_js(drupal_get_path('module', 'tic_carto_count') . '/js/tic_carto_count.js');
   if ($dc_entry == 'all') {
     drupal_set_title(t('Download Count Export CSV - All Files'));
@@ -17,6 +17,8 @@ function tic_carto_count_export_form($form, $form_state, $dc_entry = NULL) {
     drupal_set_title(t('Download Count Export CSV - @filename from @type @id', array('@filename' => $dc_entry->filename, '@type' => $dc_entry->type, '@id' => $dc_entry->id)));
   }
 
+  $form = array();
+
   $form['tic_carto_count_export_note'] = array(
     '#prefix' => '<div id="download-count-export-note">',
     '#suffix' => '</div>',
@@ -24,19 +26,13 @@ function tic_carto_count_export_form($form, $form_state, $dc_entry = NULL) {
       . '<br /><br />'
       . t('The following data will be exported:')
       . '<ul>'
-      . '<li>' . t('Download count id')
-      . '<li>' . t('File id')
-      . '<li>' . t('File name')
-      . '<li>' . t('File size')
-      . '<li>' . t('Entity type')
-      . '<li>' . t('Entity id')
-      . '<li>' . t('Downloading user id')
-      . '<li>' . t('Downloading username')
-      . '<li>' . t('Downloading user ip address')
-      . '<li>' . t('HTTP referrer')
-      . '<li>' . t('Date - time (YYYY-MM-DD  HH:MM:SS)')
+      . '<li>' . t('Node id')
+      . '<li>' . t('Node title')
+      . '<li>' . t('Download count')
+      . '<li>' . t('Visu; count')
       . '</ul>',
   );
+/*
   $form['tic_carto_count_export_range'] = array(
     '#type' => 'radios',
     '#title' => t('Export Range'),
@@ -60,6 +56,7 @@ function tic_carto_count_export_form($form, $form_state, $dc_entry = NULL) {
     '#type' => 'value',
     '#value' => $dc_entry,
   );
+*/
   $form['tic_carto_count_export_submit'] = array(
     '#type' => 'submit',
     '#value' => t('Export'),
@@ -68,7 +65,7 @@ function tic_carto_count_export_form($form, $form_state, $dc_entry = NULL) {
     '#value' => '<a href="javascript:history.back(-1)">' . t('Cancel') . '</a>',
   );
 
-  $form_state['#redirect'] = TRUE;
+  //$form_state['#redirect'] = TRUE;
   return $form;
 }
 
@@ -78,10 +75,7 @@ function tic_carto_count_export_form($form, $form_state, $dc_entry = NULL) {
 function tic_carto_count_export_form_submit($form, &$form_state) {
   variable_set('tic_carto_count_export_range', $form_state['values']['tic_carto_count_export_range']);
   $filename = 'tic_carto_count_export_' . ($form_state['values']['tic_carto_count_file_info'] == 'all' ? 'all_files' : check_plain($form_state['values']['tic_carto_count_file_info']->filename)) . '_' . date('Y-m-d') . '.csv';
-  $range = $form_state['values']['tic_carto_count_export_range'];
   $file_info =  $form_state['values']['tic_carto_count_file_info'];
-  $start = $form_state['values']['tic_carto_count_export_date_range_from'];
-  $end = $form_state['values']['tic_carto_count_export_date_range_to'];
 
   $result = tic_carto_count_export_data($filename, $range, $file_info, $start, $end);
   drupal_set_message($filename . " has been successfully exported.", 'status');
@@ -94,6 +88,7 @@ function tic_carto_count_export_data($filename, $range, $file_info, $start, $end
   drupal_add_http_header('Content-Type', 'application/csv');
   drupal_send_headers();
 
+/*
   $query = db_select('tic_carto_count', 'dc')
     ->fields('dc', array('dcid', 'fid', 'type', 'id', 'uid', 'ip_address', 'referrer', 'timestamp'))
     ->fields('f', array('filename', 'filesize', 'uri'))
@@ -114,23 +109,25 @@ function tic_carto_count_export_data($filename, $range, $file_info, $start, $end
     $query->condition('dc.timestamp', $from, '>=');
     $query->condition('dc.timestamp', $to, '<=');
   }
+*/
+
+  $query = db_select('node', 'n')
+    ->fields('n', array('nid', 'title'))
+    ->fields('cc', array('dcid', 'count'))
+    ->fields('nc', array('totalcount'))
+        ;
+  $query->leftJoin('tic_carto_count', 'cc', 'cc.nid = n.nid');
+  $query->leftJoin('node_counter', 'nc', 'nc.nid = n.nid');
+
 
   $result = $query->execute();
-  $column_names = '"Download count id","File id","File name","File URI","File size","Entity type","Entity id","Downloading user id","Downloading username","Downloading user ip address","HTTP referrer","Date time"' . "\n";
+  $column_names = '"Node id","Node name","Download count", "Visu count"' . "\n";
   print $column_names;
   foreach ($result as $record) {
-    $row  = '"' . $record->dcid . '"' . ',';
-    $row .= '"' . $record->fid . '"' . ',';
-    $row .= '"' . $record->filename . '"' . ',';
-    $row .= '"' . $record->uri . '"' . ',';
-    $row .= '"' . $record->filesize . '"' . ',';
-    $row .= '"' . $record->type . '"' . ',';
-    $row .= '"' . $record->id . '"' . ',';
-    $row .= '"' . $record->uid . '"' . ',';
-    $row .= '"' . $record->name . '"' . ',';
-    $row .= '"' . $record->ip_address . '"' . ',';
-    $row .= '"' . $record->referrer . '"' . ',';
-    $row .= '"' . date('Y-m-d H:i:s', $record->timestamp) . '"';
+    $row  = '"' . $record->nid . '"' . ',';
+    $row .= '"' . $record->title . '"' . ',';
+    $row .= '"' . $record->count . '"' . ',';
+    $row .= '"' . $record->totalcount . '"' . ',';
     $row .= "\n";
     print $row;
   }
