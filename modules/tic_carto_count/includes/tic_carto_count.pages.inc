@@ -106,7 +106,10 @@ function tic_carto_count_view_page($arg = NULL) {
   if (!empty($page_header['value'])) {
     $output .= '<div id="download-count-header">' . check_markup($page_header['value'], $page_header['format']) . '</div>';
   }
-  $output .= '<div id="download-count-total-top">' . t('Current page') . ' --- ' .  t('Total Downloads:') . ' ' . number_format($total_downloads) . ' / ' . t('Total Views:') . ' ' . number_format($total_views) . '</div>';
+  $output .= '<div id="download-count-total-top">'; 
+  $output .= l(t('Export'), 'admin/reports/download-count/export', array('attributes' => array('style' => 'float:right;')));
+  $output .= t('Current page') . ' --- ' .  t('Total Downloads:') . ' ' . number_format($total_downloads) . ' / ' . t('Total Views:') . ' ' . number_format($total_views) 
+		. '</div>';
   $output .= theme('table', array('header' => $header, 'rows' => $rows, 'attributes' => array('id' => 'download-count-table')));
   $output .= '<div id="download-count-total-bottom">' . t('Current page') . ' --- ' .  t('Total Downloads:') . ' ' . number_format($total_downloads) . ' / ' . t('Total Views:') . ' ' . number_format($total_views) . '</div>';
   if ($items_per_page > 0) {
