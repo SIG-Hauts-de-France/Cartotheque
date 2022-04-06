@@ -4,3 +4,4 @@ core = 7.x
 dependencies[] = field
 dependencies[] = file
 dependencies[] = tic_geosource
+dependencies[] = statistics

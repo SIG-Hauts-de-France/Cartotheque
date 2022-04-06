@@ -11,6 +11,7 @@
 function tic_carto_count_view_page($arg = NULL) {
   drupal_set_title(variable_get('tic_carto_count_view_page_title', 'Download Counts'));
   $total_downloads = 0;
+  $total_views = 0;
   $colspan = 0;
   $item = 1;
   $limit = (int) variable_get('tic_carto_count_view_page_limit', 0);
@@ -24,7 +25,12 @@ function tic_carto_count_view_page($arg = NULL) {
       'data' => t('#'),
     ),
     array(
-      'data' => t('Count'),
+      'data' => t('Download count'),
+      'field' => 'count',
+      'sort' => 'desc',
+    ),
+    array(
+      'data' => t('Visu. count'),
       'field' => 'count',
       'sort' => 'desc',
     ),
@@ -34,12 +40,24 @@ function tic_carto_count_view_page($arg = NULL) {
     ),
   );
 
+/*
   $query = db_select('tic_carto_count', 'cc')
     ->fields('cc', array('dcid', 'count'))
     ->fields('n', array('nid', 'title'))
+    ->fields('nc', array('totalcount'))
 	;
-
   $query->join('node', 'n', 'cc.nid = n.nid');
+  $query->join('node_counter', 'nc', 'cc.nid = nc.nid');
+*/
+
+  $query = db_select('node', 'n')
+    ->fields('n', array('nid', 'title'))
+    ->fields('cc', array('dcid', 'count'))
+    ->fields('nc', array('totalcount'))
+	;
+  $query->leftJoin('tic_carto_count', 'cc', 'cc.nid = n.nid');
+  $query->leftJoin('node_counter', 'nc', 'nc.nid = n.nid');
+   
 
 
   if ($limit > 0) {
@@ -57,6 +75,7 @@ function tic_carto_count_view_page($arg = NULL) {
     $row = array();
     $row[] = $item;
     $row[] = number_format($node->count);
+    $row[] = number_format($node->totalcount);
     $row[] = $node->nid;
     $row[] = $node->title;
     if (user_access('reset download counts')) {
@@ -64,7 +83,8 @@ function tic_carto_count_view_page($arg = NULL) {
     }
     $rows[] = $row;
     $item++;
-    $total_downloads += $node->count;
+    $total_downloads += intval($node->count);
+    $total_views += intval($node->totalcount);
     $colspan = count($rows[0]) - count($header);
   }
 
@@ -86,9 +106,9 @@ function tic_carto_count_view_page($arg = NULL) {
   if (!empty($page_header['value'])) {
     $output .= '<div id="download-count-header">' . check_markup($page_header['value'], $page_header['format']) . '</div>';
   }
-  $output .= '<div id="download-count-total-top">' . t('Total Downloads:') . ' ' . number_format($total_downloads) . '</div>';
+  $output .= '<div id="download-count-total-top">' . t('Current page') . ' --- ' .  t('Total Downloads:') . ' ' . number_format($total_downloads) . ' / ' . t('Total Views:') . ' ' . number_format($total_views) . '</div>';
   $output .= theme('table', array('header' => $header, 'rows' => $rows, 'attributes' => array('id' => 'download-count-table')));
-  $output .= '<div id="download-count-total-bottom">' . t('Total Downloads:') . ' ' . number_format($total_downloads) . '</div>';
+  $output .= '<div id="download-count-total-bottom">' . t('Current page') . ' --- ' .  t('Total Downloads:') . ' ' . number_format($total_downloads) . ' / ' . t('Total Views:') . ' ' . number_format($total_views) . '</div>';
   if ($items_per_page > 0) {
     $output .= theme('pager', array('tags' => array()));
   }
