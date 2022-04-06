@@ -181,7 +181,8 @@ function tic_carto_count_reset_form_submit($form, &$form_state) {
     }
   }
   else {
-    $result = db_delete('tic_carto_count')
+    $result = db_update('tic_carto_count')
+      ->fields(['count' => 0])
       ->condition('nid', $form['nid']['#value'])
       ->execute();
     if ($result) {
