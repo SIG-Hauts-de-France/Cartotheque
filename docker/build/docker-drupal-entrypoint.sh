@@ -93,7 +93,7 @@ do_install_contrib() {
 	  email url entity entity_token references node_reference autocomplete_deluxe \
 	  date date_api date_popup date_views views_between_dates_filter \
 	  jquery_update phpexcel redmine_rest_api image_url_formatter lightbox2 \
-	  admin_menu_toolbar views_ui imagecache_actions imagecache_canvasactions
+	  admin_menu_toolbar views_ui imagecache_actions imagecache_canvasactions statistics 
 	"${BIN_DRUSH}" dis -y toolbar
 }
 
@@ -249,6 +249,11 @@ do_config_custom() {
 	"${BIN_DRUSH}" vset -y --exact tic_carto_count_flood_window       5
 	"${BIN_DRUSH}" vset -y --exact tic_carto_count_view_page_header --format=json '{"format": "filtered_html", "value": ""}'
 	"${BIN_DRUSH}" vset -y --exact tic_carto_count_view_page_footer --format=json '{"format": "filtered_html", "value": ""}'
+	
+	printf "\n=== Drupal configuration : Module Statistics...\n"
+	cd "${DIR_DRUPAL}"
+	"${BIN_DRUSH}" vset -y --exact statistics_count_content_views    1
+	
 }
 
 
