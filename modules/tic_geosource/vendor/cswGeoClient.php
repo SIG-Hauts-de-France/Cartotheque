@@ -802,6 +802,7 @@ class cswGeoClient {
                            "</csw:Transaction>");
         //authentication is needed !!
         if (!$this->_authentication($insertMetadataRequest)) throw new Exception("authentication mandatory");
+
 		if ($this->_callHTTPCSW($insertMetadataRequest)) {
 			if (! preg_match('/BriefRecord/', $this->_response)) {
 				throw new Exception($this->_response);
@@ -814,10 +815,13 @@ class cswGeoClient {
 				$xp->registerNamespace('csw', 'http://www.isotc211.org/2005/csw');
 				$xpathString="//csw:BriefRecord";
 				$nodes = $xp->query($xpathString);
+
 				if ($nodes->length > 0) {
 					$uuids = array();
-					foreach($nodes as $node) {
-						$uuids[] = trim(preg_replace('/\s+/', '', $node->textContent));
+					foreach($nodes as $key => $node) {
+						$nodeUUID = preg_split('#\r?\n#', $node->textContent, 0)[1];
+//						var_dump($nodeUUID);
+						$uuids[] = trim(preg_replace('/\s+/', '', $nodeUUID));
 					}
 					return $uuids;
 				}
