@@ -2837,7 +2837,7 @@ class div {
 				$items = get_object_vars($items);
 			// } else
 			// 		continue;
-		
+			}
 		if ($superkey != "")
 			$superkey .= ".";
 		
