@@ -391,7 +391,7 @@ function tic_geosource_addcontact_ajax_submit($form, &$form_state) {
 	}
 	
 	module_load_include('inc', 'tic_geosource', 'includes/tic_geosource.utils');
-	
+
 	$contact = tic_geosource_create_contact($name, $email);
 	
 	$ret = Array('code' => 'success', 'nid' => $contact->nid, 'title' => $contact->title);
@@ -632,6 +632,43 @@ function tic_geosource_format_text($text) {
 	return htmlspecialchars($text);
 }
 
+/**
+ * Generate uuid string from pattern
+ * https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Component%21Uuid%21Php.php/function/Php%3A%3Agenerate/10.0.x
+ */
+function tic_generate_uuid() {
+    // Obtain a random string of 32 hex characters.
+    $hex = bin2hex(openssl_random_pseudo_bytes(16));
+
+    // The variable names $time_low, $time_mid, $time_hi_and_version,
+    // $clock_seq_hi_and_reserved, $clock_seq_low, and $node correlate to
+    // the fields defined in RFC 4122 section 4.1.2.
+    //
+    // Use characters 0-11 to generate 32-bit $time_low and 16-bit $time_mid.
+    $time_low = substr($hex, 0, 8);
+    $time_mid = substr($hex, 8, 4);
+
+    // Use characters 12-15 to generate 16-bit $time_hi_and_version.
+    // The 4 most significant bits are the version number (0100 == 0x4).
+    // We simply skip character 12 from $hex, and concatenate the strings.
+    $time_hi_and_version = '4' . substr($hex, 13, 3);
+
+    // Use characters 16-17 to generate 8-bit $clock_seq_hi_and_reserved.
+    // The 2 most significant bits are set to one and zero respectively.
+    $clock_seq_hi_and_reserved = base_convert(substr($hex, 16, 2), 16, 10);
+    $clock_seq_hi_and_reserved &= 0b111111;
+    $clock_seq_hi_and_reserved |= 0b10000000;
+
+    // Use characters 18-19 to generate 8-bit $clock_seq_low.
+    $clock_seq_low = substr($hex, 18, 2);
+
+    // Use characters 20-31 to generate 48-bit $node.
+    $node = substr($hex, 20);
+
+    // Re-combine as a UUID. $clock_seq_hi_and_reserved is still an integer.
+    $uuid = sprintf('%s-%s-%s-%02x%s-%s', $time_low, $time_mid, $time_hi_and_version, $clock_seq_hi_and_reserved, $clock_seq_low, $node);
+    return $uuid;
+}
 
 /**
  * Convert a drupal node to an array for divengine template
@@ -764,7 +801,10 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
 	if (isset($node->field_uuid['und'][0]['value'])) {
 		$uuid = $node->field_uuid['und'][0]['value'];
 	}
-	else { $uuid = false; }
+	else {
+        //$uuid = false;
+        $uuid = tic_generate_uuid();
+    }
 
 	// Description source des données
 	$sourceDesc = '';
@@ -860,6 +900,16 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
 }
 
 /**
+ * Parse XML for special caractères
+ *
+ * @param input string
+ * @return parsed string
+ */
+function utf8_for_xml($string){
+	return preg_replace ('/[^\x{0009}\x{000a}\x{000d}\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}]+/u', ' ', $string);
+}
+
+/**
  * Save metadata to geosource
  * 
  * @param stdClass Drupal node
@@ -881,12 +931,15 @@ function tic_geosource_insert_record($node) {
 	else {
 		$template = dirname(__FILE__) . '/templates/interactive.tpl';
 	}
-
+	watchdog('tic_geosource', 'tpl : '.$template);
 	$xmlString = new div($template, tic_geosource_drupal_node_to_geosource_array($node));
 	//Create XML Request
 	$dom = new DOMDocument('1.0');
+	$xmlString = utf8_for_xml((string)$xmlString);
 	$dom->loadXML((string)$xmlString);
+	watchdog('tic_geosource', 'XML : '.$dom->saveXML());
     watchdog('tic_geosource', 'DOM : '.json_encode($dom));
+	watchdog('tic_geosource', 'DOM : '.json_encode($dom));
 	//submit request
 	try {
 		$uuid = $client->insertMetadata($dom);
@@ -935,6 +988,7 @@ function tic_geosource_update_record($node) {
     watchdog('tic_geosource', 'STRING :'.$xmlString);
 	
 	$dom = new DOMDocument('1.0');
+	$xmlString=utf8_for_xml((string)$xmlString);
 	$dom->loadXML((string)$xmlString);
 	
 	$updated = 0;
@@ -987,6 +1041,7 @@ function tic_geosource_remove_record($node) {
 	$xmlString = new div($template, tic_geosource_drupal_node_to_geosource_array($node));
 	
 	$dom = new DOMDocument('1.0');
+	$xmlString = utf8_for_xml((string)$xmlString);
 	$dom->loadXML((string)$xmlString);
 	$removed = 0;
 	
@@ -1088,8 +1143,9 @@ function tic_geosource_cron() {
 		$pushQueue = DrupalQueue::get('tic_geosource_push_pending');
 		
 		foreach($nids as $nid) {
-			$pushQueue->createItem($nid);
-		}
+            $pushQueue->createItem($nid);
+        }
+
 	} else {
         watchdog('tic_geosource', 'Synchro Drupal => GeoNetwork ignorée car non active');
     }
