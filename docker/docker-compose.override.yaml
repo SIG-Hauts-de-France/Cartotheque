@@ -37,6 +37,9 @@ services:
             - WITH_ADMIN_TC
             - WITH_ADMIN_JK
 
+    geonetwork:
+        ports:
+            - 8081:8080
 
     ###
     ### Base de données SQL Postgres + Postgis

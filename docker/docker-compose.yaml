@@ -90,6 +90,38 @@ services:
             TC_PASS:                    ${PWD_TOMCAT}
         hostname: "${COMPOSE_PROJECT_NAME:-hdf-cartotheque-dev}-geosource"
 
+    elasticsearch:
+        image: elasticsearch:8.1.0
+        environment:
+            discovery.type: single-node
+            ES_JAVA_OPTS: "-Xms1g -Xmx1g"
+        networks:
+            - default
+        ports:
+            - "9200:9200"
+
+    geonetwork:
+        image: geonetwork:latest
+        depends_on:
+            - geodb
+            - elasticsearch
+        environment:
+            DATA_DIR: /var/lib/geonetwork_data
+            POSTGRES_DB_HOST: geodb
+            POSTGRES_DB_PORT: 5432
+            POSTGRES_DB_NAME: drupalcartes
+            POSTGRES_DB_USERNAME: drupalcartes
+            POSTGRES_DB_PASSWORD: drupalcartes
+            ES_HOST: elasticsearch
+            ES_PROTOCOL: http
+            ES_PORT: 9200
+        volumes:
+            - ./geonetwork:/var/lib/geonetwork_data:rw
+        networks:
+            - default
+        links:
+            - geodb
+            - elasticsearch
 
     ###
     ### Base de données SQL Postgres + Postgis
