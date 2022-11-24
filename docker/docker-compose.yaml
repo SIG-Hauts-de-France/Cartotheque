@@ -33,7 +33,7 @@ services:
                 - GID_WORKER=${GID_LOCAL:-0}
         depends_on:
             - drupaldb
-            - geosource
+            - geonetwork
         ports:
             - "${PORT_WEB:-1080}:1080"
         volumes:
@@ -55,7 +55,7 @@ services:
             SMTP_USER:                  ${SMTP_USER:-}
             SMTP_PASS:                  ${SMTP_PASS:-}
 #           GEO_HOST:                   http://geosource:8080/geosource
-            GEO_HOST:                   http://geosource:80/geosource
+            GEO_HOST:                   http://geonetwork:8080/geonetwork
             GEO_PASS:                   ${PWD_GEOADMIN}
             RED_URL:                    ${REDMINE_URL:-}
             RED_KEY:                    ${REDMINE_KEY:-}
@@ -65,63 +65,46 @@ services:
     ###
     ### Instance GeoSource (webapp déployée sur serveur tomcat)
     ###
-    geosource:
-#       image: tomcat:${VER_TOMCAT:-9.0}-jre${VER_JRE:-8}
-        image: "hdf-cartotheque-geosource-dev:${VER_GEOSOURCE}-tomcat${VER_TOMCAT:-9.0}-jre${VER_JRE:-8}"
-        build:
-            context: "./build"
-            dockerfile: "Dockerfile.geosource"
-            args:
-                - VER_GEOSOURCE
-                - VER_TOMCAT
-                - VER_JRE
-                - HTTP_PROXY
-                - HTTPS_PROXY
-        depends_on:
-            - geodb
-        ports:
-            - "${PORT_GEO:-1082}:80"
-        environment:
-            DB_HOST:                    geodb
-            DB_PORT:                    5432
-            DB_BASE:                    ${GEODB_BASENAME:-geosource}
-            DB_USER:                    ${GEODB_USERNAME:-geosource}
-            DB_PASS:                    ${GEODB_USERPASS}
-            TC_PASS:                    ${PWD_TOMCAT}
-        hostname: "${COMPOSE_PROJECT_NAME:-hdf-cartotheque-dev}-geosource"
-
-    elasticsearch:
-        image: elasticsearch:8.1.0
-        environment:
-            discovery.type: single-node
-            ES_JAVA_OPTS: "-Xms1g -Xmx1g"
-        networks:
-            - default
-        ports:
-            - "9200:9200"
+#    geosource:
+##       image: tomcat:${VER_TOMCAT:-9.0}-jre${VER_JRE:-8}
+#        image: "hdf-cartotheque-geosource-dev:${VER_GEOSOURCE}-tomcat${VER_TOMCAT:-9.0}-jre${VER_JRE:-8}"
+#        build:
+#            context: "./build"
+#            dockerfile: "Dockerfile.geosource"
+#            args:
+#                - VER_GEOSOURCE
+#                - VER_TOMCAT
+#                - VER_JRE
+#                - HTTP_PROXY
+#                - HTTPS_PROXY
+#        depends_on:
+#            - geodb
+#        ports:
+#            - "${PORT_GEO:-1082}:80"
+#        environment:
+#            DB_HOST:                    geodb
+#            DB_PORT:                    5432
+#            DB_BASE:                    ${GEODB_BASENAME:-geosource}
+#            DB_USER:                    ${GEODB_USERNAME:-geosource}
+#            DB_PASS:                    ${GEODB_USERPASS}
+#            TC_PASS:                    ${PWD_TOMCAT}
+#        hostname: "${COMPOSE_PROJECT_NAME:-hdf-cartotheque-dev}-geosource"
 
     geonetwork:
-        image: geonetwork:latest
+        image: geonetwork:3.10-postgres
         depends_on:
             - geodb
-            - elasticsearch
         environment:
-            DATA_DIR: /var/lib/geonetwork_data
-            POSTGRES_DB_HOST: geodb
-            POSTGRES_DB_PORT: 5432
-            POSTGRES_DB_NAME: drupalcartes
-            POSTGRES_DB_USERNAME: drupalcartes
-            POSTGRES_DB_PASSWORD: drupalcartes
-            ES_HOST: elasticsearch
-            ES_PROTOCOL: http
-            ES_PORT: 9200
+            DATA_DIR:                   /var/lib/geonetwork_data
+            POSTGRES_DB_HOST:           geodb
+            POSTGRES_DB_PORT:           5432
+            POSTGRES_DB_NAME:           ${GEODB_BASENAME:-geosource}
+            POSTGRES_DB_USERNAME:       ${GEODB_USERNAME:-geosource}
+            POSTGRES_DB_PASSWORD:       ${GEODB_USERPASS}
         volumes:
-            - ./geonetwork:/var/lib/geonetwork_data:rw
-        networks:
-            - default
+            - ./geonetwork:/var/lib/geonetwork_data
         links:
             - geodb
-            - elasticsearch
 
     ###
     ### Base de données SQL Postgres + Postgis

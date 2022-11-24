@@ -880,9 +880,9 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
 		'map_abstract' => tic_geosource_format_text($node->field_description['und'][0]['value']),
 		'map_number' => $mapNumber,
 		'map_scale' => $scale,
-		'source_url' => $sourceUrl,
+		'source_url' => tic_geosource_format_text($sourceUrl),
 		//'source_date' => $sourceDate,
-		'source_description' => $sourceDesc,
+		'source_description' => tic_geosource_format_text($sourceDesc),
 		'bbox' => $bbox,
 		'keywords' => $keywords,
 		'thesaurus' => "",
@@ -894,7 +894,7 @@ function tic_geosource_drupal_node_to_geosource_array($node) {
 		'formatPng' => $formatPng,
 		'uuid' => $uuid,
 		'thumbnails' => $thumbnails,
-		'url_carte' => $mapUrl,
+		'url_carte' => tic_geosource_format_text($mapUrl),
 		'ressources_associees' => $ressourcesAssociees,
 	);
 }
@@ -1218,7 +1218,7 @@ function tic_geosource_push_worker($nid) {
         watchdog('tic_geosource', sprintf('Synchro Drupal => carte %s non envoyée car non publiée', $nid));
 		return;
 	}
-	
+
 	$uuid = tic_geosource_insert_record($node);
 	if ($uuid) {
 		// On ne doit garder que les 255 premiers caractères de la str récupérée pour ne pas avoir d'erreur SQL (le champ est un varchar(255))
