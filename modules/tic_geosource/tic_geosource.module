@@ -455,7 +455,7 @@ function tic_geosource_generate_map_thumbnail($node) {
  *
  */
 function tic_geosource_node_presave($node) {
-	
+
 	if ($node->type != 'carte') {
 		return;
 	}
@@ -484,10 +484,12 @@ function tic_geosource_node_presave($node) {
 
 		$uuid = tic_geosource_insert_record($node);
 
-		if ($uuid) {
-			$node->field_uuid['und'][0]['value'] = $uuid;
-			tic_geosource_add_map_group($node);
-		}
+        if ($uuid) {
+            $uuid = substr($uuid, 0, 255);
+            $node->field_uuid['und'][0]['value'] = $uuid;
+            watchdog('tic_geosource', 'UUID : '.$uuid);
+            tic_geosource_add_map_group($node);
+        }
 	}
 	else {
 		tic_geosource_update_record($node);
@@ -628,7 +630,8 @@ function tic_geosource_is_static_map($node) {
  *
  */
 function tic_geosource_format_text($text) {
-	return htmlspecialchars($text);
+    $text = preg_replace ('/[^\x{0009}\x{000a}\x{000d}\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}]+/u', ' ', $text);
+	return htmlspecialchars($text, ENT_QUOTES);
 }
 
 /**
@@ -1219,17 +1222,9 @@ function tic_geosource_push_worker($nid) {
 		return;
 	}
 
-	$uuid = tic_geosource_insert_record($node);
-	if ($uuid) {
-		// On ne doit garder que les 255 premiers caractères de la str récupérée pour ne pas avoir d'erreur SQL (le champ est un varchar(255))
-		$uuid = substr($uuid, 0, 255);
-		$node->field_uuid['und'][0]['value'] = $uuid;
-		node_save($node);
-		watchdog('tic_geosource', 'Carte '.$nid.' synchronisée vers GeoNetwork');
-	}
-	else {
-		watchdog('tic_geosource', 'Erreur lors de la synchronisation du node '.$nid.' vers GeoNetwork');
-	}
+    // Dans le presave, on fait l'insert record geonetwork
+    // En passant par la sauvegarde du node, on va le pousser vers geonetwork
+    node_save($node);
 }
 
 /**
