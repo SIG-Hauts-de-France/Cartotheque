@@ -79,4 +79,5 @@ function reset_maps_uuid($nid = null) {
 	}
 
 	drush_print("Nombre de maps réinitialisées : ".$cpt);
+    cache_clear_all();
 }
