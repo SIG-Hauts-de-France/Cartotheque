@@ -791,8 +791,8 @@ class div {
 					
 					if ($exists === true || $decode === true)
 						$items = self::jsonDecode($items);
-					if ($exists === true)
-						break;
+					// if ($exists === true)
+					// 	break;
 				}
 		}
 		
@@ -2835,9 +2835,9 @@ class div {
 		if (! is_array($items))
 			if (is_object($items)) {
 				$items = get_object_vars($items);
-			} else
-				continue;
-		
+			// } else
+			// 		continue;
+			}
 		if ($superkey != "")
 			$superkey .= ".";
 		
