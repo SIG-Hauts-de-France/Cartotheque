@@ -28,15 +28,18 @@ services:
     ###
     ### Instance GeoSource (webapp déployée sur serveur tomcat)
     ###
-    geosource:
-        ports:
-            - "${PORT_TOMCAT:-1083}:8080"
-        volumes:
-            - "./dumps:/var/dump:rw"
-        environment:
-            - WITH_ADMIN_TC
-            - WITH_ADMIN_JK
+#    geosource:
+#        ports:
+#            - "${PORT_TOMCAT:-1083}:8080"
+#        volumes:
+#            - "./dumps:/var/dump:rw"
+#        environment:
+#            - WITH_ADMIN_TC
+#            - WITH_ADMIN_JK
 
+    geonetwork:
+        ports:
+            - 8081:8080
 
     ###
     ### Base de données SQL Postgres + Postgis

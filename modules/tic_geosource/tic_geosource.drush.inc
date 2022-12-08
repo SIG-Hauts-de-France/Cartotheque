@@ -30,8 +30,13 @@ function tic_geosource_manage_map_uuid() {
 				list_maps_nid();
 				break;
 			case 'reset':
-				drush_print("Réinitialisation des uuids de maps");
-				reset_maps_uuid();
+			    if ($args[1]) {
+                    drush_print("Réinitialisation de l'uuid de la map " . $args[1]);
+                    reset_maps_uuid($args[1]);
+                } else {
+                    drush_print("Réinitialisation des uuids de maps");
+                    reset_maps_uuid();
+                }
 				break;
 			default:
 				drush_print("Commande inconnue, liste des cartes synchronisées");
@@ -58,8 +63,13 @@ function list_maps_nid() {
 	drush_print("Nombre de maps synchronisées : ".$cpt);
 }
 
-function reset_maps_uuid() {
-	$ret = db_query("select nid from node where nid in (select entity_id from field_data_field_uuid) and type = 'carte';");
+function reset_maps_uuid($nid = null) {
+    $ret = "";
+    if ($nid) {
+        $ret = db_query("select nid from node where nid = " . $nid . ";");
+    } else {
+        $ret = db_query("select nid from node where nid in (select entity_id from field_data_field_uuid) and type = 'carte';");
+    }
 	$cpt = 0;
 
 	foreach($ret as $r) {
@@ -69,4 +79,5 @@ function reset_maps_uuid() {
 	}
 
 	drush_print("Nombre de maps réinitialisées : ".$cpt);
+    cache_clear_all();
 }
