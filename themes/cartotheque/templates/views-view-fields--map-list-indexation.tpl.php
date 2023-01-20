@@ -58,12 +58,12 @@
 				<?php if (strtolower($fields['field_type_de_carte']->content) == 'statique'): ?>
 				<?php if ($fields['field_image_carte']->content): ?>
 				<span class="linkImg">
-					<a href="<?php print $fields['field_image_carte']->content; ?>&countdl=yes" download> </a>
+					<a href="<?php print $fields['field_image_carte']->content; ?>?&countdl=yes" download> </a>
 				</span>
 				<?php endif; ?>
 				<?php if ($fields['field_fichier_carte']->content): ?>
 				<span class="linkPdf">
-					<a href="<?php print $fields['field_fichier_carte']->content; ?>&countdl=yes" download> </a>
+					<a href="<?php print $fields['field_fichier_carte']->content; ?>?&countdl=yes" download> </a>
 				</span>
 				<?php endif; ?>
 				<?php else: ?>
@@ -83,7 +83,7 @@
 				print '<div class="file-dialog" style="display: none;" title="Fichier carte">';
 				print '<span class="ui-helper-hidden-accessible"><input type="text" /></span>';
 				print '<span class="linkShow"><a href="'.$fields['field_fichier_carte']->content.'" target="_blank">Visualiser</a></span>';
-				print '<span class="linkDl"><a href="'.$fields['field_fichier_carte']->content.'&forcedl" download>Télécharger</a></span>';
+				print '<span class="linkDl"><a href="'.$fields['field_fichier_carte']->content.'?&forcedl" download>Télécharger</a></span>';
 				print '</div>';
 			}
 			
@@ -91,7 +91,7 @@
 				print '<div class="image-dialog" style="display: none;" title="Image carte">';
 				print '<span class="ui-helper-hidden-accessible"><input type="text" /></span>';
 				print '<span class="linkShow"><a href="'.$fields['field_image_carte']->content.'" target="_blank">Visualiser</a></span>';
-				print '<span class="linkDl"><a href="'.$fields['field_image_carte']->content.'&forcedl" download>Télécharger</a></span>';
+				print '<span class="linkDl"><a href="'.$fields['field_image_carte']->content.'?&forcedl" download>Télécharger</a></span>';
 				print '</div>';
 			}
 			
