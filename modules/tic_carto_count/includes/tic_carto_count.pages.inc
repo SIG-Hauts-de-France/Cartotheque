@@ -38,6 +38,10 @@ function tic_carto_count_view_page($arg = NULL) {
       'data' => t('Entity ID'),
       'field' => 'nid',
     ),
+    array(
+      'data' => t('Card number'),
+      'field' => 'field_numero_de_carte_value',
+    ),
   );
 
 /*
@@ -54,10 +58,13 @@ function tic_carto_count_view_page($arg = NULL) {
     ->fields('n', array('nid', 'title'))
     ->fields('cc', array('dcid', 'count'))
     ->fields('nc', array('totalcount'))
+    ->fields('nfc', array('field_numero_de_carte_value'))
+
 	;
   $query->leftJoin('tic_carto_count', 'cc', 'cc.nid = n.nid');
   $query->leftJoin('node_counter', 'nc', 'nc.nid = n.nid');
-   
+  $query->leftJoin('field_data_field_numero_de_carte', 'nfc', 'nfc.entity_id = n.nid');
+
 
 
   if ($limit > 0) {
@@ -77,6 +84,7 @@ function tic_carto_count_view_page($arg = NULL) {
     $row[] = number_format($node->count);
     $row[] = number_format($node->totalcount);
     $row[] = $node->nid;
+    $row[] = $node->field_numero_de_carte_value;
     $row[] = $node->title;
     if (user_access('reset download counts')) {
       $row[] = l(t('Reset'), 'admin/reports/download-count/' . $node->nid . '/reset');

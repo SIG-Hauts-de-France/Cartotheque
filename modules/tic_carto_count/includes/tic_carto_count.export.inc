@@ -28,6 +28,7 @@ function tic_carto_count_export_form($form, $form_state, $dc_entry = 'all') {
       . '<ul>'
       . '<li>' . t('Node id')
       . '<li>' . t('Node title')
+      . '<li>' . t('Card number')
       . '<li>' . t('Download count')
       . '<li>' . t('Visu; count')
       . '</ul>',
@@ -115,17 +116,20 @@ function tic_carto_count_export_data($filename, $range, $file_info, $start, $end
     ->fields('n', array('nid', 'title'))
     ->fields('cc', array('dcid', 'count'))
     ->fields('nc', array('totalcount'))
+    ->fields('nfc', array('field_numero_de_carte_value'))
         ;
   $query->leftJoin('tic_carto_count', 'cc', 'cc.nid = n.nid');
   $query->leftJoin('node_counter', 'nc', 'nc.nid = n.nid');
+  $query->leftJoin('field_data_field_numero_de_carte', 'nfc', 'nfc.entity_id = n.nid');
 
 
   $result = $query->execute();
-  $column_names = '"Node id","Node name","Download count", "Visu count"' . "\n";
+  $column_names = '"Node id","Node name","Card number", "Download count", "Visu count"' . "\n";
   print $column_names;
   foreach ($result as $record) {
     $row  = '"' . $record->nid . '"' . ',';
     $row .= '"' . $record->title . '"' . ',';
+    $row .= '"' . $record->field_numero_de_carte_value . '"' . ',';
     $row .= '"' . $record->count . '"' . ',';
     $row .= '"' . $record->totalcount . '"' . ',';
     $row .= "\n";
