@@ -28,7 +28,7 @@ function tic_carto_count_export_form($form, $form_state, $dc_entry = 'all') {
       . '<ul>'
       . '<li>' . t('Node id')
       . '<li>' . t('Node title')
-      . '<li>' . t('Card number')
+      . '<li>' . t('Map number')
       . '<li>' . t('Download count')
       . '<li>' . t('Visu; count')
       . '</ul>',
@@ -124,7 +124,7 @@ function tic_carto_count_export_data($filename, $range, $file_info, $start, $end
 
 
   $result = $query->execute();
-  $column_names = '"Node id","Node name","Card number", "Download count", "Visu count"' . "\n";
+  $column_names = '"Node id","Node name","Map number", "Download count", "Visu count"' . "\n";
   print $column_names;
   foreach ($result as $record) {
     $row  = '"' . $record->nid . '"' . ',';

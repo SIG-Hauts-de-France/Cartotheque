@@ -39,7 +39,7 @@ function tic_carto_count_view_page($arg = NULL) {
       'field' => 'nid',
     ),
     array(
-      'data' => t('Card number'),
+      'data' => t('Map number'),
       'field' => 'field_numero_de_carte_value',
     ),
   );
