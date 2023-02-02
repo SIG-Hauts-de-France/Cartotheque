@@ -403,8 +403,6 @@ function tic_geosource_addcontact_ajax_submit($form, &$form_state) {
  *
  */
 function tic_geosource_node_delete($node) {
-	// TODO: reactiver fonction suppression
-	return;
 	if ($node->type != 'carte') {
 		return;
 	}
@@ -1032,7 +1030,7 @@ function tic_geosource_remove_record($node) {
 	$dom = new DOMDocument('1.0');
 	$dom->loadXML((string)$xmlString);
 	$removed = 0;
-	
+
 	try {
 		$removed = $client->deleteMetadataFromUuid($node->field_uuid['und'][0]['value']);
 	}

@@ -987,7 +987,7 @@ class cswGeoClient {
                            "<csw:Delete>".
                            "<csw:Constraint version='1.0.0'>".
                            "<Filter xmlns='http://www.opengis.net/ogc' xmlns:gml='http://www.opengis.net/gml'>".
-                           "<PropertyIsLike wildCard='%' singleChar='_' escapeChar='\'>".
+                           "<PropertyIsLike wildCard='%' singleChar='_' escape='\'>".
                            "    <PropertyName>apiso:identifier</PropertyName>".
                            "    <Literal>".$uuid."</Literal>".
                            "</PropertyIsLike>".
@@ -1004,6 +1004,7 @@ class cswGeoClient {
                 if ($docXml->loadXML($this->_response)) {
                     $xp = new DOMXPath($docXml);
                     $xpathString="//csw:totalDeleted";
+					watchdog('tic_geosource', "XML Delete : " . $this->_response);
                     $nodes = $xp->query($xpathString);
                     if ($nodes->length==1)
                         return $nodes->item(0)->textContent;
