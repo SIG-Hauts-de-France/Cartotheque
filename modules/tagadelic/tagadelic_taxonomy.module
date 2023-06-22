@@ -49,8 +49,8 @@ function tagadelic_taxonomy_get_cloud($max_amount) {
 		case 'mots_cles'          : $tag->set_link("?q=map-list&field_mots_cles_tid[]={$term->tid}");   break;
 		case 'mots_cles_thesaurus_gemet' : $tag->set_link("?q=map-list&field_mots_cles_thesaurus_tid[]={$term->tid}");  break;
 		case 'thematique_gemet'   : $tag->set_link("?q=map-list&field_thematique_tid[]={$term->tid}");  break;
-		case 'thematique_hdf'     : $tag->set_link("?q=map-list-new&field_thematique_hdf={$term->name}");  break;
-		case 'collections'        : $tag->set_link("?q=map-list&field_collections_tid[]={$term->tid}"); break;
+		case 'thematique_hdf'     : $tag->set_link("?q=map-list-new&field_thematique_hdf={$term->tid}");  break;
+		case 'collections'        : $tag->set_link("?q=map-list-new&field_collections={$term->tid}"); break;
 		default                   : continue 2;  // $tag->set_link("taxonomy/term/{$term->tid}");
 	}
 
