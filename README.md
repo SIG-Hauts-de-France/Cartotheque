@@ -148,7 +148,7 @@ Import des termes des taxonomies
 
 Export des terms des taxonomies sur le serveur de PROD avec le module `taxonomy_csv` :
 ```bash
-ssh root@91.230.1.143
+ssh root@[L'IP de mon serveur]
 cd /var/www/html/cartes
 
 LST_TAXO="categorie collections tags mots_cles mots_cles_thesaurus_gemet thematique_gemet thematique_hdf"
@@ -159,7 +159,7 @@ done
 
 Récupération des exports générés sur le serveur de PROD :
 ```bash
-scp root@91.230.1.143:/data/teicee/taxonomy-* .
+scp root@[L'IP de mon serveur]:/data/teicee/taxonomy-* .
 ```
 
 Exemple de commande pour importer tous les fichiers CSV :
@@ -180,7 +180,7 @@ Import Excel pour la mise à jour des thèmes HdF
 
 Fichier récupéré sur le serveur de PROD :
 ```bash
-scp root@91.230.1.143:/data/teicee/Cartes_production_200228_V2.xlsx ./imports/
+scp root@[L'IP de mon serveur]:/data/teicee/Cartes_production_200228_V2.xlsx ./imports/
 ```
 
 Import réalisable via une commande Drush du module `tic_theme_hdf_update` :
@@ -198,13 +198,13 @@ Import des bases de données en production (drupal & geosource)
 
 Génération de dumps des bases Drupal et Geosource avec la commande `pg_dump` :
 ```bash
-ssh root@91.230.1.143
+ssh root@[L'IP de mon serveur]
 
-pg_dump --host=172.16.102.23 --dbname=drupalcartes --username=drupalcartes \
+pg_dump --host=[Mon host] --dbname=drupalcartes --username=drupalcartes \
  --no-owner --no-privileges --blobs --oids --compress=5 \
  --file="/data/teicee/dump-drupalcartes-$(date +"%Y%m%d").sql.gz"
 
-pg_dump --host=172.16.102.23 --dbname=geosource    --username=postgres \
+pg_dump --host=[Mon host] --dbname=geosource    --username=postgres \
  --no-owner --no-privileges --blobs --oids --compress=5 \
  --file="/data/teicee/dump-geosource-$(date +"%Y%m%d").sql.gz"
 ```
@@ -213,8 +213,8 @@ Récupération des fichiers des dumps SQL du serveur de PROD :
 ```bash
 cd ./docker/dumps
 
-scp root@91.230.1.143:/data/teicee/dump-drupalcartes-$(date +"%Y%m%d").sql.gz ./init_drupaldb/1_import.sql.gz
-scp root@91.230.1.143:/data/teicee/dump-geosource-$(date +"%Y%m%d").sql.gz    ./init_geodb/1_import.sql.gz
+scp root@[L'IP de mon serveur]:/data/teicee/dump-drupalcartes-$(date +"%Y%m%d").sql.gz ./init_drupaldb/1_import.sql.gz
+scp root@[L'IP de mon serveur]:/data/teicee/dump-geosource-$(date +"%Y%m%d").sql.gz    ./init_geodb/1_import.sql.gz
 ```
 
 Suppression des volumes pour recharger les dumps des bases de données :
@@ -234,13 +234,13 @@ Récupération du dossier des fichiers de l'instance de production
 
 Génération d'une archive du dossier `files` de Drupal sur la PROD :
 ```bash
-ssh root@91.230.1.143
+ssh root@[L'IP de mon serveur]
 tar cf /data/teicee/files-$(date +"%Y%m%d").tar /var/www/html/cartes/sites/default/files/
 ```
 
 Récupération de l'archive et mise en place pour l'instance Docker :
 ```bash
-scp root@91.230.1.143:/data/teicee/files-$(date +"%Y%m%d").tar .
+scp root@[L'IP de mon serveur]:/data/teicee/files-$(date +"%Y%m%d").tar .
 tar xf ./files-$(date +"%Y%m%d").tar
 mv ./var/www/html/cartes/sites/default/files/private/* ./docker/files/private/
 rm -rf ./var/www/html/cartes/sites/default/files/private
