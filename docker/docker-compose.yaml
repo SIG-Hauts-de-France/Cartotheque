@@ -133,10 +133,30 @@ services:
             - "geodb_data:/var/lib/postgresql/data:rw"
         hostname: "${COMPOSE_PROJECT_NAME:-hdf-cartotheque-dev}-geodb"
 
+    redmine:
+        image: redmine
+        ports:
+            - "${PORT_REDMINE:-8080}:3000"
+        environment:
+            REDMINE_DB_POSTGRES: redminedb
+            REDMINE_DB_USERNAME: ${REDMINEDB_USERNAME:-redmine}
+            REDMINE_DB_PASSWORD: ${REDMINEDB_USERPASS}
+            REDMINE_DB_DATABASE: ${REDMINEDB_BASENAME:-redmine}
+            REDMINE_SECRET_KEY_BASE: supersecretkey
+        hostname: "${COMPOSE_PROJECT_NAME:-hdf-cartotheque-dev}-redmine"
+
+    redminedb:
+        image: postgres
+        expose:
+            - "5432"
+        volumes:
+            - "redminedb_data:/var/lib/postgresql/data:rw"
+        hostname: "${COMPOSE_PROJECT_NAME:-hdf-cartotheque-dev}-redminedb"
 
 volumes:
     drupaldb_data: {}
     geodb_data: {}
+    redminedb_data: {}
 
 networks:
     default: {}

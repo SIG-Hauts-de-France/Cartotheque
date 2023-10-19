@@ -78,6 +78,11 @@ services:
             PGPASSWORD:                 ${GEODB_USERPASS}
             IMPORT_FOLDER:              /var/dump/init_geodb
 
+    redminedb:
+        environment:
+            POSTGRES_DB:        ${REDMINEDB_BASENAME:-redmine}
+            POSTGRES_USER:      ${REDMINEDB_USERNAME:-redmine}
+            POSTGRES_PASSWORD:  ${REDMINEDB_USERPASS}
 
     ###
     ### Gestionnaire BdD pgAdmin
@@ -89,6 +94,7 @@ services:
         depends_on:
             - drupaldb
             - geodb
+            - redminedb
         expose:
             - "5050"
 #       ports:
